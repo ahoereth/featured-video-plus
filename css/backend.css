@@ -1,0 +1,20 @@
+.wp-picker-holder {
+	position: absolute; bottom: 2.5em; left: -1em;
+	z-index: 1;
+	-webkit-box-shadow: 3px 3px 5px #ddd;
+	   -moz-box-shadow: 3px 3px 5px #ddd;
+			box-shadow: 3px 3px 5px #ddd;
+    -webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+			box-sizing: border-box;	
+}
+
+.defaultTextActive { 
+	color: #a1a1a1; 
+	font-style: italic; 
+}
+
+#fvp_activation_notification {
+	border-color: #00adef;
+	background-color: whiteSmoke; 
+}
