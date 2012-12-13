@@ -1,5 +1,5 @@
 === Featured Video Plus ===
-Contributors: ahoereth
+Contributors: a.hoereth
 Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Tags: featured video, featured, post, video, thumbnail, post thumbnail, image, flash, youtube, vimeo
@@ -39,6 +39,8 @@ Theme functions:
 	
 All parameters are optional. If no post_id is given the current post's id will be used.
 
+
+This plugin was created after using the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin with more features and a more seemless integration into WordPress in mind. I hope you like it, feel free to contact me by mail or post in the support forum.
 
 == Installation ==
 
