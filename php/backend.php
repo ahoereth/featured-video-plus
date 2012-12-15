@@ -524,11 +524,16 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	function settings_save($input) {
 		$input['overwrite'] = $input['overwrite'] == 'true' ? true : false;
 
-		$input['vimeo']['portrait'] = $input['vimeo']['portrait'] 	== 'display' ? 1 : 0;
-		$input['vimeo']['title'] 	= $input['vimeo']['title'] 		== 'display' ? 1 : 0;
-		$input['vimeo']['byline'] 	= $input['vimeo']['byline'] 	== 'display' ? 1 : 0;
-		preg_match('/#?([0123456789abcdef]{3}[0123456789abcdef]{0,3})/i', $input['vimeo']['color'], $color);
-		$input['vimeo']['color'] = $color[1];
+		$input['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
+		$input['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
+		$input['vimeo']['byline'] 	= isset($input['vimeo']['byline']) 	&& ( $input['vimeo']['byline'] 	 == 'display' ) ? 1 : 0;
+
+		if( isset($input['vimeo']['color']) ) {
+			preg_match('/#?([0123456789abcdef]{3}[0123456789abcdef]{0,3})/i', $input['vimeo']['color'], $color);
+			$input['vimeo']['color'] = $color[1];
+		} else
+			$input['vimeo']['color'] = '00adef';
+
 		return $input;
 	}
 
