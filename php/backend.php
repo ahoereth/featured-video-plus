@@ -14,6 +14,8 @@ class featured_video_plus_backend {
 	private $featured_video_plus;
 	private $default_value;
 
+
+
 	/**
 	 * Creates a new instace of this class, saves the featured_video_instance and default value for the meta box input.
 	 *
