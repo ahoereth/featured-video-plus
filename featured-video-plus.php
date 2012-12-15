@@ -35,7 +35,7 @@ $featured_video_plus = new featured_video_plus();
 
 // shortcode
 add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
-	
+
 // only on backend / administration interface
 if(  is_admin() ) {
 	// init backend class, located in php/backend.php
@@ -43,15 +43,20 @@ if(  is_admin() ) {
 
 	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
 	add_action('save_post',  array( &$featured_video_plus_backend, 'metabox_save' )	 );
-	
+
 	add_action('admin_init', array( &$featured_video_plus_backend, 'settings_init' ) );
-	
+
 	// enqueue scripts and styles
-	add_action( 'admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) ); 
-	
+	add_action( 'admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
+
 	add_action('admin_notices', array( &$featured_video_plus_backend, 'activation_notification' ) );
 	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
+
+	add_action('admin_notices', array( &$featured_video_plus_backend, 'no_featimg_warning' ) );
+	add_action('admin_init', array( &$featured_video_plus_backend, 'no_featimg_warning_callback' ) );
+	add_filter( 'admin_post_thumbnail_html', array( &$featured_video_plus_backend, 'featimg_metabox' ));
 }
+
 
 // only on frontend / page
 if( !is_admin() ) {
@@ -60,10 +65,12 @@ if( !is_admin() ) {
 
 	// enqueue scripts and styles
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
-	
+
 	// filter get_post_thumbnail output
-	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5); 
-	
+	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
+
+
+	// functions which are available to theme developers follow here:
 	// echos the current posts featured video
 	function the_post_video($width = '560', $height = '315', $allowfullscreen = true) {
 		echo get_the_post_video(null, $width, $height, $allowfullscreen, true);
@@ -84,8 +91,7 @@ if( !is_admin() ) {
 
 
 include_once( dirname( __FILE__ ) . '/php/setup.php' );
-register_activation_hook( 	__FILE__, array( 'featured_video_plus_setup', 'on_activate' ) );
-//register_deactivation_hook( __FILE__, array( 'featured_video_plus_setup', 'on_deactivate' ) );
-register_uninstall_hook( 	__FILE__, array( 'featured_video_plus_setup', 'on_uninstall' ) );
+register_activation_hook( 	 WP_PLUGIN_DIR . '/featured-video-plus/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
+register_uninstall_hook( 	 WP_PLUGIN_DIR . '/featured-video-plus/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
 
 ?>

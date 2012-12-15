@@ -25,18 +25,18 @@ If you are missing a certain video platform: Leave a message in the supports for
 
 After activating the plugin you will get some additions to your media settings, where you can choose how the videos will be size and some other stuff - have a look at the screenshots. If the theme you are using does not work with any combination of the width and height settings please contact me and I will look into it.
 
-Shortcode:
+=Shortcode:=
 
 	[featured-video-plus]
 	[featured-video-plus width=300]
 
-	
-Theme functions:
+
+=Theme functions:=
 
     the_post_video(array(width, height), fullscreen = true)
     has_post_video(post_id)
     get_the_post_video(post_id, size(width, height), fullscreen = true)
-	
+
 All parameters are optional. If no post_id is given the current post's id will be used.
 
 
@@ -53,6 +53,12 @@ If you want to change some settings have a look under Settings -> Media.
 
 
 == Changelog ==
+
+= 1.1 =
+* fixed youtube 'start at specific time' embeds
+* overhaul of the interaction between Featured Videos and Featured Images
+* existing featured images will no longer be replaced by newly added featured videos in the administration interface
+
 
 = 1.0 =
 * Release

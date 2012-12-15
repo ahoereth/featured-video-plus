@@ -50,7 +50,7 @@ class featured_video_plus {
 			}elseif( $meta['prov'] == 'youtube' ) {
 			
 				$fs = $allowfullscreen ? 'allowfullscreen' : '';
-				$attr = '#' . $meta['attr'];
+				$attr = '#t=' . $meta['attr'];
 				$embed = "\n" . '<iframe width="'.$width.'" height="'.$height.'" src="http://www.youtube.com/embed/' . $meta['id'] . '?rel=0' . $attr . '" frameborder="0" ' . $fs . '></iframe>' . "\n";
 			}
 			
