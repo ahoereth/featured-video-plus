@@ -128,14 +128,14 @@ class featured_video_plus_backend {
 			( defined( 'DOING_AJAX' ) && DOING_AJAX ) 			|| 	// AJAX? Not used here
 			( !current_user_can( 'edit_post', $post_id ) ) 		|| 	// Check user permissions
 			( false !== wp_is_post_revision( $post_id ) ) 		||	// Return if it's a post revision
-			( ( !wp_verify_nonce( $_POST['fvp_nonce'], plugin_basename( __FILE__ ) ) ) &&
+			( ( isset($_POST['fvp_nonce']) && !wp_verify_nonce( $_POST['fvp_nonce'], plugin_basename( __FILE__ ) ) ) &&
 			  ( !isset( $redo ) ) )
 		   ) return;
 
 		$set_featimg 	= isset($_POST['fvp_set_featimg']) 	&& !empty($_POST['fvp_set_featimg']) 	? true : $set_featimg;
 
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
-		if( $_POST['fvp_video'] == $this->default_value || (empty($_POST['fvp_video']) && isset($meta)) )
+		if( ((!isset($_POST['fvp_video']) || empty($_POST['fvp_video'])) && ( isset( $meta ) ) ) || ($_POST['fvp_video'] == $this->default_value) )
 			$video = $meta['full'];
 		else
 			$video = $_POST['fvp_video'];
@@ -333,7 +333,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	public function no_featimg_warning() {
 
 		$screen = get_current_screen();
-		if( ($screen->base == 'post') ) {
+		if( $screen->base == 'post' && isset($_GET['post']) ) {
 			$post_id = $_GET['post'];
 
 			if( $this->featured_video_plus->has_post_video( $post_id ) && !has_post_thumbnail( $post_id ) ) {
