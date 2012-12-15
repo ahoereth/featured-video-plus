@@ -23,9 +23,9 @@ jQuery(document).ready(function($){
     $("#fvp_set_featimg_link").show();
     $("#fvp_set_featimg_input").hide();
 
-    $("#fvp_set_featimg_link").click(function() {
+    $("#fvp_set_featimg_link, #fvp_warning_set_featimg").click(function() {
         $("#fvp_set_featimg").attr('checked', true);
-        $(this).closest("form").submit();
+        $("#fvp_set_featimg").closest("form").submit();
         return false;
     });
 

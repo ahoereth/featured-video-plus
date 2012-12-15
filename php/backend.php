@@ -129,16 +129,21 @@ class featured_video_plus_backend {
 			( !current_user_can( 'edit_post', $post_id ) ) 		|| 	// Check user permissions
 			( false !== wp_is_post_revision( $post_id ) ) 		||	// Return if it's a post revision
 			( ( isset($_POST['fvp_nonce']) && !wp_verify_nonce( $_POST['fvp_nonce'], plugin_basename( __FILE__ ) ) ) &&
-			  ( !isset( $redo ) ) )
+			  !is_string($set_featimg) )
 		   ) return;
 
-		$set_featimg 	= isset($_POST['fvp_set_featimg']) 	&& !empty($_POST['fvp_set_featimg']) 	? true : $set_featimg;
-
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
-		if( ((!isset($_POST['fvp_video']) || empty($_POST['fvp_video'])) && ( isset( $meta ) ) ) || ($_POST['fvp_video'] == $this->default_value) )
-			$video = $meta['full'];
-		else
-			$video = $_POST['fvp_video'];
+		if( is_string($set_featimg) ) {
+			$video = $set_featimg;
+			$set_featimg = true;
+		} else {
+			$set_featimg = isset($_POST['fvp_set_featimg']) && !empty($_POST['fvp_set_featimg']) ? true : $set_featimg;
+
+			if( ((!isset($_POST['fvp_video']) || empty($_POST['fvp_video'])) && ( isset( $meta ) ) ) || ($_POST['fvp_video'] == $this->default_value) )
+				$video = $meta['full'];
+			else
+				$video = trim($_POST['fvp_video']);
+		}
 
 		// something changed
 		if( ( empty($video) ) || 							// no video or
@@ -342,8 +347,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 
 				echo "\n" . '<div class="updated"><p>';
 				printf(
-					__('To automatically add the Featured Video to your theme a Featured Image is required! | <a href="%1$s">use video screen capture</a> | change setting | <a href="%3$s">hide this notice</a>'),
-					get_admin_url(null, 'post.php?post=' . $post_id . '&action=edit&fvp_redo=' . urlencode( $meta['full'] ) ),
+					__('To automatically add the Featured Video to your theme a Featured Image is required! | <a id="fvp_warning_set_featimg" href="%1$s">use video screen capture</a> | change setting | <a href="%3$s">hide this notice</a>'),
+					get_admin_url(null, 'post.php?post=' . $post_id . '&action=edit&fvp_url=' . urlencode( $meta['full'] ) ),
 					get_admin_url(null, '/options-media.php'),
 					get_admin_url(null, 'post.php?post=' . $post_id . '&action=edit&fvp_no_featimg_hide=1' )
 				);
@@ -367,8 +372,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 			update_post_meta( $_GET['post'], '_fvp_video', serialize($meta) );
 
 		// User wants to pull the video screen capture, do it
-		} elseif ( isset($_GET['fvp_redo']) && !empty($_GET['fvp_redo']) ) {
-			$this->metabox_save( $_GET['post'], urldecode($_GET['fvp_redo']) );
+		} elseif ( isset($_GET['fvp_url']) && !empty($_GET['fvp_url']) ) {
+			$this->metabox_save( $_GET['post'], urldecode($_GET['fvp_url']) );
 		}
 	}
 
