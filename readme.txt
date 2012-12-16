@@ -27,13 +27,13 @@ If you are missing a certain video platform: Leave a message in the supports for
 
 After activating the plugin you will get some additions to your media settings. There you can choose how the videos will be sized and get some other individualisation properties - have a look at the [screenshots](http://wordpress.org/extend/plugins/featured-video-plus/screenshots/). If the theme you are using does not work with any combination of the width and height settings please contact me and I will look into it.
 
-=Shortcode:=
+__Shortcode:__
 
 	[featured-video-plus]
 	[featured-video-plus width=300]
 
 
-=PHP functions:=
+__PHP functions:__
 
 	the_post_video(array(width, height), fullscreen = true)
 	has_post_video(post_id)
