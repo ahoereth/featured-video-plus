@@ -109,9 +109,12 @@ class featured_video_plus_backend {
 
 		// link/input to set as featured image
 		$class = !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
-		$text  = $has_featimg && !$featimg_is_fvp ? 'Replace current Featured Image' : 'Set as Featured Image';
+		$text  = 'Set as Featured Image';
 		echo '<p id="fvp_set_featimg_box"'.$class.'><span id="fvp_set_featimg_input"><input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" /><label for="fvp_set_featimg">&nbsp;'.$text.'</label></span>';
 		echo '<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a></p>';
+
+		$class = $has_featimg ? ' fvp_hidden' : '';
+		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'"><p class="description">To automatically add the Featured Video to your theme a Featured Image is required!</p></div>';
 
 	}
 
@@ -139,7 +142,7 @@ class featured_video_plus_backend {
 		} else {
 			$set_featimg = isset($_POST['fvp_set_featimg']) && !empty($_POST['fvp_set_featimg']) ? true : $set_featimg;
 
-			if( ((!isset($_POST['fvp_video']) || empty($_POST['fvp_video'])) && ( isset( $meta ) ) ) || ($_POST['fvp_video'] == $this->default_value) )
+			if( !isset($_POST['fvp_video']) && isset( $meta ) )
 				$video = $meta['full'];
 			else
 				$video = trim($_POST['fvp_video']);
@@ -195,68 +198,96 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 
 		$local = wp_upload_dir();
 		// match 		different provider(!)
-		preg_match('/(vimeo|youtu|'.preg_quote($local['baseurl'], '/').')/i', $video, $video_provider);
+		preg_match('/(vimeo|youtu|dailymotion)/i', $video, $video_provider);
+		if(!isset($video_provider[1]))
+			return;
+
 		$video_prov = $video_provider[1] == "youtu" ? "youtube" : $video_provider[1];
-		/*if( $video_prov == $local['baseurl'] ) {
 
-			$video_id 	= $this->get_post_by_url($video);
-			$video_prov = 'local';
+		switch ($video_prov) {
+			/*case $local['baseurl'];
+				$video_id 	= $this->get_post_by_url($video);
+				$video_prov = 'local';
+				//'.preg_quote($local['baseurl'], '/').'
+				break;
+			*/
 
-		// get video from youtube
-		} else */
-		if( $video_prov == 'youtube' ) {
+			case 'youtube':
+				//match			provider				watch		feature							id(!)					attr(!)
+				preg_match('/youtu(?:be\.com|\.be)\/(?:watch)?(?:\?feature=[^\?&]*)*(?:[\?&]v=)?([^\?&\s]+)(?:(?:[&\?]t=)(\d+m\d+s))?/', $video, $video_data);
+				$video_id = $video_data[1];
+				if( isset($video_data[2] ) )
+					$video_attr = $video_data[2];
 
-			//match			provider				watch		feature							id(!)					attr(!)
-			preg_match('/youtu(?:be\.com|\.be)\/(?:watch)?(?:\?feature=[^\?&]*)*(?:[\?&]v=)?([^\?&\s]+)(?:(?:[&\?]t=)(\d+m\d+s))?/', $video, $video_data);
-			$video_id = $video_data[1];
-			if( isset($video_data[2] ) )
-				$video_attr = $video_data[2];
-
-			// title, allow_embed 0/1, keywords, author, iurlmaxres, thumbnail_url, timestamp, avg_rating
-			$tmp = download_url( 'http://youtube.com/get_video_info?video_id=' . $video_id );
-			$data = file_get_contents($tmp);
-			parse_str($data, $data);
-			@unlink( $tmp );
-
-			// generate video metadata
-			$video_info = array(
-				'title' => $data['title'],
-				'description' => $data['keywords'],
-				'filename' => sanitize_file_name($data['title']),
-				'timestamp' => $data['timestamp'],
-				'author' => $data['author'],
-				'tags' => $data['keywords'],
-				'img' => ( isset($data['iurlmaxres']) ? $data['iurlmaxres'] : 'http://img.youtube.com/vi/' . $video_id . '/0.jpg' )
-			);
-
-		// get video from vimeo
-		} else if( $video_prov == 'vimeo' ) {
-
-			preg_match('/vimeo.com\/([^#]+)/', $video, $video_data);
-			$video_id = $video_data[1];
-
-			// http://developer.vimeo.com/apis/simple
-			// title, description, upload_date, thumbnail_large, user_name, tags
-			$url = 'http://vimeo.com/api/v2/video/' . $video_id . '.php';
-
-			$data = unserialize(file_get_contents( $url ));
-			if( !isset( $data ) || empty( $data ) ) {
-				$tmp = download_url( $url );
-				$data = unserialize(file_get_contents($tmp));
+				// title, allow_embed 0/1, keywords, author, iurlmaxres, thumbnail_url, timestamp, avg_rating
+				$tmp = download_url( 'http://youtube.com/get_video_info?video_id=' . $video_id );
+				$data = file_get_contents($tmp);
+				parse_str($data, $data);
 				@unlink( $tmp );
-			}
+				print_r($data);
 
-			// generate video metadata
-			$video_info = array(
-				'title' => $data[0]['title'],
-				'description' => $data[0]['description'],
-				'filename' => sanitize_file_name( $data[0]['title'] ),
-				'timestamp' => strtotime( $data[0]['upload_date'] ),
-				'author' => $data[0]['user_name'],
-				'tags' => $data[0]['tags'],
-				'img' => $data[0]['thumbnail_large']
-			);
+				// generate video metadata
+				$video_info = array(
+					'title' => $data['title'],
+					'description' => $data['keywords'],
+					'filename' => sanitize_file_name($data['title']),
+					'timestamp' => $data['timestamp'],
+					'author' => $data['author'],
+					'tags' => $data['keywords'],
+					'img' => ( isset($data['']) && !empty($data['iurlmaxres']) ) ? $data['iurlmaxres'] : 'http://img.youtube.com/vi/' . $video_id . '/0.jpg'
+				);
+				break;
 
+			case 'vimeo': // http://developer.vimeo.com/apis/simple
+				preg_match('/vimeo.com\/([^#]+)/', $video, $video_data);
+				$video_id = $video_data[1];
+
+				// title, description, upload_date, thumbnail_large, user_name, tags
+				$url = 'http://vimeo.com/api/v2/video/' . $video_id . '.php';
+
+				$data = unserialize(file_get_contents( $url ));
+				if( !isset( $data ) || empty( $data ) ) {
+					$tmp = download_url( $url );
+					$data = unserialize(file_get_contents($tmp));
+					@unlink( $tmp );
+				}
+
+				// generate video metadata
+				$video_info = array(
+					'title' => $data[0]['title'],
+					'description' => $data[0]['description'],
+					'filename' => sanitize_file_name( $data[0]['title'] ),
+					'timestamp' => strtotime( $data[0]['upload_date'] ),
+					'author' => $data[0]['user_name'],
+					'tags' => $data[0]['tags'],
+					'img' => $data[0]['thumbnail_large'],
+					'url' => $data[0]['url']
+				);
+				break;
+
+			case 'dailymotion': // http://www.dailymotion.com/doc/api/obj-video.html
+				preg_match('/dailymotion.com\/video\/([^_]+)/', $video, $video_data);
+				$video_id = $video_data[1];
+
+				// http://codex.wordpress.org/HTTP_API
+				//thumbnail_url,aspect_ratio,description,created_time,embed_url,owner (owner.screenname),tags,title,url
+				$url = 'https://api.dailymotion.com/video/'.$video_id.'?fields=title,description,created_time,owner.screenname,tags,thumbnail_url,thumbnail_large_url,url,aspect_ratio';
+				$request = new WP_Http;
+				$result = $request->request( $url, array( 'method' => 'GET', 'sslverify' => false) );
+				$data = json_decode($result['body'], true);
+
+				// generate video metadata
+				$video_info = array(
+					'title' => $data['title'],
+					'description' => $data['description'],
+					'filename' => sanitize_file_name($data['title']),
+					'timestamp' => $data['created_time'],
+					'author' => $data['owner.screenname'],
+					'tags' => $data['tags'],
+					'img' => ( isset($data['thumbnail_url']) && !empty($data['thumbnail_url']) ) ? $data['thumbnail_url'] : $data['thumbnail_large_url'],
+					'url' => $data['url']
+				);
+				break;
 		}
 
 		// do we have a screen capture to pull?
@@ -305,7 +336,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		}
 
 		$meta = array(
-			'full' => $video,
+			'full' => ( isset($data['url']) && !empty($data['url']) ) ? $data['url'] : $video,
 			'id' => $video_id,
 			'img' => $video_img,
 			'prov' => $video_prov,
@@ -315,17 +346,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );
 
 		return;
-	}
-
-	/**
-	 * Adds a warning to the featured image metabox about the problems
-	 * when removing the featured image.
-	 *
-	 * @see http://snipplr.com/view/60269/
-	 * @since 1.1
-	 */
-	public function featimg_metabox( $content ) {
-		return $content .= '<p class="description">To automatically add the Featured Video to your theme a Featured Image is required!</p>';
 	}
 
 	/**
