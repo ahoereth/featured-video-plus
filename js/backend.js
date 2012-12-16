@@ -30,12 +30,11 @@ jQuery(document).ready(function($){
     });
 
     $("#remove-post-thumbnail").click(function() {
-        $("#fvp_set_featimg_link").html('Set as Featured Image');
         $("#fvp_set_featimg_box").removeClass("fvp_hidden");
         $("#fvp_featimg_box_warning").removeClass("fvp_hidden");
     });
 
-    $("#set-post-thumbnail, .media-button-select").click(function() {
+    $("#set-post-thumbnail").click(function() {
         $("#fvp_set_featimg_link").html('Replace current Featured Image');
         $("#fvp_featimg_box_warning").addClass("fvp_hidden");
     });

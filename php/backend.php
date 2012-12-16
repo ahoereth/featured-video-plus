@@ -114,7 +114,7 @@ class featured_video_plus_backend {
 		echo '<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a></p>';
 
 		$class = $has_featimg ? ' fvp_hidden' : '';
-		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'"><p class="description">To automatically add the Featured Video to your theme a Featured Image is required!</p></div>';
+		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'"><p class="description">In many themes to automatically display the Featured Video a Featured Image is required!</p></div>';
 
 	}
 
@@ -224,7 +224,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				$data = file_get_contents($tmp);
 				parse_str($data, $data);
 				@unlink( $tmp );
-				print_r($data);
 
 				// generate video metadata
 				$video_info = array(
@@ -245,7 +244,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				// title, description, upload_date, thumbnail_large, user_name, tags
 				$url = 'http://vimeo.com/api/v2/video/' . $video_id . '.php';
 
-				$data = unserialize(file_get_contents( $url ));
+				if( ini_get('allow_url_fopen') )
+					$data = unserialize(file_get_contents( $url ));
 				if( !isset( $data ) || empty( $data ) ) {
 					$tmp = download_url( $url );
 					$data = unserialize(file_get_contents($tmp));
@@ -346,55 +346,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );
 
 		return;
-	}
-
-	/**
-	 * Warning shown when plugin there is a Featured Video but no Featured Image
-	 *
-	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
-	 * @see http://codex.wordpress.org/Function_Reference/get_current_screen
-	 * @since 1.1
-	 */
-	public function no_featimg_warning() {
-
-		$screen = get_current_screen();
-		if( $screen->base == 'post' && isset($_GET['post']) ) {
-			$post_id = $_GET['post'];
-
-			if( $this->featured_video_plus->has_post_video( $post_id ) && !has_post_thumbnail( $post_id ) ) {
-
-				$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
-
-				echo "\n" . '<div class="updated"><p>';
-				printf(
-					__('To automatically add the Featured Video to your theme a Featured Image is required! | <a id="fvp_warning_set_featimg" href="%1$s">use video screen capture</a> | change setting | <a href="%3$s">hide this notice</a>'),
-					get_admin_url(null, 'post.php?post=' . $post_id . '&action=edit&fvp_url=' . urlencode( $meta['full'] ) ),
-					get_admin_url(null, '/options-media.php'),
-					get_admin_url(null, 'post.php?post=' . $post_id . '&action=edit&fvp_no_featimg_hide=1' )
-				);
-				echo "</p></div>\n";
-			}
-		}
-	}
-
-	/**
-	 * Function used when user responds to no_featimg_warning.
-	 *
-	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
-	 * @see function activation_notification
-	 * @since 1.1
-	 */
-	public function no_featimg_warning_callback() {
-		// User wants to ignore the warning, add that to the post meta
-		if ( isset($_GET['fvp_no_featimg_hide']) && $_GET['fvp_no_featimg_hide'] == '1' ) {
-			$meta = unserialize( get_post_meta($_GET['post'], '_fvp_video', true) );
-			$meta['warn_featimg'] = false;
-			update_post_meta( $_GET['post'], '_fvp_video', serialize($meta) );
-
-		// User wants to pull the video screen capture, do it
-		} elseif ( isset($_GET['fvp_url']) && !empty($_GET['fvp_url']) ) {
-			$this->metabox_save( $_GET['post'], urldecode($_GET['fvp_url']) );
-		}
 	}
 
 	/**
