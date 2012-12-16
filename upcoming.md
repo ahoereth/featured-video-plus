@@ -3,12 +3,12 @@ to be included in feature releases
 
 1.1
 -------
-* Add settings for specifiing youtube video player design -  https://developers.google.com/youtube/player_parameters#Parameters
 
 
-In consideration
+In Consideration
 -------
 * Merge Featured Image and Feature Video meta boxes into a single boxes
+* Add settings for specifiing youtube video player design - https://developers.google.com/youtube/player_parameters#Parameters
 
 topics to resolve
 =============

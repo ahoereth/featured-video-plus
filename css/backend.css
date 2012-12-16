@@ -21,3 +21,13 @@
 .fvp_hidden {
 	display: none;
 }
+.fvp_notice {
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	border-width: 1px;
+	border-style: solid;
+	background-color: lightYellow;
+	border-color: #E6DB55;
+	margin: .5em 0;
+	padding: .4em .6em .2em;
+}

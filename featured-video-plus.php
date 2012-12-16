@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Description: Featured Videos just like Featured Images.
 Author: Alexander Höreth
-Version: 1.0
+Version: 1.1
 Author URI: http://ahoereth.yrnxt.com
 License: GPL2
 
@@ -51,10 +51,6 @@ if(  is_admin() ) {
 
 	add_action('admin_notices', array( &$featured_video_plus_backend, 'activation_notification' ) );
 	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
-
-	add_action('admin_notices', array( &$featured_video_plus_backend, 'no_featimg_warning' ) );
-	add_action('admin_init', array( &$featured_video_plus_backend, 'no_featimg_warning_callback' ) );
-	add_filter( 'admin_post_thumbnail_html', array( &$featured_video_plus_backend, 'featimg_metabox' ));
 }
 
 
