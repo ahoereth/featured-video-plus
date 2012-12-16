@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Description: Featured Videos just like Featured Images.
 Author: Alexander Höreth
-Version: 1.0
+Version: 1.1
 Author URI: http://ahoereth.yrnxt.com
 License: GPL2
 
