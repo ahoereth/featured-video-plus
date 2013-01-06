@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Description: Featured Videos just like Featured Images.
 Author: Alexander Höreth
-Version: 1.1
+Version: 1.2
 Author URI: http://ahoereth.yrnxt.com
 License: GPL2
 
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', 1.2);
+	define('FVP_VERSION', '1.2');
 
 if (!defined('FVP_NAME'))
 	define('FVP_NAME', 'featured-video-plus');
@@ -50,6 +50,8 @@ $featured_video_plus = new featured_video_plus();
 // shortcode
 add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
 
+// get settings
+$options = get_option( 'fvp-settings' );
 
 // only on backend / administration interface
 if(  is_admin() ) {
@@ -67,6 +69,9 @@ if(  is_admin() ) {
 
 	add_action('admin_notices', array( &$featured_video_plus_backend, 'activation_notification' ) );
 	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
+
+	if( isset($options['localvideos']) && $options['localvideos'] )
+		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes', 1, 1 ) );
 }
 
 
@@ -108,10 +113,11 @@ register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featur
 register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
 
 // plugin options
-$options = get_option( 'fvp-settings' );
-if( !isset($options['version']) )
-	add_action( 'admin_init', featured_video_plus_upgrade(1.1) );
-elseif( $options['version'] < FVP_VERSION )
-	add_action( 'admin_init', featured_video_plus_upgrade($options['version']) );
+if( !isset($options) || empty($options) )
+	add_action( 'admin_init', featured_video_plus_upgrade('0', FVP_VERSION) );
+elseif( !isset($options['version']) )
+	add_action( 'admin_init', featured_video_plus_upgrade('1.1', FVP_VERSION) );
+elseif( version_compare($options['version'], FVP_VERSION, '>') )
+	add_action( 'admin_init', featured_video_plus_upgrade($options['version'], FVP_VERSION) );
 
 ?>

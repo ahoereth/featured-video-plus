@@ -111,8 +111,8 @@ class featured_video_plus_backend {
 		echo "\n" . '<input id="fvp_video" name="fvp_video" type="text" value="' . $meta['full'] . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
 
 		$options = get_option( 'fvp-settings' );
-		if( isset($options['experimental']) && $options['experimental'] ) {
-			echo '<div id="fvp_experimental_notice" class="fvp_notice">';
+		if( isset($options['localvideos']) && $options['localvideos'] ) {
+			echo '<div id="fvp_localvideos_notice" class="fvp_notice">';
 			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> and paste it here.<br />Remember to add an Featured Image, it will be used as screen capture before the video is being played.\n\t</p>";
 			echo "\n</div>\n";
 		}
@@ -221,7 +221,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		switch ($video_prov) {
 
 			case $local['baseurl'];
-				if( isset($options['experimental']) && $options['experimental'] ) {
+				if( isset($options['localvideos']) && $options['localvideos'] ) {
 					$video_id 	= $this->get_post_by_url($video);
 					$video_prov = 'local';
 				}
@@ -379,7 +379,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		add_settings_field('fvp-settings-width', 		'Video width', 				array( &$this, 'settings_width' ), 			'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-height', 		'Video height', 			array( &$this, 'settings_height' ), 		'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-vimeo', 		'Vimeo Player Design', 		array( &$this, 'settings_vimeo' ), 			'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-experimental', 'Experimental', 			array( &$this, 'settings_experimental' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-localvideos', 	'Local Videos', 			array( &$this, 'settings_localvideos' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-rate', 		'Support', 					array( &$this, 'settings_rate' ), 			'media', 'fvp-settings-section');
 
 		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
@@ -497,11 +497,11 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 *
 	 * @since 1.2
 	 */
-	function settings_experimental() {
+	function settings_localvideos() {
 		$options = get_option( 'fvp-settings' ); ?>
 
 <div style="position: relative; bottom: .6em;">
-	<input type="checkbox" name="fvp-settings[experimental]" id="fvp-experimental" value="true" <?php if( isset($options['experimental']) ) checked( 1, $options['experimental'], 1 ) ?>/><label for="fvp-experimental">&nbsp;Local videos</label>
+	<input type="checkbox" name="fvp-settings[localvideos]" id="fvp-localvideos" value="true" <?php if( isset($options['localvideos']) ) checked( 1, $options['localvideos'], 1 ) ?>/><label for="fvp-localvideos">&nbsp;Local videos</label>
 </div>
 <p class="description">
 	This embeds your video using <a href="http://videojs.com/">VIDEOJS</a>. See the <a href="http://videojs.com/#compatibilitychart">compatibility chart</a> for supported video formats and browsers.<br />
@@ -530,21 +530,43 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_save($input) {
-		$input['overwrite'] = $input['overwrite'] == 'true' ? true : false;
+		$options = get_option( 'fvp-settings' );
 
-		$input['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
-		$input['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
-		$input['vimeo']['byline'] 	= isset($input['vimeo']['byline']) 	&& ( $input['vimeo']['byline'] 	 == 'display' ) ? 1 : 0;
+		$options['overwrite'] = $input['overwrite'] == 'true' ? true : false;
 
-		if( isset($input['vimeo']['color']) ) {
+		$options['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
+		$options['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
+		$options['vimeo']['byline'] 	= isset($input['vimeo']['byline']) 	&& ( $input['vimeo']['byline'] 	 == 'display' ) ? 1 : 0;
+
+		if( isset($options['vimeo']['color']) ) {
 			preg_match('/#?([0123456789abcdef]{3}[0123456789abcdef]{0,3})/i', $input['vimeo']['color'], $color);
-			$input['vimeo']['color'] = $color[1];
+			$options['vimeo']['color'] = $color[1];
 		} else
-			$input['vimeo']['color'] = '00adef';
+			$options['vimeo']['color'] = '00adef';
 
-		$input['experimental'] = $input['experimental'] == 'true' ? true : false;
+		$options['localvideos'] = isset($input['localvideos']) && $input['localvideos'] == 'true' ? true : false;
 
-		return $input;
+		return $options;
+	}
+
+	/**
+	 * Function to allow more upload mime types.
+	 *
+	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/upload_mimes
+	 * @since 1.2
+	 */
+	function add_upload_mimes( $mimes=array() ) {
+		$mimes = array_merge($mimes,
+			array(
+				'webm' 			=> 'video/webm',
+				'mp4|m4v' 		=> 'video/mp4',
+				'm4a|m4b|m4r' 	=> 'audio/mp4',
+				'ogv' 			=> 'video/ogg',
+				'ogg' 			=> 'audio/ogg'
+			)
+		);
+
+		return $mimes;
 	}
 
 	/**
@@ -608,9 +630,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 							$meta_key, $meta_value
 						);
 
-		$id = $wpdb->get_var( $prepared );
-		//echo $ids;
-		return $id;
+		return $wpdb->get_var( $prepared );;
 	}
 
 	/**

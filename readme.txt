@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.5
-Stable tag: 1.1
+Stable tag: 1.2
 
 Add Featured Videos to your posts and pages, just like you add Featured Images. Works with every theme which supports Featured Images.
 
@@ -84,6 +84,13 @@ If you want to change some settings have a look under Settings -> Media.
 = After adding the URL and saving the post I do not get any video? =
 Maybe the plugin does not recognize the URL. Try the URL you get when clicking on share below a youtube video or the simple vimeo URL, which should look something like this: http://vimeo.com/32071937
 If you want to you can post the URL which is not working in the support forums and the plugin might work with it in the next release.
+
+= I activated local video support, how do I use it? =
+* Add a mp4, webM or ogv video to your Media Library
+* Copy the *Link To Media File* and paste it into the Featured Video box
+
+= Why do I get errors when uploading my video? =
+WordPress does not support HTML5 videos by default. I activated the MIME types via the plugin, but you might need to add some more settings: Take a look at this [post](http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/).
 
 = What about other video portals? =
 Leave me a note in the support forums which you would like and I will consider adding them in the next release.

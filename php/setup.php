@@ -29,8 +29,8 @@ class featured_video_plus_setup {
 	 */
 	public function on_activate() {
 		$options = get_option( 'fvp-settings' );
-		if( !isset($options['version']) )
-			featured_video_plus_upgrade( 0 );
+		if( !isset($options['version']) || empty($options['version']) )
+			featured_video_plus_upgrade( '0' );
 	}
 
 	/**
@@ -71,24 +71,28 @@ class featured_video_plus_setup {
  *
  * @since 1.2
  */
-function featured_video_plus_upgrade( $departure = null ) {
+function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 
-	if( $departure == null )
+	if( !isset($departure) || empty($departure) )
 		return;
 
 	$options = get_option( 'fvp-settings' );
 
 	switch($departure) {
 
-		case 1.1:
-			$options['version'] = FVP_VERSION;
-			$options['experimental'] = false;
+		case '1.1':
+			$options = array_merge($options,
+				array(
+					'version' => $destination,
+					'localvideos'  => 'false'
+				)
+			);
 			break;
 
-		case 0:
-			if( empty($options) ) {
+		case '0':
+			if( !isset($options) || empty($options) ) {
 				$options = array(
-					'version' => FVP_VERSION,
+					'version' => $destination,
 					'overwrite' => true,
 					'width' => 'auto',
 					'height' => 'auto',
@@ -98,7 +102,7 @@ function featured_video_plus_upgrade( $departure = null ) {
 						'byline' => 1,
 						'color' => '00adef'
 					),
-					'experimental' => false
+					'localvideos' => false
 				);
 			}
 			break;
