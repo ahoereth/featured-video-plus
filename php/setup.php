@@ -84,9 +84,12 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 			$options = array_merge($options,
 				array(
 					'version' => $destination,
-					'localvideos'  => 'false'
+					'localvideos'  => false
 				)
 			);
+
+			if($destination == "1.2")
+				add_action('admin_notices', 'featured_video_plus_upgrade_11_12' );
 			break;
 
 		case '0':
@@ -111,4 +114,17 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 
 	update_option( 'fvp-settings', $options );
 }
+
+/**
+ * Upgrade notification 1.1 to 1.2
+ *
+ * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
+ * @since 1.2
+ */
+function featured_video_plus_upgrade_11_12() {
+	echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+	printf('Featured Video Plus was upgraded. Version 1.2 now supports local featured videos. To activate this feature <span style="font-weight: bold;">take a look at the <a href="%1$s" title="Media Settings">Media Settings</a></span>', get_admin_url(null, '/options-media.php'));
+	echo "</p></div>\n";
+}
+
 ?>

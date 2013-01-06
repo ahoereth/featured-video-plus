@@ -75,6 +75,19 @@ if(  is_admin() ) {
 
 	if( isset($options['localvideos']) && $options['localvideos'] )
 		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
+
+	// plugin setup
+	include_once( FVP_DIR . '/php/setup.php' );
+	register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
+	register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
+
+	// plugin options
+	if( !isset($options) || empty($options) )
+		add_action( 'admin_init', featured_video_plus_upgrade('0', FVP_VERSION) );
+	elseif( !isset($options['version']) )
+		add_action( 'admin_init', featured_video_plus_upgrade('1.1', FVP_VERSION) );
+	elseif( version_compare($options['version'], FVP_VERSION, '>') )
+		add_action( 'admin_init', featured_video_plus_upgrade($options['version'], FVP_VERSION) );
 }
 
 
@@ -109,18 +122,5 @@ if( !is_admin() ) {
 		return $featured_video_plus->has_post_video($post_id);
 	}
 }
-
-// plugin setup
-include_once( FVP_DIR . '/php/setup.php' );
-register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
-register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
-
-// plugin options
-if( !isset($options) || empty($options) )
-	add_action( 'admin_init', featured_video_plus_upgrade('0', FVP_VERSION) );
-elseif( !isset($options['version']) )
-	add_action( 'admin_init', featured_video_plus_upgrade('1.1', FVP_VERSION) );
-elseif( version_compare($options['version'], FVP_VERSION, '>') )
-	add_action( 'admin_init', featured_video_plus_upgrade($options['version'], FVP_VERSION) );
 
 ?>

@@ -452,10 +452,12 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_overwrite() {
-		$options = get_option( 'fvp-settings' ); ?>
+		$options = get_option( 'fvp-settings' );
+		$overwrite = isset($options['overwrite']) ? $options['overwrite'] : false;
+?>
 
-<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-1" value="true" 	<?php checked( true, $options['overwrite'], true ) ?>/><label for="fvp-settings-overwrite-1">&nbsp;yes&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-2" value="false" 	<?php checked( false, $options['overwrite'], true ) ?>/><label for="fvp-settings-overwrite-2">&nbsp;no</label>
+<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-1" value="true" 	<?php checked( true, $overwrite, true ) ?>/><label for="fvp-settings-overwrite-1">&nbsp;yes&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-2" value="false" 	<?php checked( false, $overwrite, true ) ?>/><label for="fvp-settings-overwrite-2">&nbsp;no</label>
 <p class="description">If a featured video is available, it can be displayed in place of the featured image.<br />For some themes this could result in displaying errors. When using this, try different <code>width</code> and <code>height</code> settings.</p>
 
 <?php }
@@ -466,10 +468,11 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_width() {
-		$options = get_option( 'fvp-settings' ); ?>
+		$options = get_option( 'fvp-settings' );
+		$width = isset($options['width']) ? $options['width'] : 'auto'; ?>
 
-<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-1" value="auto" 	<?php checked( 'auto', 	$options['width'], true ) ?>/><label for="fvp-settings-width-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-2" value="fixed" 	<?php checked( 'fixed', $options['width'], true ) ?>/><label for="fvp-settings-width-2">&nbsp;fixed</label>
+<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-1" value="auto" 	<?php checked( 'auto', 	$width, true ) ?>/><label for="fvp-settings-width-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-2" value="fixed" 	<?php checked( 'fixed', $width, true ) ?>/><label for="fvp-settings-width-2">&nbsp;fixed</label>
 <p class="description">Using <code>auto</code> the video's width will be adjusted to fit the parent element. Works best in combination with height setted to <code>auto</code> as well.</p>
 
 <?php }
@@ -480,10 +483,11 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_height() {
-		$options = get_option( 'fvp-settings' ); ?>
+		$options = get_option( 'fvp-settings' );
+		$height = isset($options['height']) ? $options['height'] : 'auto'; ?>
 
-<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-1" value="auto" 	<?php checked( 'auto', 	$options['height'], true ) ?>/><label for="fvp-settings-height-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-2" value="fixed" 	<?php checked( 'fixed', $options['height'], true ) ?>/><label for="fvp-settings-height-2">&nbsp;fixed</label>
+<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-1" value="auto" 	<?php checked( 'auto', 	$height, true ) ?>/><label for="fvp-settings-height-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-2" value="fixed" 	<?php checked( 'fixed', $height, true ) ?>/><label for="fvp-settings-height-2">&nbsp;fixed</label>
 <p class="description">If using <code>fixed</code> videos may lose their ascpect radio, resulting in <span style="font-style: italic;">not so pretty</span> black bars.</p>
 
 <?php }
@@ -497,14 +501,18 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_vimeo() {
-		$options = get_option( 'fvp-settings' ); ?>
+		$options = get_option( 'fvp-settings' );
+		$vimeo['portrait'] 	= isset($options['vimeo']['portrait']) ? $options['vimeo']['portrait'] : 0;
+		$vimeo['title'] 	= isset($options['vimeo']['title']) ? $options['vimeo']['title'] : 1;
+		$vimeo['byline'] 	= isset($options['vimeo']['byline']) ? $options['vimeo']['byline'] : 1;
+		$vimeo['color'] 	= isset($options['vimeo']['color']) ? $options['vimeo']['color'] : '00adef'; ?>
 
 <div style="position: relative; bottom: .6em;">
-	<input type="checkbox" name="fvp-settings[vimeo][portrait]" id="fvp-settings-vimeo-1" value="display" <?php checked( 1, $options['vimeo']['portrait'], 	1 ) ?>/><label for="fvp-settings-vimeo-1">&nbsp;Portrait</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="checkbox" name="fvp-settings[vimeo][title]" 	id="fvp-settings-vimeo-2" value="display" <?php checked( 1, $options['vimeo']['title'], 	1 ) ?>/><label for="fvp-settings-vimeo-2">&nbsp;Title</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="checkbox" name="fvp-settings[vimeo][byline]" 	id="fvp-settings-vimeo-3" value="display" <?php checked( 1, $options['vimeo']['byline'], 	1 ) ?>/><label for="fvp-settings-vimeo-3">&nbsp;Byline</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="checkbox" name="fvp-settings[vimeo][portrait]" id="fvp-settings-vimeo-1" value="display" <?php checked( 1, $vimeo['portrait'], 1 ) ?>/><label for="fvp-settings-vimeo-1">&nbsp;Portrait</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="checkbox" name="fvp-settings[vimeo][title]" 	id="fvp-settings-vimeo-2" value="display" <?php checked( 1, $vimeo['title'], 	1 ) ?>/><label for="fvp-settings-vimeo-2">&nbsp;Title</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<input type="checkbox" name="fvp-settings[vimeo][byline]" 	id="fvp-settings-vimeo-3" value="display" <?php checked( 1, $vimeo['byline'], 	1 ) ?>/><label for="fvp-settings-vimeo-3">&nbsp;Byline</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[vimeo][color]" id="fvp-settings-vimeo-color" value="#<?php echo isset($options['vimeo']['color']) ? $options['vimeo']['color'] : '00adef'; ?>" data-default-color="#00adef" />
+		<input type="text" name="fvp-settings[vimeo][color]" id="fvp-settings-vimeo-color" value="#<?php echo $vimeo['color'] ?>" data-default-color="#00adef" />
 		<label for="fvp-settings-vimeo-color" style="display: none;">&nbsp;Color</label>
 		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div style="position: absolute; bottom: 0; right: -197px; background-color: #fff; z-index: 100; border: 1px solid #ccc;" id="fvp-settings-vimeo-colorpicker"></div><?php } ?>
 	</span>
@@ -678,6 +686,5 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 			);
 		return $id;
 	}
-
 }
 ?>
