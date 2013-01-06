@@ -15,8 +15,6 @@ class featured_video_plus_backend {
 	private $default_value;
 	private $default_value_sec;
 
-
-
 	/**
 	 * Creates a new instace of this class, saves the featured_video_instance and default value for the meta box input.
 	 *
@@ -69,11 +67,6 @@ class featured_video_plus_backend {
 				'default_value' 	=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec
 			) );
-
-			// just required if width is set to auto
-			$options = get_option( 'fvp-settings' );
-			if($options['width'] == 'auto')
-				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true );
 		}
 
 		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' );

@@ -20,9 +20,16 @@ class featured_video_plus {
 	public function enqueue($hook_suffix) {
 		// just required on post.php
 		if( !is_admin() || ( $hook_suffix == 'post.php' && isset($_GET['post']) ) ) {
+			$options = get_option( 'fvp-settings' );
+
 			// http://videojs.com/
+			if( isset($options['localvideos']) && $options['localvideos'] ) {
 			wp_enqueue_style( 'videojs', 'http://vjs.zencdn.net/c/video-js.css' );
 			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js' );
+			}
+
+			if( isset($options['width']) && $options['width'] == 'auto' )
+				wp_enqueue_script('fvp_fitvids', plugins_url(). '/featured-video-plus/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true );
 		}
 	}
 
