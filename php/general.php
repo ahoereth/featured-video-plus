@@ -52,11 +52,21 @@ class featured_video_plus {
 			switch( $meta['prov'] ) {
 
 				case 'local':
-					if( has_post_thumbnail($post_id) )
-						$featimg = wp_get_attachment_url( get_post_thumbnail_id($post_id) );
-					$ext = pathinfo($meta['full'], PATHINFO_EXTENSION);
+					$featimg = has_post_thumbnail($post_id) ? wp_get_attachment_url( get_post_thumbnail_id($post_id) ) : '';
+
+					$ext = pathinfo( $meta['full'], PATHINFO_EXTENSION );
+					if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' ) break;
+					$ext = $ext == 'ogv' ? 'ogg' : $ext;
 					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" poster="'.$featimg.'" data-setup="{}">';
 					$embed .= "\n\t\t".'<source src="' . $meta['full'] . '" type="video/'.$ext.'">';
+
+					if( isset($meta['sec_id']) && !empty($meta['sec_id']) ) {
+						$ext2 = pathinfo( $meta['sec'], PATHINFO_EXTENSION );
+						$ext2 = $ext2 == 'ogv' ? 'ogg' : $ext2;
+						if( $ext2 == 'mp4' || $ext2 == 'ogv' || $ext2 == 'webm' || $ext2 == 'ogg' )
+							$embed .= "\n\t\t".'<source src="' . $meta['sec'] . '" type="video/'.$ext2.'">';
+					}
+
 					$embed .= "\n\t</video>\n";
 					break;
 

@@ -2,21 +2,21 @@ jQuery(document).ready(function($){
 
     // remove default value of input field on focus
     // since 1.0
-	$("#fvp_video").focus(function(srcc) {
+	$(".fvp_video_input").focus(function() {
         if ($(this).val() == $(this)[0].title) {
             $(this).removeClass("defaultTextActive");
             $(this).val("");
         }
     });
 
-    $("#fvp_video").blur(function() {
-        if ($(this).val() == "") {
+    $(".fvp_video_input").blur(function() {
+        if ( ($(this).val().length === 0) || ($(this).val() == $(this)[0].title) ) {
             $(this).addClass("defaultTextActive");
             $(this).val($(this)[0].title);
         }
     });
 
-    $("#fvp_video").blur();
+    $(".fvp_video_input").blur();
 
     // replace current featured video link & checkbox
     // since 1.1
@@ -30,12 +30,11 @@ jQuery(document).ready(function($){
     });
 
     $("#remove-post-thumbnail").click(function() {
-        $("#fvp_set_featimg_box").removeClass("fvp_hidden");
+        //$("#fvp_set_featimg_box").removeClass("fvp_hidden");
         $("#fvp_featimg_box_warning").removeClass("fvp_hidden");
     });
 
     $("#set-post-thumbnail").click(function() {
-        $("#fvp_set_featimg_link").html('Replace current Featured Image');
         $("#fvp_featimg_box_warning").addClass("fvp_hidden");
     });
 

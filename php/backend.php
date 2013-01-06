@@ -13,6 +13,7 @@
 class featured_video_plus_backend {
 	private $featured_video_plus;
 	private $default_value;
+	private $default_value_sec;
 
 
 
@@ -28,7 +29,12 @@ class featured_video_plus_backend {
             wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
 		$this->featured_video_plus = $featured_video_plus_instance;
-		$default_value = 'paste your YouTube or Vimeo URL here';
+		$this->default_value 		= 'YouTube, Vimeo, Dailymotion';
+		$this->default_value_sec 	= 'Local Video Fallback: different format';
+
+		$options = get_option( 'fvp-settings' );
+		if( isset($options['localvideos']) && $options['localvideos'] )
+			$this->default_value .= ', Local URL';
 	}
 
 	/**
@@ -108,17 +114,23 @@ class featured_video_plus_backend {
 			echo "\n" . '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . '</div>';
 
 		// input box containing the featured video URL
-		echo "\n" . '<input id="fvp_video" name="fvp_video" type="text" value="' . $meta['full'] . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
+		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
+		echo "\n" . '<input class="fvp_video_input" id="fvp_video" name="fvp_video" type="text" value="' . $full . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
 
 		$options = get_option( 'fvp-settings' );
 		if( isset($options['localvideos']) && $options['localvideos'] ) {
+
+			$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
+			echo '<input class="fvp_video_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
+
 			echo '<div id="fvp_localvideos_notice" class="fvp_notice">';
-			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> and paste it here.<br />Remember to add an Featured Image, it will be used as screen capture before the video is being played.\n\t</p>";
+			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> into the input field.\n\t</p>";
 			echo "\n</div>\n";
+
 		}
 
 		// link/input to set as featured image
-		$class = !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
+		$class = $meta['prov'] == 'local' || !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
 		$text  = 'Set as Featured Image';
 		echo '<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;'.$text.'</label>'."\n\t".'</span>'."\n";
 		echo "\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a>'."\n".'</p>'."\n";
@@ -159,6 +171,8 @@ class featured_video_plus_backend {
 				$video = trim($_POST['fvp_video']);
 		}
 
+		$sec = isset($_POST['fvp_sec']) && !empty($_POST['fvp_sec']) ? trim($_POST['fvp_sec']) : '';
+
 		// something changed
 		if( ( empty($video) ) || 							// no video or
 			( isset($meta) && ($video != $meta['full'])) ) 	// different video?
@@ -189,7 +203,9 @@ class featured_video_plus_backend {
 		if( empty($video) )
 			return;
 
-		if( ($video == $meta['full']) && !$set_featimg )
+		if( ($video == $meta['full']) &&
+			(!$set_featimg) &&
+			(empty($sec) || ( isset($meta['sec']) && $meta['sec'] == $sec ) ) ) // different secondary video?
 			return;
 
 		$options = get_option( 'fvp-settings' );
@@ -224,6 +240,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				if( isset($options['localvideos']) && $options['localvideos'] ) {
 					$video_id 	= $this->get_post_by_url($video);
 					$video_prov = 'local';
+
+					$video_sec_id = $this->get_post_by_url($sec);
 				}
 				break;
 
@@ -323,7 +341,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				);
 
 				// pull external img to local server and add to media library
-				require_once( FVP_DIR . 'somatic_attach_external_image.php' );
+				include_once( FVP_DIR . 'php/somatic_attach_external_image.php' );
 				$video_img = somatic_attach_external_image($video_info['img'], $post_id, false, $video_info['filename'], $video_img_data);
 
 				// generate picture metadata
@@ -356,11 +374,14 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		$meta = array(
 			'full' => ( isset($data['url']) && !empty($data['url']) ) ? $data['url'] : $video,
 			'id' => $video_id,
+			'sec' => $sec,
+			'sec_id' => ( isset($video_sec_id) && !empty($video_sec_id) ) ? $video_sec_id : '',
 			'img' => isset($video_img) ? $video_img : '',
 			'prov' => $video_prov,
 			'attr' => isset($video_attr) ? $video_attr : '',
 			'warn_featimg' => true
 		);
+
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );
 
 		return;
@@ -500,12 +521,11 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	function settings_localvideos() {
 		$options = get_option( 'fvp-settings' ); ?>
 
-<div style="position: relative; bottom: .6em;">
-	<input type="checkbox" name="fvp-settings[localvideos]" id="fvp-localvideos" value="true" <?php if( isset($options['localvideos']) ) checked( 1, $options['localvideos'], 1 ) ?>/><label for="fvp-localvideos">&nbsp;Local videos</label>
-</div>
+<input type="radio" name="fvp-settings[localvideos]" id="fvp-settings-localvideos-1" value="true" 	<?php checked( true,  $options['localvideos'], true ) ?>/><label for="fvp-settings-localvideos-1">&nbsp;enable</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[localvideos]" id="fvp-settings-localvideos-2" value="false" 	<?php checked( false, $options['localvideos'], true ) ?>/><label for="fvp-settings-localvideos-2">&nbsp;disable&nbsp;<span style="font-style: italic;">(default)</span></label>
 <p class="description">
 	This embeds your video using <a href="http://videojs.com/">VIDEOJS</a>. See the <a href="http://videojs.com/#compatibilitychart">compatibility chart</a> for supported video formats and browsers.<br />
-	If you get max file size errors take a look at this <a href="http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/">article</a>.
+	For more info take a look at the <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">FAQ</a>.
 </p>
 
 <?php }
@@ -532,7 +552,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	function settings_save($input) {
 		$options = get_option( 'fvp-settings' );
 
-		$options['overwrite'] = $input['overwrite'] == 'true' ? true : false;
+		$options['overwrite'] 	= $input['overwrite'] 	== 'true' ? true : false;
+		$options['localvideos'] = $input['localvideos'] == 'true' ? true : false;
 
 		$options['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
 		$options['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
@@ -544,7 +565,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		} else
 			$options['vimeo']['color'] = '00adef';
 
-		$options['localvideos'] = isset($input['localvideos']) && $input['localvideos'] == 'true' ? true : false;
 
 		return $options;
 	}
@@ -598,6 +618,20 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		// If user clicks to ignore the notice, add that to their user meta
 		if ( isset($_GET['fvp_activation_notification_ignore']) && '0' == $_GET['fvp_activation_notification_ignore'] )
 			update_user_meta($current_user->ID, 'fvp_activation_notification_ignore', 999);
+	}
+
+	/**
+	 * Adds a media settings link to the plugin info
+	 *
+	 * @since 1.2
+	 */
+	function plugin_action_link($links, $file) {
+		if ($file == FVP_NAME . '/' . FVP_NAME . '.php') {
+			$settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/options-media.php">Media Settings</a>';
+			array_unshift($links, $settings_link);
+		}
+
+		return $links;
 	}
 
 	/**

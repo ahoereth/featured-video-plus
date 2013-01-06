@@ -58,8 +58,9 @@ If you want to change some settings have a look under Settings -> Media.
 
 = 1.2 =
 * __Added experimental support for local videos__. Activate under settings.
+* Allow webM mime type for media upload
+* Added Media Settings link in plugin info
 * fixed some small bugs
-
 
 = 1.1 =
 * __Added Dailymotion__
@@ -67,10 +68,17 @@ If you want to change some settings have a look under Settings -> Media.
 * overhaul of the interaction between Featured Videos and Featured Images
 * existing featured images will no longer be replaced by newly added featured videos in the administration interface
 
-
 = 1.0 =
 * Release
 
+
+== Upgrade Notice ==
+
+= 1.2 =
+Now you can use your local videos.
+
+= 1.1 =
+Feature Dailymotion Videos on your posts!
 
 == Screenshots ==
 
@@ -86,11 +94,19 @@ Maybe the plugin does not recognize the URL. Try the URL you get when clicking o
 If you want to you can post the URL which is not working in the support forums and the plugin might work with it in the next release.
 
 = I activated local video support, how do I use it? =
-* Add a mp4, webM or ogv video to your Media Library
-* Copy the *Link To Media File* and paste it into the Featured Video box
+* Add a __mp4__, __webM__ or __ogv__ video to your Media Library
+* Copy the ´Link To Media File´ and paste it into the Featured Video box
+* For better [compatibility](http://videojs.com/#compatibilitychart) upload a second version of the same video with a different format and paste the URL in the second input box as a fallback.
 
-= Why do I get errors when uploading my video? =
-WordPress does not support HTML5 videos by default. I activated the MIME types via the plugin, but you might need to add some more settings: Take a look at this [post](http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/).
+= What is the easiest way to get my video into these formats? =
+Take a look at the [Miro Video Converter](http://www.mirovideoconverter.com/). It is open source, lightweight and compatible with Windows, Mac and Linux.
+
+= What can I do about those errors I get when uploading my video? =
+* Read [this](http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/) on how to increase maximum file upload size.
+* WordPress by default does not support webM. The plugin activates it, but under some conditions this might not be enough and you might want to take a look at this [post](http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/).
+
+= What happens if the user does not use a HTML5 compatible browser? =
+The video player, [VIDEOJS](http://videojs.com/), features an adobe flash fallback if you provide an MP4 video.
 
 = What about other video portals? =
 Leave me a note in the support forums which you would like and I will consider adding them in the next release.
