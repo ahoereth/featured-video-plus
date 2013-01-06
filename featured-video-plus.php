@@ -71,7 +71,7 @@ if(  is_admin() ) {
 	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
 
 	if( isset($options['localvideos']) && $options['localvideos'] )
-		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes', 1, 1 ) );
+		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 }
 
 

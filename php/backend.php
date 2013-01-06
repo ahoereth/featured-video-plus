@@ -555,16 +555,9 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/upload_mimes
 	 * @since 1.2
 	 */
+
 	function add_upload_mimes( $mimes=array() ) {
-		$mimes = array_merge($mimes,
-			array(
-				'webm' 			=> 'video/webm',
-				'mp4|m4v' 		=> 'video/mp4',
-				'm4a|m4b|m4r' 	=> 'audio/mp4',
-				'ogv' 			=> 'video/ogg',
-				'ogg' 			=> 'audio/ogg'
-			)
-		);
+		$mimes['webm'] = 'video/webm';
 
 		return $mimes;
 	}
