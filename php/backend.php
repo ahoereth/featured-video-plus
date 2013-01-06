@@ -30,11 +30,11 @@ class featured_video_plus_backend {
 
 		$this->featured_video_plus = $featured_video_plus_instance;
 		$this->default_value 		= 'YouTube, Vimeo, Dailymotion';
-		$this->default_value_sec 	= 'Local Video Fallback: different format';
+		$this->default_value_sec 	= 'Fallback: same video, different format';
 
 		$options = get_option( 'fvp-settings' );
 		if( isset($options['localvideos']) && $options['localvideos'] )
-			$this->default_value .= ', Local URL';
+			$this->default_value .= ', Local Media';
 	}
 
 	/**
@@ -43,6 +43,7 @@ class featured_video_plus_backend {
 	 * @see http://codex.wordpress.org/Function_Reference/wp_style_is
 	 * @see http://make.wordpress.org/core/2012/11/30/new-color-picker-in-wp-3-5/
 	 * @see http://ottopress.com/2010/passing-parameters-from-php-to-javascripts-in-plugins/
+	 * @see http://codex.wordpress.org/Function_Reference/wp_localize_script
 	 * @since 1.0
 	 */
 	public function enqueue($hook_suffix) {
@@ -51,26 +52,31 @@ class featured_video_plus_backend {
 			if( wp_style_is( 'wp-color-picker', 'registered' ) ) {
 				// >=WP3.5
 				wp_enqueue_style( 'wp-color-picker' );
-				wp_enqueue_script( 'fvp_backend_35', plugins_url() . '/featured-video-plus/js/backend_35.js', array( 'wp-color-picker', 'jquery' ) );
+				wp_enqueue_script( 'fvp_backend_35', FVP_URL . '/js/backend_35.js', array( 'wp-color-picker', 'jquery' ) );
 			} else {
 				// <WP3.5, fallback for the new WordPress Color Picker which was added in 3.5
 				wp_enqueue_style( 'farbtastic' );
 				wp_enqueue_script( 'farbtastic' );
-				wp_enqueue_script( 'fvp_backend_pre35', plugins_url() . '/featured-video-plus/js/backend_pre35.js', array( 'jquery' ) );
+				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . '/js/backend_pre35.js', array( 'jquery' ) );
 			}
 		}
 
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
-			wp_enqueue_script( 'fvp_backend', plugins_url() . '/featured-video-plus/js/backend.js', array( 'jquery' ) );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery' ) );
+			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
+				'wp_upload_dir' 	=> wp_upload_dir()['baseurl'],
+				'default_value' 	=> $this->default_value,
+				'default_value_sec' => $this->default_value_sec
+			) );
 
 			// just required if width is set to auto
 			$options = get_option( 'fvp-settings' );
 			if($options['width'] == 'auto')
-				wp_enqueue_script('fvp_fitvids', plugins_url(). '/featured-video-plus/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true );
+				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true );
 		}
 
-		wp_enqueue_style( 'fvp_backend', plugins_url() . '/featured-video-plus/css/backend.css' );
+		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' );
 	}
 
 	/**
@@ -115,15 +121,16 @@ class featured_video_plus_backend {
 
 		// input box containing the featured video URL
 		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
-		echo "\n" . '<input class="fvp_video_input" id="fvp_video" name="fvp_video" type="text" value="' . $full . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
+		echo "\n" . '<input class="fvp_input" id="fvp_video" name="fvp_video" type="text" value="' . $full . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
 
 		$options = get_option( 'fvp-settings' );
 		if( isset($options['localvideos']) && $options['localvideos'] ) {
 
 			$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
-			echo '<input class="fvp_video_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
+			echo '<input class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
 
-			echo '<div id="fvp_localvideos_notice" class="fvp_notice">';
+			$class = $has_post_video ? ' fvp_hidden"' : '';
+			echo '<div id="fvp_localvideos_notice" class="fvp_notice'.$class.'">';
 			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> into the input field.\n\t</p>";
 			echo "\n</div>\n";
 
