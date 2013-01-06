@@ -22,26 +22,15 @@ class featured_video_plus_setup {
 	}
 
 	/**
-	 * Runs on activation, writes default settings to database.
+	 * Runs on activation. Required for initializing plugin options on first
+	 * activation.
 	 *
 	 * @since 1.0
 	 */
 	public function on_activate() {
 		$options = get_option( 'fvp-settings' );
-		if( empty($options) ) {
-			$options = array(
-				'overwrite' => true,
-				'width' => 'auto',
-				'height' => 'auto',
-				'vimeo' => array(
-					'portrait' => 0,
-					'title' => 1,
-					'byline' => 1,
-					'color' => '00adef'
-				)
-			);
-		}
-		update_option( 'fvp-settings', $options );
+		if( !isset($options['version']) )
+			featured_video_plus_upgrade( 0 );
 	}
 
 	/**
@@ -75,5 +64,47 @@ class featured_video_plus_setup {
 		}
 	}
 
+}
+
+/**
+ * Is used on plugin upgrade and on first activation. Initializes options.
+ *
+ * @since 1.2
+ */
+function featured_video_plus_upgrade( $departure = null ) {
+
+	if( $departure == null )
+		return;
+
+	$options = get_option( 'fvp-settings' );
+
+	switch($departure) {
+
+		case 1.1:
+			$options['version'] = FVP_VERSION;
+			$options['experimental'] = false;
+			break;
+
+		case 0:
+			if( empty($options) ) {
+				$options = array(
+					'version' => FVP_VERSION,
+					'overwrite' => true,
+					'width' => 'auto',
+					'height' => 'auto',
+					'vimeo' => array(
+						'portrait' => 0,
+						'title' => 1,
+						'byline' => 1,
+						'color' => '00adef'
+					),
+					'experimental' => false
+				);
+			}
+			break;
+
+	}
+
+	update_option( 'fvp-settings', $options );
 }
 ?>

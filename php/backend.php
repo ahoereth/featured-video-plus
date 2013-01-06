@@ -86,7 +86,7 @@ class featured_video_plus_backend {
 	 * @since 1.0
 	 */
 	function metabox_content() {
-		wp_nonce_field( plugin_basename( __FILE__ ), 'fvp_nonce');
+		wp_nonce_field( FVP_NAME, 'fvp_nonce');
 
 		if( isset($_GET['post']) )
 			$post_id = $_GET['post'];
@@ -102,22 +102,31 @@ class featured_video_plus_backend {
 
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
 
+		echo "\n\n\n<!-- Featured Video Plus Metabox -->";
 		// displays the current featured video
 		if( $has_post_video )
-			echo "\n" . '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . '</div>' . "\n";
+			echo "\n" . '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . '</div>';
 
 		// input box containing the featured video URL
 		echo "\n" . '<input id="fvp_video" name="fvp_video" type="text" value="' . $meta['full'] . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
 
+		$options = get_option( 'fvp-settings' );
+		if( isset($options['experimental']) && $options['experimental'] ) {
+			echo '<div id="fvp_experimental_notice" class="fvp_notice">';
+			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> and paste it here.<br />Remember to add an Featured Image, it will be used as screen capture before the video is being played.\n\t</p>";
+			echo "\n</div>\n";
+		}
+
 		// link/input to set as featured image
 		$class = !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
 		$text  = 'Set as Featured Image';
-		echo '<p id="fvp_set_featimg_box"'.$class.'><span id="fvp_set_featimg_input"><input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" /><label for="fvp_set_featimg">&nbsp;'.$text.'</label></span>';
-		echo '<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a></p>';
+		echo '<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;'.$text.'</label>'."\n\t".'</span>'."\n";
+		echo "\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a>'."\n".'</p>'."\n";
 
 		$class = $has_featimg ? ' fvp_hidden' : '';
-		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'"><p class="description">In many themes to automatically display the Featured Video a Featured Image is required!</p></div>';
+		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">In many themes to automatically display the Featured Video a Featured Image is required!</p>'."\n".'</div>';
 
+		echo "\n<!-- Featured Video Plus Metabox End-->\n\n\n";
 	}
 
 	/**
@@ -133,7 +142,7 @@ class featured_video_plus_backend {
 			( defined( 'DOING_AJAX' ) && DOING_AJAX ) 			|| 	// AJAX? Not used here
 			( !current_user_can( 'edit_post', $post_id ) ) 		|| 	// Check user permissions
 			( false !== wp_is_post_revision( $post_id ) ) 		||	// Return if it's a post revision
-			( ( isset($_POST['fvp_nonce']) && !wp_verify_nonce( $_POST['fvp_nonce'], plugin_basename( __FILE__ ) ) ) &&
+			( ( isset($_POST['fvp_nonce']) && !wp_verify_nonce( $_POST['fvp_nonce'], FVP_NAME ) ) &&
 			  !is_string($set_featimg) )
 		   ) return;
 
@@ -183,6 +192,8 @@ class featured_video_plus_backend {
 		if( ($video == $meta['full']) && !$set_featimg )
 			return;
 
+		$options = get_option( 'fvp-settings' );
+
 /*
 REGEX tested using: http://www.rubular.com/
 
@@ -200,19 +211,21 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 
 		$local = wp_upload_dir();
 		// match 		different provider(!)
-		preg_match('/(vimeo|youtu|dailymotion)/i', $video, $video_provider);
+
+		preg_match('/(vimeo|youtu|dailymotion|' . preg_quote($local['baseurl'], '/') . ')/i', $video, $video_provider);
 		if(!isset($video_provider[1]))
 			return;
 
 		$video_prov = $video_provider[1] == "youtu" ? "youtube" : $video_provider[1];
 
 		switch ($video_prov) {
-			/*case $local['baseurl'];
-				$video_id 	= $this->get_post_by_url($video);
-				$video_prov = 'local';
-				//'.preg_quote($local['baseurl'], '/').'
+
+			case $local['baseurl'];
+				if( isset($options['experimental']) && $options['experimental'] ) {
+					$video_id 	= $this->get_post_by_url($video);
+					$video_prov = 'local';
+				}
 				break;
-			*/
 
 			case 'youtube':
 				//match			provider				watch		feature							id(!)					attr(!)
@@ -292,6 +305,9 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				break;
 		}
 
+		if( !isset($video_id) )
+			return;
+
 		// do we have a screen capture to pull?
 		if( !empty($video_info['img']) ) {
 
@@ -307,7 +323,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				);
 
 				// pull external img to local server and add to media library
-				require_once( plugin_dir_path(__FILE__) . 'somatic_attach_external_image.php' );
+				require_once( FVP_DIR . 'somatic_attach_external_image.php' );
 				$video_img = somatic_attach_external_image($video_info['img'], $post_id, false, $video_info['filename'], $video_img_data);
 
 				// generate picture metadata
@@ -340,7 +356,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		$meta = array(
 			'full' => ( isset($data['url']) && !empty($data['url']) ) ? $data['url'] : $video,
 			'id' => $video_id,
-			'img' => $video_img,
+			'img' => isset($video_img) ? $video_img : '',
 			'prov' => $video_prov,
 			'attr' => isset($video_attr) ? $video_attr : '',
 			'warn_featimg' => true
@@ -357,13 +373,14 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 * @since 1.0
 	 */
 	function settings_init() {
-		add_settings_section('fvp-settings-section', 'Featured Video', array( &$this, 'settings_content' ), 'media');
+		add_settings_section('fvp-settings-section', 	'Featured Video', 			array( &$this, 'settings_content' ), 		'media');
 
-		add_settings_field('fvp-settings-overwrite', 'Replace featured images', array( &$this, 'settings_overwrite' ), 'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-width', 'Video width', array( &$this, 'settings_width' ), 'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-height', 'Video height', array( &$this, 'settings_height' ), 'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-vimeo', 'Vimeo Player Design', array( &$this, 'settings_vimeo' ), 'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-rate', 'Support', array( &$this, 'settings_rate' ), 'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-overwrite', 	'Replace featured images', 	array( &$this, 'settings_overwrite' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-width', 		'Video width', 				array( &$this, 'settings_width' ), 			'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-height', 		'Video height', 			array( &$this, 'settings_height' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-vimeo', 		'Vimeo Player Design', 		array( &$this, 'settings_vimeo' ), 			'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-experimental', 'Experimental', 			array( &$this, 'settings_experimental' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-rate', 		'Support', 					array( &$this, 'settings_rate' ), 			'media', 'fvp-settings-section');
 
 		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
 	}
@@ -476,6 +493,24 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 <?php }
 
 	/**
+	 * Displays the setting for enabling experimental features.
+	 *
+	 * @since 1.2
+	 */
+	function settings_experimental() {
+		$options = get_option( 'fvp-settings' ); ?>
+
+<div style="position: relative; bottom: .6em;">
+	<input type="checkbox" name="fvp-settings[experimental]" id="fvp-experimental" value="true" <?php if( isset($options['experimental']) ) checked( 1, $options['experimental'], 1 ) ?>/><label for="fvp-experimental">&nbsp;Local videos</label>
+</div>
+<p class="description">
+	This embeds your video using <a href="http://videojs.com/">VIDEOJS</a>. See the <a href="http://videojs.com/#compatibilitychart">compatibility chart</a> for supported video formats and browsers.<br />
+	If you get max file size errors take a look at this <a href="http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/">article</a>.
+</p>
+
+<?php }
+
+	/**
 	 * Displays info about rating the plugin, giving feedback and requesting new features
 	 *
 	 * @since 1.0
@@ -506,6 +541,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 			$input['vimeo']['color'] = $color[1];
 		} else
 			$input['vimeo']['color'] = '00adef';
+
+		$input['experimental'] = $input['experimental'] == 'true' ? true : false;
 
 		return $input;
 	}

@@ -26,15 +26,30 @@ License: GPL2
 
 */
 
-require_once( plugin_dir_path(__FILE__) . 'php/general.php' );
-require_once( plugin_dir_path(__FILE__) . 'php/backend.php' );
-require_once( plugin_dir_path(__FILE__) . 'php/frontend.php' );
+if (!defined('FVP_VERSION'))
+	define('FVP_VERSION', 1.2);
+
+if (!defined('FVP_NAME'))
+	define('FVP_NAME', 'featured-video-plus');
+	//define('FVP_NAME', trim(dirname(plugin_basename(__FILE__)), '/'));
+
+if (!defined('FVP_DIR'))
+	define('FVP_DIR', plugin_dir_path(__FILE__));
+
+if (!defined('FVP_URL'))
+	define('FVP_URL', WP_PLUGIN_URL . '/' . FVP_NAME);
+
+include_once( FVP_DIR . 'php/general.php' );
+include_once( FVP_DIR . 'php/backend.php' );
+include_once( FVP_DIR . 'php/frontend.php' );
+
 
 // init general class, located in php/general.php
 $featured_video_plus = new featured_video_plus();
 
 // shortcode
 add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
+
 
 // only on backend / administration interface
 if(  is_admin() ) {
@@ -47,7 +62,8 @@ if(  is_admin() ) {
 	add_action('admin_init', array( &$featured_video_plus_backend, 'settings_init' ) );
 
 	// enqueue scripts and styles
-	add_action( 'admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
+	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
+	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
 
 	add_action('admin_notices', array( &$featured_video_plus_backend, 'activation_notification' ) );
 	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
@@ -61,6 +77,7 @@ if( !is_admin() ) {
 
 	// enqueue scripts and styles
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
+	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
 
 	// filter get_post_thumbnail output
 	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
@@ -85,9 +102,16 @@ if( !is_admin() ) {
 	}
 }
 
+// plugin setup
+include_once( FVP_DIR . '/php/setup.php' );
+register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
+register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
 
-include_once( dirname( __FILE__ ) . '/php/setup.php' );
-register_activation_hook( 	 WP_PLUGIN_DIR . '/featured-video-plus/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
-register_uninstall_hook( 	 WP_PLUGIN_DIR . '/featured-video-plus/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
+// plugin options
+$options = get_option( 'fvp-settings' );
+if( !isset($options['version']) )
+	add_action( 'admin_init', featured_video_plus_upgrade(1.1) );
+elseif( $options['version'] < FVP_VERSION )
+	add_action( 'admin_init', featured_video_plus_upgrade($options['version']) );
 
 ?>
