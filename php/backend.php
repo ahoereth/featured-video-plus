@@ -62,8 +62,10 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery' ) );
+
+			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
-				'wp_upload_dir' 	=> wp_upload_dir()['baseurl'],
+				'wp_upload_dir' 	=> $upload_dir['baseurl'],
 				'default_value' 	=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec
 			) );
@@ -588,44 +590,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		$mimes['webm'] = 'video/webm';
 
 		return $mimes;
-	}
-
-	/**
-	 * Notification shown when plugin is newly activated. Automatically hidden after 5x displayed.
-	 *
-	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
-	 * @since 1.0
-	 */
-	public function activation_notification() {
-		if ( current_user_can( 'manage_options' ) ) {
-			global $current_user;
-
-			$count = get_user_meta($current_user->ID, 'fvp_activation_notification_ignore', true);
-			if( empty($count) || ($count <= 5) ) {
-				$part = empty($count) ? 'There is a new box on post & page edit screens for you to add video URLs.' : '';
-				echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-				printf(__('Featured Video Plus is ready to use. %1$s<span style="font-weight: bold;">Take a look at your new <a href="%2$s" title="Media Settings">Media Settings</a></span> | <a href="%3$s">hide this notice</a>'), $part . '&nbsp;', get_admin_url(null, '/options-media.php?fvp_activation_notification_ignore=0'), '?fvp_activation_notification_ignore=0');
-				echo "</p></div>\n";
-
-				$count = empty($count) ? 1 : $count+1;
-				update_user_meta($current_user->ID, 'fvp_activation_notification_ignore', $count);
-			}
-		}
-	}
-
-	/**
-	 * Function fired when notification should be hidden manually. Hides it for the current user forever.
-	 *
-	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
-	 * @see function activation_notification
-	 * @since 1.0
-	 */
-	public function ignore_activation_notification() {
-		global $current_user;
-
-		// If user clicks to ignore the notice, add that to their user meta
-		if ( isset($_GET['fvp_activation_notification_ignore']) && '0' == $_GET['fvp_activation_notification_ignore'] )
-			update_user_meta($current_user->ID, 'fvp_activation_notification_ignore', 999);
 	}
 
 	/**

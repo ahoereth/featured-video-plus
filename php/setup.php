@@ -30,7 +30,7 @@ class featured_video_plus_setup {
 	public function on_activate() {
 		$options = get_option( 'fvp-settings' );
 		if( !isset($options['version']) || empty($options['version']) )
-			featured_video_plus_upgrade( '0' );
+			featured_video_plus_upgrade::upgrade( '0' );
 	}
 
 	/**
@@ -53,25 +53,24 @@ class featured_video_plus_setup {
 					$meta = unserialize(get_post_meta( $post->ID, '_fvp_video', true ));
 
 					wp_delete_attachment( $meta['img'] );
-					delete_post_meta($post->ID, '_fvp_video');
+
+					delete_post_meta($meta['img'], 	'_fvp_image');
+					delete_post_meta($post->ID, 	'_fvp_video');
 				}
 			}
-		}
-
-		$users = array_merge( get_users( array( 'role' => 'Administrator' ) ), get_users( array( 'role' => 'Super Admin' ) ) );
-		foreach( $users as $user ) {
-			delete_user_meta( $user-ID, 'fvp_activation_notification_ignore' );
 		}
 	}
 
 }
 
 /**
- * Is used on plugin upgrade and on first activation. Initializes options.
+ * Is used on plugin upgrade and on first activation. Initializes and upgrades options, places notice etc.
  *
  * @since 1.2
  */
 function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
+
+	$notices = new featured_video_plus_notices();
 
 	if( !isset($departure) || empty($departure) )
 		return;
@@ -88,8 +87,14 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 				)
 			);
 
+			// remove no longer needed user meta
+			$users = array_merge( get_users( array( 'role' => 'Administrator' ) ), get_users( array( 'role' => 'Super Admin' ) ) );
+			foreach( $users as $user ) {
+				delete_user_meta( $user-ID, 'fvp_activation_notification_ignore' );
+			}
+
 			if($destination == "1.2")
-				add_action('admin_notices', 'featured_video_plus_upgrade_11_12' );
+				add_action('admin_notices', array( &$notices, 'upgrade_11_12' ) );
 			break;
 
 		case '0':
@@ -108,23 +113,48 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 					'localvideos' => false
 				);
 			}
+
+			add_action('admin_notices',  array( &$notices, 'initial_activation' ) );
 			break;
 
 	}
 
 	update_option( 'fvp-settings', $options );
+
 }
 
 /**
- * Upgrade notification 1.1 to 1.2
+ * Class containing notices for upgrading the plugin
  *
- * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
+ * @author ahoereth
+ * @version 2013/01/08
  * @since 1.2
  */
-function featured_video_plus_upgrade_11_12() {
-	echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-	printf('Featured Video Plus was upgraded. Version 1.2 now supports local featured videos. To activate this feature <span style="font-weight: bold;">take a look at the <a href="%1$s" title="Media Settings">Media Settings</a></span>', get_admin_url(null, '/options-media.php'));
-	echo "</p></div>\n";
-}
+class featured_video_plus_notices {
 
+	/**
+	 * Upgrade notification 1.1 to 1.2
+	 *
+	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
+	 * @since 1.2
+	 */
+	function upgrade_11_12() {
+		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+		printf('Featured Video Plus was upgraded. Version 1.2 now supports local videos. If you like the plugin please <a href="%1$s">rate it</a>.', 'http://wordpress.org/extend/plugins/featured-video-plus/');
+		echo "</p></div>\n";
+	}
+
+	/**
+	 * Notification shown when plugin is newly activated. Automatically hidden after 5x displayed.
+	 *
+	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
+	 * @since 1.0
+	 */
+	function initial_activation() {
+		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+		printf('Featured Video Plus is ready to use. There is a new box on post & page edit screens for you to add video URLs. <span style="font-weight: bold;">Take a look at your new <a href="%1$s" title="Media Settings">Media Settings</a></span> | <a href="%2$s">hide this notice</a>', get_admin_url(null, '/options-media.php?fvp_activation_notification_ignore=0'), '?fvp_activation_notification_ignore=0');
+		echo "</p></div>\n";
+	}
+
+}
 ?>

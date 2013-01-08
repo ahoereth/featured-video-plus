@@ -67,21 +67,17 @@ if(  is_admin() ) {
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
 
-	add_action('admin_notices', array( &$featured_video_plus_backend, 'activation_notification' ) );
-	add_action('admin_init', array( &$featured_video_plus_backend, 'ignore_activation_notification' ) );
-
-
 	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
 
 	if( isset($options['localvideos']) && $options['localvideos'] )
 		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
-	// plugin setup
+	// plugin setup & upgrade
 	include_once( FVP_DIR . '/php/setup.php' );
 	register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
 	register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
 
-	// plugin options
+	// plugin upgrade
 	if( !isset($options) || empty($options) )
 		add_action( 'admin_init', featured_video_plus_upgrade('0', FVP_VERSION) );
 	elseif( !isset($options['version']) )
