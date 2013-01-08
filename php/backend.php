@@ -57,7 +57,8 @@ class featured_video_plus_backend {
 
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
-			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery' ) );
+			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ) );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) );
 
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
@@ -105,33 +106,48 @@ class featured_video_plus_backend {
 
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
 
-		echo "\n\n\n<!-- Featured Video Plus Metabox -->";
+		echo "\n\n\n<!-- Featured Video Plus Metabox -->\n";
 		// displays the current featured video
 		if( $has_post_video )
-			echo "\n" . '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . '</div>';
+			echo '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . "</div>\n";
 
 		// input box containing the featured video URL
 		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
-		echo "\n" . '<input class="fvp_input" id="fvp_video" name="fvp_video" type="text" value="' . $full . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
+		echo '<textarea class="fvp_input" id="fvp_video" name="fvp_video" type="text" title="' . $this->default_value . '" />' . $full . '</textarea>' . "\n";
 
 		$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
-		echo '<input class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
+		echo '<textarea class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" title="' . $this->default_value_sec . '" />' . $sec . '</textarea>' . "\n";
 
-		$class = $has_post_video ? ' fvp_hidden"' : '';
-		echo '<div id="fvp_localvideos_notice" class="fvp_notice'.$class.'">';
-		echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> into the input field.\n\t</p>";
-		echo "\n</div>\n";
+		// local video format warning
+		echo '<div id="fvp_localvideo_format_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
+		echo '<span style="font-weight: bold;">Supported Video Formats:</span> <code>mp4</code>, <code>webM</code> or <code>ogg/ogv</code>. <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">More information</a>.';
+		echo "\n\t</p>\n</div>\n";
 
-		// link/input to set as featured image
+		// local videos not distinct warning
+		echo '<div id="fvp_localvideo_notdistinct_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
+		echo '<span style="font-weight: bold;">Fallback Video:</span> The two input fields should contain the same video but in distinct formats.';
+		echo "\n\t</p>\n</div>\n";
+
+		// how to use a local video notice
+		$class = $sec != $this->default_value_sec ? ' fvp_hidden"' : '';
+		echo "<div id=\"fvp_localvideo_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
+		echo '<span style="font-weight: bold;">Local Media:</span> Use the <code>Link To Media File</code> from your <a href="#" class="insert-media" title="Add Media">Media Library</a>.';
+		echo "\n\t</p>\n</div>\n";
+
+		// no featured image warning
+		$fvp_settings = get_option( 'fvp-settings' );
+		$class = $has_featimg || !$has_post_video || (isset($fvp_settings['overwrite']) && !$fvp_settings['overwrite']) ? ' fvp_hidden' : '';
+		echo '<div id="fvp_featimg_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">';
+		echo '<span style="font-weight: bold;">Featured Image:</span> For automatically displaying the Featured Video a Featured Image is required.';
+		echo "</p>\n</div>\n";
+
+		// set as featured image
 		$class = $meta['prov'] == 'local' || !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
 		$text  = 'Set as Featured Image';
 		echo '<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;'.$text.'</label>'."\n\t".'</span>'."\n";
 		echo "\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a>'."\n".'</p>'."\n";
 
-		$class = $has_featimg ? ' fvp_hidden' : '';
-		echo '<div id="fvp_featimg_box_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">In many themes to automatically display the Featured Video a Featured Image is required!</p>'."\n".'</div>';
-
-		echo "\n<!-- Featured Video Plus Metabox End-->\n\n\n";
+		echo "<!-- Featured Video Plus Metabox End-->\n\n\n";
 	}
 
 	/**
@@ -230,9 +246,21 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		switch ($video_prov) {
 
 			case $local['baseurl']:
+				$ext = pathinfo( $video, PATHINFO_EXTENSION );
+				if( !isset($ext) || ($ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg') ) return; // wrong extension
+
 				$video_id 		= $this->get_post_by_url($video);
-				$video_sec_id 	= $this->get_post_by_url($sec);
 				$video_prov 	= 'local';
+
+				if( !empty($sec) ) {
+					preg_match('/(' . preg_quote($local['baseurl'], '/') . ')/i', $sec, $sec_prov);
+					$ext2 = pathinfo( $sec, PATHINFO_EXTENSION );
+					if ( isset($sec_prov[1]) && isset($ext2) && $sec_prov[1] == $video_provider[1] && $ext != $ext2 &&
+					   ($ext2 == 'mp4' || $ext2 == 'ogv' || $ext2 == 'webm' || $ext2 == 'ogg'))
+						$video_sec_id = $this->get_post_by_url($sec);
+					else $sec = ''; // illegal second video, remove it
+				}
+
 				break;
 
 			case 'youtube':
@@ -509,6 +537,8 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 <p class="description">These settings could be overwritten by videos from Vimeo Plus members.</p>
 
 <?php
+	}
+
 	/**
 	 * Displays info about rating the plugin, giving feedback and requesting new features
 	 *
@@ -597,7 +627,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 							$meta_key, $meta_value
 						);
 
-		return $wpdb->get_var( $prepared );;
+		return $wpdb->get_var( $prepared );
 	}
 
 	/**
