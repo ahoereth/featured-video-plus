@@ -39,22 +39,14 @@ if (!defined('FVP_DIR'))
 if (!defined('FVP_URL'))
 	define('FVP_URL', WP_PLUGIN_URL . '/' . FVP_NAME);
 
-include_once( FVP_DIR . 'php/general.php' );
-include_once( FVP_DIR . 'php/backend.php' );
-include_once( FVP_DIR . 'php/frontend.php' );
-
-
 // init general class, located in php/general.php
+include_once( FVP_DIR . 'php/general.php' );
 $featured_video_plus = new featured_video_plus();
-
-// shortcode
-add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
-
-// get settings
-$options = get_option( 'fvp-settings' );
 
 // only on backend / administration interface
 if(  is_admin() ) {
+	include_once( FVP_DIR . 'php/backend.php' );
+
 	// init backend class, located in php/backend.php
 	$featured_video_plus_backend = new featured_video_plus_backend($featured_video_plus);
 
@@ -71,23 +63,20 @@ if(  is_admin() ) {
 
 	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
-	// plugin setup & upgrade
+	// plugin setup
 	include_once( FVP_DIR . '/php/setup.php' );
-	register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
+	$featured_video_plus_notices = new featured_video_plus_notices();
+	add_action( 'admin_init', 'featured_video_plus_upgrade' );
+	add_action('admin_notices',  array( &$featured_video_plus_notices, 'initial_activation' ) );
 	register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
 
-	// plugin upgrade
-	if( !isset($options) || empty($options) )
-		add_action( 'admin_init', featured_video_plus_upgrade('0', FVP_VERSION) );
-	elseif( !isset($options['version']) )
-		add_action( 'admin_init', featured_video_plus_upgrade('1.1', FVP_VERSION) );
-	elseif( version_compare($options['version'], FVP_VERSION, '>') )
-		add_action( 'admin_init', featured_video_plus_upgrade($options['version'], FVP_VERSION) );
+//	register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
 }
 
 
 // only on frontend / page
 if( !is_admin() ) {
+	include_once( FVP_DIR . 'php/frontend.php' );
 	// init frontend class, located in php/frontend.php
 	$featured_video_plus_frontend = new featured_video_plus_frontend($featured_video_plus);
 
@@ -117,5 +106,8 @@ if( !is_admin() ) {
 		return $featured_video_plus->has_post_video($post_id);
 	}
 }
+
+// shortcode
+add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
 
 ?>

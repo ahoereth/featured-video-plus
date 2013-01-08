@@ -64,7 +64,7 @@ class featured_video_plus {
 					$ext = pathinfo( $meta['full'], PATHINFO_EXTENSION );
 					if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' ) break;
 					$ext = $ext == 'ogv' ? 'ogg' : $ext;
-					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" poster="'.$featimg.'" data-setup="{}">';
+					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" >'; // poster="'.$featimg.'" data-setup="{}"
 					$embed .= "\n\t\t".'<source src="' . $meta['full'] . '" type="video/'.$ext.'">';
 
 					if( isset($meta['sec_id']) && !empty($meta['sec_id']) ) {

@@ -26,7 +26,7 @@ class featured_video_plus_backend {
 		if ( !isset($featured_video_plus_instance) )
 			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
-		$this->featured_video_plus = $featured_video_plus_instance;
+		$this->featured_video_plus 	= $featured_video_plus_instance;
 		$this->default_value 		= 'YouTube, Vimeo, Dailymotion; Local Media';
 		$this->default_value_sec 	= 'Fallback: same video, different format';
 	}
@@ -131,7 +131,7 @@ class featured_video_plus_backend {
 		echo "\n\t</p>\n</div>\n";
 
 		// how to use a local video notice
-		$class = $sec != $this->default_value_sec ? ' fvp_hidden"' : '';
+		$class = !isset($meta['sec']) || empty($meta['sec']) ? '' : ' fvp_hidden' ;
 		echo "<div id=\"fvp_localvideo_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
 		echo '<span style="font-weight: bold;">Local Media:</span> Use the <code>Link To Media File</code> from your <a href="#" class="insert-media" title="Add Media">Media Library</a>.';
 		echo "\n\t</p>\n</div>\n";

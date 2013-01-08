@@ -28,9 +28,9 @@ class featured_video_plus_setup {
 	 * @since 1.0
 	 */
 	public function on_activate() {
-		$options = get_option( 'fvp-settings' );
+/*		$options = get_option( 'fvp-settings' );
 		if( !isset($options['version']) || empty($options['version']) )
-			featured_video_plus_upgrade::upgrade( '0' );
+			featured_video_plus_upgrade( 'fresh' );*/
 	}
 
 	/**
@@ -68,51 +68,43 @@ class featured_video_plus_setup {
  *
  * @since 1.2
  */
-function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
-
-	$notices = new featured_video_plus_notices();
-
-	if( !isset($departure) || empty($departure) )
-		return;
+function featured_video_plus_upgrade() {
 
 	$options = get_option( 'fvp-settings' );
+	if( !isset($options) )
+		$options['version'] = '0';
+	elseif( !isset($options['version']) )
+		$options['version'] = '1.1';
 
-	switch($departure) {
+	switch($options['version']) {
 
 		case '1.1':
 			$options = array_merge($options,
 				array(
-					'version' => $destination
+					'version' => '1.2'
 				)
 			);
 
 			// remove no longer needed user meta
 			$users = array_merge( get_users( array( 'role' => 'Administrator' ) ), get_users( array( 'role' => 'Super Admin' ) ) );
 			foreach( $users as $user ) {
-				delete_user_meta( $user-ID, 'fvp_activation_notification_ignore' );
+				delete_user_meta( $user->ID, 'fvp_activation_notification_ignore' );
 			}
-
-			if($destination == "1.2")
-				add_action('admin_notices', array( &$notices, 'upgrade_11_12' ) );
 			break;
 
 		case '0':
-			if( !isset($options) || empty($options) ) {
-				$options = array(
-					'version' => $destination,
-					'overwrite' => true,
-					'width' => 'auto',
-					'height' => 'auto',
-					'vimeo' => array(
-						'portrait' => 0,
-						'title' => 1,
-						'byline' => 1,
-						'color' => '00adef'
-					)
-				);
-			}
-
-			add_action('admin_notices',  array( &$notices, 'initial_activation' ) );
+			$options = array(
+				'version' => '1.2',
+				'overwrite' => true,
+				'width' => 'auto',
+				'height' => 'auto',
+				'vimeo' => array(
+					'portrait' => 0,
+					'title' => 1,
+					'byline' => 1,
+					'color' => '00adef'
+				)
+			);
 			break;
 
 	}
@@ -136,9 +128,9 @@ class featured_video_plus_notices {
 	 * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
 	 * @since 1.2
 	 */
-	function upgrade_11_12() {
+	function upgrade_11() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf('Featured Video Plus was upgraded. Version 1.2 now supports local videos. If you like the plugin please <a href="%1$s">rate it</a>.', 'http://wordpress.org/extend/plugins/featured-video-plus/');
+		printf('Featured Video Plus was <span style="font-weight: bold;">upgraded</span>. Version <span style="font-weight: bold;">1.2</span> now supports <span style="font-weight: bold;">local videos</span>. If you like the plugin please <a href="%1$s">rate it</a>.', 'http://wordpress.org/extend/plugins/featured-video-plus/');
 		echo "</p></div>\n";
 	}
 
@@ -153,6 +145,5 @@ class featured_video_plus_notices {
 		printf('Featured Video Plus is ready to use. There is a new box on post & page edit screens for you to add video URLs. <span style="font-weight: bold;">Take a look at your new <a href="%1$s" title="Media Settings">Media Settings</a></span> | <a href="%2$s">hide this notice</a>', get_admin_url(null, '/options-media.php?fvp_activation_notification_ignore=0'), '?fvp_activation_notification_ignore=0');
 		echo "</p></div>\n";
 	}
-
 }
 ?>
