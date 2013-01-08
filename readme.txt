@@ -2,7 +2,7 @@
 Contributors: a.hoereth
 Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
-Tags: featured video, featured image, featured, post video, post thumbnail, video, thumbnail, html5, flash, youtube, vimeo, dailymotion
+Tags: featured video, featured image, featured, video, post video, post thumbnail, post, thumbnail, html5, flash, youtube, vimeo, dailymotion, mp4, webm, ogg, ogv
 Author: Alexander Höreth
 Author URI: http://ahoereth.yrnxt.com/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ehoereth%40gmail%2ecom
@@ -16,24 +16,25 @@ Add Featured Videos to your posts and pages, just like you add Featured Images. 
 
 
 == Description ==
-
 *A picture is worth a thousand words. How many words is a video worth?*
 
-This plugin enables you to define Featured Videos for your posts and pages. When Featured Images are supported by your theme the Featured Videos will automatically be displayed inplace if available. The Featured Image will be used as fallback.
-The Featured Videos can either be displayed inplace of Featured Images, can be added to the theme by editing the theme's source files or inserted in your posts manually using the shortcode.
+This plugin enables you to define Featured Videos in addition to Featured Images. Themes using Featured Images automatically display the videos in place.
 
-The plugin will add an box to the admin interface's post and pages edit page where you can paste your videos URL. At the moment the plugin supports __YouTube__ (including [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618 "Link to a specific time in a video")), __Vimeo__ and __Dailymotion__. As experimental feature the plugin now also supports your __local videos__.
-If you are missing a certain video platform: Leave a message in the supports forum.
+There are three ways to get the videos onto your page:
+1. If your theme already makes use of Featured Images, these will automatically be replaced by Featured Videos if available. Alternatively you can
+2. insert the ´[featured-video-plus]´ shortcode in your entries or
+3. manually use the PHP functions in your theme's source files.
 
-After activating the plugin you will get some additions to your media settings. There you can choose how the videos will be sized and get some other individualisation properties - have a look at the [screenshots](http://wordpress.org/extend/plugins/featured-video-plus/screenshots/). If the theme you are using does not work with any combination of the width and height settings please contact me and I will look into it.
+Beside your local videos (mp4, webM & ogg/ogv) you can use __YouTube__ (w/[time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618 "Link to a specific time in a video")), __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus).
 
-__Shortcode:__
+The plugin adds some individualization options to your Media Settings. Beside aesthetic customizations you can turn off automatic integration and tweak some technical settings.
+
+=Shortcode:=
 
 	[featured-video-plus]
 	[featured-video-plus width=300]
 
-
-__PHP functions:__
+=PHP functions:=
 
 	the_post_video(array(width, height), fullscreen = true)
 	has_post_video(post_id)
@@ -42,7 +43,9 @@ __PHP functions:__
 All parameters are optional. If no post_id is given the current post's id will be used.
 
 
-This plugin was created after using the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin. Featured Video Plus is a complete remake with more features and a more seemless integration into WordPress.
+
+*This plugin was created with the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin in mind. __Featured Video Plus__ was freshly coded from ground up to be more powerful, bring you more features and to integrate more seamless into WordPress.*
+
 
 == Installation ==
 
@@ -57,10 +60,10 @@ If you want to change some settings have a look under Settings -> Media.
 == Changelog ==
 
 = 1.2 =
-* __Added experimental support for local videos__. Activate under settings.
+* __Added support for local videos__
 * Allow webM mime type for media upload
 * Added Media Settings link in plugin info
-* fixed some small bugs
+* fixed some other stuff
 
 = 1.1 =
 * __Added Dailymotion__
@@ -80,6 +83,7 @@ Now you can use your local videos.
 = 1.1 =
 Feature Dailymotion Videos on your posts!
 
+
 == Screenshots ==
 
 1. Featured Video and Featured Image boxes on the post edit screen.
@@ -92,6 +96,15 @@ Feature Dailymotion Videos on your posts!
 = After adding the URL and saving the post I do not get any video? =
 Maybe the plugin does not recognize the URL. Try the URL you get when clicking on share below a youtube video or the simple vimeo URL, which should look something like this: http://vimeo.com/32071937
 If you want to you can post the URL which is not working in the support forums and the plugin might work with it in the next release.
+
+= My theme uses Featured Images. Why are my videos not being displayed in place? =
+For the videos to be automatically displayed you need to define a Featured Image. This image will never be shown if a video is available.
+On the technical side your theme needs to feature [Post Thumbnails](http://codex.wordpress.org/Post_Thumbnails) and make use of ´get_the_post_thumbnail()´ or ´the_post_thumbnail()´, because there is where the plugin hooks into.
+
+If the automatic integration does not work, you can tell me in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus) which theme you are using and I will take a look at it and might be able to develop a workaround.
+
+= Why do my videos do not fit their container? =
+Take a look at your media settings and try tweaking the video size. For most installations the sizing works fine by default, if it still does not: I'm [happy to help](http://wordpress.org/support/plugin/featured-video-plus).
 
 = I activated local video support, how do I use it? =
 * Add a __mp4__, __webM__ or __ogv__ video to your Media Library
