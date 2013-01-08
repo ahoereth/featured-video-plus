@@ -82,8 +82,7 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 		case '1.1':
 			$options = array_merge($options,
 				array(
-					'version' => $destination,
-					'localvideos'  => false
+					'version' => $destination
 				)
 			);
 
@@ -109,8 +108,7 @@ function featured_video_plus_upgrade( $departure, $destination = FVP_VERSION ) {
 						'title' => 1,
 						'byline' => 1,
 						'color' => '00adef'
-					),
-					'localvideos' => false
+					)
 				);
 			}
 

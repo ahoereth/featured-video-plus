@@ -69,8 +69,7 @@ if(  is_admin() ) {
 
 	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
 
-	if( isset($options['localvideos']) && $options['localvideos'] )
-		add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
+	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
 	// plugin setup & upgrade
 	include_once( FVP_DIR . '/php/setup.php' );

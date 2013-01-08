@@ -23,16 +23,12 @@ class featured_video_plus_backend {
 	 * @param featured_video_plus_instance required, dies without
 	 */
 	function __construct( $featured_video_plus_instance ){
-	    if ( !isset($featured_video_plus_instance) )
-            wp_die( 'featured_video_plus general instance required!', 'Error!' );
+		if ( !isset($featured_video_plus_instance) )
+			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
 		$this->featured_video_plus = $featured_video_plus_instance;
-		$this->default_value 		= 'YouTube, Vimeo, Dailymotion';
+		$this->default_value 		= 'YouTube, Vimeo, Dailymotion; Local Media';
 		$this->default_value_sec 	= 'Fallback: same video, different format';
-
-		$options = get_option( 'fvp-settings' );
-		if( isset($options['localvideos']) && $options['localvideos'] )
-			$this->default_value .= ', Local Media';
 	}
 
 	/**
@@ -118,18 +114,13 @@ class featured_video_plus_backend {
 		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
 		echo "\n" . '<input class="fvp_input" id="fvp_video" name="fvp_video" type="text" value="' . $full . '" style="width: 100%" title="' . $this->default_value . '" />' . "\n";
 
-		$options = get_option( 'fvp-settings' );
-		if( isset($options['localvideos']) && $options['localvideos'] ) {
+		$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
+		echo '<input class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
 
-			$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
-			echo '<input class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" value="' . $sec . '" style="width: 100%" title="' . $this->default_value_sec . '" />' . "\n";
-
-			$class = $has_post_video ? ' fvp_hidden"' : '';
-			echo '<div id="fvp_localvideos_notice" class="fvp_notice'.$class.'">';
-			echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> into the input field.\n\t</p>";
-			echo "\n</div>\n";
-
-		}
+		$class = $has_post_video ? ' fvp_hidden"' : '';
+		echo '<div id="fvp_localvideos_notice" class="fvp_notice'.$class.'">';
+		echo "\n\t<p class=\"description\">\n\t\tSupport for local videos is active. After adding a video to your Media Library copy the <code>Link To Media File</code> into the input field.\n\t</p>";
+		echo "\n</div>\n";
 
 		// link/input to set as featured image
 		$class = $meta['prov'] == 'local' || !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
@@ -238,13 +229,10 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 
 		switch ($video_prov) {
 
-			case $local['baseurl'];
-				if( isset($options['localvideos']) && $options['localvideos'] ) {
-					$video_id 	= $this->get_post_by_url($video);
-					$video_prov = 'local';
-
-					$video_sec_id = $this->get_post_by_url($sec);
-				}
+			case $local['baseurl']:
+				$video_id 		= $this->get_post_by_url($video);
+				$video_sec_id 	= $this->get_post_by_url($sec);
+				$video_prov 	= 'local';
 				break;
 
 			case 'youtube':
@@ -402,7 +390,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		add_settings_field('fvp-settings-width', 		'Video width', 				array( &$this, 'settings_width' ), 			'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-height', 		'Video height', 			array( &$this, 'settings_height' ), 		'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-vimeo', 		'Vimeo Player Design', 		array( &$this, 'settings_vimeo' ), 			'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-localvideos', 	'Local Videos', 			array( &$this, 'settings_localvideos' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-rate', 		'Support', 					array( &$this, 'settings_rate' ), 			'media', 'fvp-settings-section');
 
 		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
@@ -521,25 +508,7 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 </div>
 <p class="description">These settings could be overwritten by videos from Vimeo Plus members.</p>
 
-<?php }
-
-	/**
-	 * Displays the setting for enabling experimental features.
-	 *
-	 * @since 1.2
-	 */
-	function settings_localvideos() {
-		$options = get_option( 'fvp-settings' ); ?>
-
-<input type="radio" name="fvp-settings[localvideos]" id="fvp-settings-localvideos-1" value="true" 	<?php checked( true,  $options['localvideos'], true ) ?>/><label for="fvp-settings-localvideos-1">&nbsp;enable</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[localvideos]" id="fvp-settings-localvideos-2" value="false" 	<?php checked( false, $options['localvideos'], true ) ?>/><label for="fvp-settings-localvideos-2">&nbsp;disable&nbsp;<span style="font-style: italic;">(default)</span></label>
-<p class="description">
-	This embeds your video using <a href="http://videojs.com/">VIDEOJS</a>. See the <a href="http://videojs.com/#compatibilitychart">compatibility chart</a> for supported video formats and browsers.<br />
-	For more info take a look at the <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">FAQ</a>.
-</p>
-
-<?php }
-
+<?php
 	/**
 	 * Displays info about rating the plugin, giving feedback and requesting new features
 	 *
@@ -563,7 +532,6 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 		$options = get_option( 'fvp-settings' );
 
 		$options['overwrite'] 	= $input['overwrite'] 	== 'true' ? true : false;
-		$options['localvideos'] = $input['localvideos'] == 'true' ? true : false;
 
 		$options['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
 		$options['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
