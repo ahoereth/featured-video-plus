@@ -58,7 +58,8 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ) );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// productive
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// for development
 
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
@@ -68,7 +69,8 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' );
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' );
+		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' );
 	}
 
 	/**

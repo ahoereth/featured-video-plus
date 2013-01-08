@@ -22,12 +22,17 @@ jQuery(document).ready(function($){
         }
     });
 
+
     /**
-     * blur both input fields on page load
+     * blur both input fields on page load, autosize them and prevent enter
      * @see http://www.jacklmoore.com/autosize
      * @since 1.0
      */
-    $(".fvp_input").autosize().blur();
+    $(".fvp_input").autosize().blur().keypress(function(event) {
+        if (event.keyCode == 13) { // enter
+            event.preventDefault();
+        }
+    });
 
     /**
      * select whole input field content on click
