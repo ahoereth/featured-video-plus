@@ -12,7 +12,7 @@ Requires at least: 3.1
 Tested up to: 3.5
 Stable tag: 1.2
 
-Add Featured Videos to your posts and pages, just like you add Featured Images. Works with every theme which supports Featured Images.
+Add Featured Videos to your posts and pages, just like you add Featured Images. Supports your Local Videos, YouTube, Vimeo and Dailymotion.
 
 
 == Description ==
@@ -22,7 +22,7 @@ This plugin enables you to define Featured Videos in addition to Featured Images
 
 There are three ways to get the videos onto your page:
 1. If your theme already makes use of Featured Images, these will automatically be replaced by Featured Videos if available. Alternatively you can
-2. insert the ´[featured-video-plus]´ shortcode in your entries or
+2. insert the `[featured-video-plus]` shortcode in your entries or
 3. manually use the PHP functions in your theme's source files.
 
 Beside your local videos (mp4, webM & ogg/ogv) you can use __YouTube__ (w/[time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618 "Link to a specific time in a video")), __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus).
@@ -53,8 +53,7 @@ All parameters are optional. If no post_id is given the current post's id will b
 2. Search for "Featured Video Plus", and click "Install Now" below the plugins name
 3. When the installation finished, click "Activate Plugin"
 
-The plugin is ready to go. Now edit your posts and add video links to the "Featured Video" box on the right!
-If you want to change some settings have a look under Settings -> Media.
+The plugin is ready to go. Now edit your posts and add video links to the "Featured Video" box on the right! If you want to use Local Videos they need to be `mp4`, `webM` or `ogg/ogv`. If you want to change some settings have a look under Settings -> Media.
 
 
 == Changelog ==
@@ -63,6 +62,9 @@ If you want to change some settings have a look under Settings -> Media.
 * __Added support for local videos__
 * Allow webM mime type for media upload
 * Added Media Settings link in plugin info
+* More notices/warnings
+* More JS
+* minimized JS and CSS
 * fixed some other stuff
 
 = 1.1 =
@@ -78,7 +80,7 @@ If you want to change some settings have a look under Settings -> Media.
 == Upgrade Notice ==
 
 = 1.2 =
-Now you can use your local videos.
+Now featuring your local videos!
 
 = 1.1 =
 Feature Dailymotion Videos on your posts!
@@ -99,7 +101,7 @@ If you want to you can post the URL which is not working in the support forums a
 
 = My theme uses Featured Images. Why are my videos not being displayed in place? =
 For the videos to be automatically displayed you need to define a Featured Image. This image will never be shown if a video is available.
-On the technical side your theme needs to feature [Post Thumbnails](http://codex.wordpress.org/Post_Thumbnails) and make use of ´get_the_post_thumbnail()´ or ´the_post_thumbnail()´, because there is where the plugin hooks into.
+On the technical side your theme needs to feature [Post Thumbnails](http://codex.wordpress.org/Post_Thumbnails) and make use of `get_the_post_thumbnail()` or `the_post_thumbnail()`, because there is where the plugin hooks into.
 
 If the automatic integration does not work, you can tell me in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus) which theme you are using and I will take a look at it and might be able to develop a workaround.
 
@@ -108,7 +110,7 @@ Take a look at your media settings and try tweaking the video size. For most ins
 
 = I activated local video support, how do I use it? =
 * Add a __mp4__, __webM__ or __ogv__ video to your Media Library
-* Copy the ´Link To Media File´ and paste it into the Featured Video box
+* Copy the `Link To Media File` and paste it into the Featured Video box
 * For better [compatibility](http://videojs.com/#compatibilitychart) upload a second version of the same video with a different format and paste the URL in the second input box as a fallback.
 
 = What is the easiest way to get my video into these formats? =
