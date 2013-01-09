@@ -3,7 +3,7 @@
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
  * @author ahoereth
- * @version 2012/12/07
+ * @version 2013/01/09
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
@@ -58,8 +58,8 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ) );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// productive
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// for development
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// production
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// development
 
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
@@ -69,8 +69,8 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' );
-		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' );
+		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' ); 	// production
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' ); 		// development
 	}
 
 	/**
@@ -131,9 +131,11 @@ class featured_video_plus_backend {
 		echo "\n\t</p>\n</div>\n";
 
 		// how to use a local video notice
-		$class = !isset($meta['sec']) || empty($meta['sec']) ? '' : ' fvp_hidden' ;
+		$class 		= (isset($meta['prov']) && $meta['prov'] != 'local') || (isset($meta['sec']) && !empty($meta['sec'])) ? ' fvp_hidden' : '' ;
+		$mediahref 	= (get_bloginfo('version') >= 3.5) ? '<a href="#" class="insert-media" title="Add Media">' : '<a href="media-upload.php?post_id=4&amp;type=video&amp;TB_iframe=1&amp;width=640&amp;height=207" id="add_video" class="thickbox" title="Add Video">';
+		$urllabel 	= (get_bloginfo('version') >= 3.5) ? 'Link To Media File' : 'File URL';
 		echo "<div id=\"fvp_localvideo_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
-		echo '<span style="font-weight: bold;">Local Media:</span> Use the <code>Link To Media File</code> from your <a href="#" class="insert-media" title="Add Media">Media Library</a>.';
+		echo '<span style="font-weight: bold;">Local Media:</span> Use the <code>' . $urllabel . '</code> from your '. $mediahref . 'Media Library</a>.';
 		echo "\n\t</p>\n</div>\n";
 
 		// no featured image warning
@@ -521,10 +523,10 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	 */
 	function settings_vimeo() {
 		$options = get_option( 'fvp-settings' );
-		$vimeo['portrait'] 	= isset($options['vimeo']['portrait']) ? $options['vimeo']['portrait'] : 0;
-		$vimeo['title'] 	= isset($options['vimeo']['title']) ? $options['vimeo']['title'] : 1;
-		$vimeo['byline'] 	= isset($options['vimeo']['byline']) ? $options['vimeo']['byline'] : 1;
-		$vimeo['color'] 	= isset($options['vimeo']['color']) ? $options['vimeo']['color'] : '00adef'; ?>
+		$vimeo['portrait'] 	= isset($options['vimeo']['portrait']) 	? $options['vimeo']['portrait'] : 0;
+		$vimeo['title'] 	= isset($options['vimeo']['title']) 	? $options['vimeo']['title'] 	: 1;
+		$vimeo['byline'] 	= isset($options['vimeo']['byline']) 	? $options['vimeo']['byline'] 	: 1;
+		$vimeo['color'] 	= isset($options['vimeo']['color']) 	? $options['vimeo']['color'] 	: '00adef'; ?>
 
 <div style="position: relative; bottom: .6em;">
 	<input type="checkbox" name="fvp-settings[vimeo][portrait]" id="fvp-settings-vimeo-1" value="display" <?php checked( 1, $vimeo['portrait'], 1 ) ?>/><label for="fvp-settings-vimeo-1">&nbsp;Portrait</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -563,10 +565,10 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 	function settings_save($input) {
 		$options = get_option( 'fvp-settings' );
 
-		$options['overwrite'] 	= $input['overwrite'] 	== 'true' ? true : false;
+		$options['overwrite'] 	= isset($input['overwrite']) && $input['overwrite'] == 'true' ? true : false;
 
-		$options['vimeo']['portrait'] = isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
-		$options['vimeo']['title'] 	= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
+		$options['vimeo']['portrait'] 	= isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
+		$options['vimeo']['title'] 		= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
 		$options['vimeo']['byline'] 	= isset($input['vimeo']['byline']) 	&& ( $input['vimeo']['byline'] 	 == 'display' ) ? 1 : 0;
 
 		if( isset($options['vimeo']['color']) ) {

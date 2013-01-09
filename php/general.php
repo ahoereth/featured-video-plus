@@ -3,7 +3,7 @@
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
  * @author ahoereth
- * @version 2012/12/07
+ * @version 2013/01/09
  * @see ../featured_video_plus.php
  * @see featured_video_plus_backend in backend.php
  * @see featured_video_plus_frontend in frontend.php
@@ -23,13 +23,12 @@ class featured_video_plus {
 			$options = get_option( 'fvp-settings' );
 
 			// http://videojs.com/
-			if( isset($options['localvideos']) && $options['localvideos'] ) {
 			wp_enqueue_style( 'videojs', 'http://vjs.zencdn.net/c/video-js.css' );
 			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js' );
-			}
 
 			if( isset($options['width']) && $options['width'] == 'auto' )
-				wp_enqueue_script('fvp_fitvids', plugins_url(). '/featured-video-plus/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true );
+				wp_enqueue_script('fvp_fitvids', plugins_url(). '/featured-video-plus/js/jquery.fitvids_fvp-min.js', array( 'jquery' ), '20121207', true ); 	// production
+				//wp_enqueue_script('fvp_fitvids', plugins_url(). '/featured-video-plus/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true ); 		// development
 		}
 	}
 

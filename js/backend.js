@@ -121,14 +121,15 @@ jQuery(document).ready(function($){
             var file_extension = /^.*\/(.*)\.(.*)$/g;
             var match = file_extension.exec($.trim(value));
             if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
+                distinctContent();
                 $("#fvp_sec").css('backgroundColor', 'white');
                 $("#fvp_localvideo_format_warning").hide('fast');
                 $("#fvp_localvideo_notice").hide('fast');
             } else {
+                distinctContent();
                 $("#fvp_sec").css('backgroundColor', 'lightYellow');
                 $("#fvp_localvideo_format_warning").show('fast');
             }
-            distinctContent();
         } else if (value.length !== 0) {
             $("#fvp_sec").css('backgroundColor', 'lightYellow');
             $("#fvp_localvideo_notdistinct_warning").show('fast');

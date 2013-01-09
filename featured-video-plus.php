@@ -45,39 +45,37 @@ $featured_video_plus = new featured_video_plus();
 
 // only on backend / administration interface
 if(  is_admin() ) {
-	include_once( FVP_DIR . 'php/backend.php' );
+	// plugin upgrade/setup
+	include_once( FVP_DIR . '/php/upgrade.php' );
+	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
 	// init backend class, located in php/backend.php
+	include_once( FVP_DIR . 'php/backend.php' );
 	$featured_video_plus_backend = new featured_video_plus_backend($featured_video_plus);
 
+	// admin meta box
 	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
 	add_action('save_post',  array( &$featured_video_plus_backend, 'metabox_save' )	 );
 
+	// admin settings
 	add_action('admin_init', array( &$featured_video_plus_backend, 'settings_init' ) );
 
-	// enqueue scripts and styles
+	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
 
+	// link to media settings on plugins overview
 	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
 
+	// add upload mime types for HTML5 videos
 	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
-
-	// plugin setup
-	include_once( FVP_DIR . '/php/setup.php' );
-	$featured_video_plus_notices = new featured_video_plus_notices();
-	add_action( 'admin_init', 'featured_video_plus_upgrade' );
-	add_action('admin_notices',  array( &$featured_video_plus_notices, 'initial_activation' ) );
-	register_uninstall_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_uninstall' ) );
-
-//	register_activation_hook( 	 FVP_DIR . '/featured-video-plus.php', array( 'featured_video_plus_setup', 'on_activate' ) );
 }
 
 
 // only on frontend / page
 if( !is_admin() ) {
-	include_once( FVP_DIR . 'php/frontend.php' );
 	// init frontend class, located in php/frontend.php
+	include_once( FVP_DIR . 'php/frontend.php' );
 	$featured_video_plus_frontend = new featured_video_plus_frontend($featured_video_plus);
 
 	// enqueue scripts and styles

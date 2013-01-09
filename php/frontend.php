@@ -3,7 +3,7 @@
  * Class containing functions required on frontend. Enqueue scripts/styles, replace featured images by featured videos.
  *
  * @author ahoereth
- * @version 2012/12/07
+ * @version 2013/01/09
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
