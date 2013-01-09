@@ -15,8 +15,8 @@
 }
 
 #fvp_activation_notification {
-	border-color: #00adef;
-	background-color: whiteSmoke;
+	border-color: #00adef !important;
+	background-color: whiteSmoke !important;
 }
 .fvp_hidden {
 	display: none;
