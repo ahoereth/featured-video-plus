@@ -225,17 +225,6 @@ class featured_video_plus_backend {
 
 /*
 REGEX tested using: http://www.rubular.com/
-
-Tested URLs:
-http://youtu.be/G_Oj7UI0-pw
-https://youtu.be/G_Oj7UI0-pw
-http://vimeo.com/32071937
-https://vimeo.com/32071937
-http://vimeo.com/32071937#embed
-http://youtu.be/9Tjg6V1Eoz4?t=2m29s
-http://www.youtube.com/watch?v=9Tjg6V1Eoz4&t=2m29s
-http://www.youtube.com/watch?v=G_Oj7UI0-pw
-http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 */
 
 		$local = wp_upload_dir();
@@ -269,7 +258,11 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 
 			case 'youtube':
 				//match			provider				watch		feature							id(!)					attr(!)
-				preg_match('/youtu(?:be\.com|\.be)\/(?:watch)?(?:\?feature=[^\?&]*)*(?:[\?&]v=)?([^\?&\s]+)(?:(?:[&\?]t=)(\d+m\d+s))?/', $video, $video_data);
+				//preg_match('/youtu(?:be\.com|\.be)\/(?:watch)?(?:\?feature=[^\?&]*)*(?:[\?&]v=)?([^\?&\s]+)(?:(?:[&\?]t=)((?:\d+m)?\d+s))?/', $video, $video_data);
+
+				$pattern = '#(?:https?\:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([\w-]{11})(?:(?:\?|&)?(?:.*)(?:t=)((?:\d+m)?\d+s))?.*#x';
+				preg_match($pattern, $video, $video_data);
+
 				$video_id = $video_data[1];
 				if( isset($video_data[2] ) )
 					$video_attr = $video_data[2];
@@ -293,7 +286,9 @@ http://www.youtube.com/watch?feature=blub&v=G_Oj7UI0-pw
 				break;
 
 			case 'vimeo': // http://developer.vimeo.com/apis/simple
-				preg_match('/vimeo.com\/([^#]+)/', $video, $video_data);
+				//preg_match('/vimeo.com\/([^#]+)/', $video, $video_data);
+
+				$pattern = '#(?:https?://)?(?:\w+.)?vimeo.com/(?:video/|moogaloop\.swf\?clip_id=)?(\w+)#x'
 				$video_id = $video_data[1];
 
 				// title, description, upload_date, thumbnail_large, user_name, tags

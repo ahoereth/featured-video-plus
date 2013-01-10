@@ -129,3 +129,11 @@ Leave me a note in the support forums which you would like and I will consider a
 
 = Are there translations available? =
 Not yet, but I will add translation capabilities soon. Interested in translating the plugin? Contact me!
+
+= Which URL formats have been tested? =
+
+	[http(s)://](www.)youtu.be/ELEVENCHARS(?t=1m3s)
+	[http(s)://](www.)youtube.com/watch?v=ELEVENCHARS(?t=1m3s)
+	[http(s)://](www.)youtube.com/v/ELEVENCHARS(?random=13&t=1m3s)
+	(http(s)://)(www.)vimeo.com/UNIQUEID(#embed)
+	(http(s)://)(www.)dailymotion.com/video/UNIQUEID(_video_title)
