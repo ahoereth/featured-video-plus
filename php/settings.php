@@ -97,15 +97,15 @@ class featured_video_plus_settings {
 	 * @since 1.0
 	 */
 	function settings_init() {
-		add_settings_section('fvp-settings-section', 	'Featured Video', 				array( &$this, 'settings_content' ), 	'media');
+		add_settings_section('fvp-settings-section', 		'Featured Videos', 										array( &$this, 'settings_content' ), 	'media');
 
-		add_settings_field('fvp-settings-overwrite', 	'Replace Featured Images', 		array( &$this, 'settings_overwrite' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-sizing', 		'Video Sizing', 				array( &$this, 'settings_sizing' ), 	'media', 'fvp-settings-section');
-		//add_settings_field('fvp-settings-videojs', 		'VIDEOJS Player Options', 		array( &$this, 'settings_videojs' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-youtube', 		'YouTube Player Options', 		array( &$this, 'settings_youtube' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-vimeo', 		'Vimeo Player Options', 		array( &$this, 'settings_vimeo' ), 		'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-dailymotion', 	'Dailymotion Player Options', 	array( &$this, 'settings_dailymotion' ),'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-rate', 		'Support', 						array( &$this, 'settings_rate' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-overwrite', 	__('Replace Featured Images', 'featured-video-plus'), 		array( &$this, 'settings_overwrite' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-sizing', 		__('Video Sizing', 'featured-video-plus'), 					array( &$this, 'settings_sizing' ), 	'media', 'fvp-settings-section');
+		//add_settings_field('fvp-settings-videojs', 		__('VIDEOJS Player Options', 'featured-video-plus'), 		array( &$this, 'settings_videojs' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-youtube', 		__('YouTube Player Options', 'featured-video-plus'), 		array( &$this, 'settings_youtube' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-vimeo', 		__('Vimeo Player Options', 'featured-video-plus'), 			array( &$this, 'settings_vimeo' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-dailymotion', 	__('Dailymotion Player Options', 'featured-video-plus'), 	array( &$this, 'settings_dailymotion' ),'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-rate', 		__('Support', 'featured-video-plus'), 						array( &$this, 'settings_rate' ), 		'media', 'fvp-settings-section');
 
 		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
 	}
@@ -218,6 +218,7 @@ if( !current_theme_supports('post-thumbnails') )
 <input type="radio" name="fvp-settings[videojs][skin]" id="fvp-settings-videojs-skin-3" value="moonify" <?php checked( 'moonify', $videojs['skin'], true ) ?>/><label for="fvp-settings-videojs-skin-3">&nbsp;Moonify</label>&nbsp;(<a style="font-style: italic;" href="http://jlofstedt.com/moonify/" target="_blank">info</a>)&nbsp;&nbsp;&nbsp;&nbsp;
 
 <?php
+		__('VIDEOJS Player Options', 'featured-video-plus'); // translate it, even if not yet integrated
 	}
 
 	/**
