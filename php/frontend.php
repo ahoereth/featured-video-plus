@@ -54,21 +54,7 @@ class featured_video_plus_frontend {
 		if( !$options['overwrite'] || !$this->featured_video_plus->has_post_video( $post_id ) )
 			return $html;
 
-		if( isset($_wp_additional_image_sizes[$size]) )
-			$size = array( $_wp_additional_image_sizes[$size]['width'], $_wp_additional_image_sizes[$size]['height'] );
-		else {
-
-			if( $size == 'thumbnail' || $size == 'thumb' )
-				$size = array( get_option( 'thumbnail_size_w' ), get_option( 'thumbnail_size_h' ) );
-			else if( $size == 'medium' )
-				$size = array( get_option( 'medium_size_w' ), get_option( 'medium_size_h' ) );
-			else if( $size == 'large' )
-				$size = array( get_option( 'large_size_w' ), get_option( 'large_size_h' ) );
-
-		}
-
 		return $this->featured_video_plus->get_the_post_video( $post_id, $size );
-
 	}
 }
 ?>

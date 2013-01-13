@@ -22,7 +22,6 @@ jQuery(document).ready(function($){
         }
     });
 
-
     /**
      * blur both input fields on page load, autosize them and prevent enter
      * @see http://www.jacklmoore.com/autosize
@@ -66,7 +65,6 @@ jQuery(document).ready(function($){
         var value = obj.val();
         var sec = $('#fvp_sec').val();
 
-
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_video").css('backgroundColor', 'white');
             $("#fvp_sec").val( fvp_backend_data.default_value_sec ).blur().hide('fast');
@@ -109,7 +107,6 @@ jQuery(document).ready(function($){
     function handleSecInput( obj ) {
         var value = obj.val();
         var prim = $('#fvp_video').val();
-
 
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_localvideo_format_warning").hide('fast');
@@ -172,4 +169,5 @@ jQuery(document).ready(function($){
     $("#set-post-thumbnail").click(function() {
         $("#fvp_featimg_box_warning").addClass("fvp_hidden");
     });
+
 });

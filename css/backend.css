@@ -9,6 +9,14 @@
 			box-sizing: border-box;
 }
 
+.fvp_colorpicker {
+	position: absolute;
+	bottom: 0; right: -197px;
+	background-color: #fff;
+	z-index: 100;
+	border: 1px solid #ccc;
+}
+
 .defaultTextActive {
 	color: #a1a1a1;
 	font-style: italic;
@@ -49,4 +57,18 @@
 	height: 1.1em;
 	line-height: 1.1em;
 	font-size: 1em;
+}
+
+.fvp_grouplable {
+	width: 50px;
+	float: left;
+	padding-top: 2px;
+}
+.fvp_grouppart1 {
+	width: 125px;
+	float: left;
+	padding-top: 2px;
+}
+.fvp_readonly {
+	color: gray !important;
 }

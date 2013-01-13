@@ -27,8 +27,8 @@ class featured_video_plus_backend {
 			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
 		$this->featured_video_plus 	= $featured_video_plus_instance;
-		$this->default_value 		= 'YouTube, Vimeo, Dailymotion; Local Media';
-		$this->default_value_sec 	= 'Fallback: same video, different format';
+		$this->default_value 		= __('YouTube, Vimeo, Dailymotion; Local Media', 'featured-video-plus');
+		$this->default_value_sec 	= __('Fallback: same video, different format', 'featured-video-plus');
 	}
 
 	/**
@@ -53,13 +53,15 @@ class featured_video_plus_backend {
 				wp_enqueue_script( 'farbtastic' );
 				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . '/js/backend_pre35.js', array( 'jquery' ) );
 			}
+			//wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings-min.js', array( 'jquery' ) ); 	// production
+			wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings.js', array( 'jquery' ) ); 		// development
 		}
 
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ) );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// production
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// development
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// production
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// development
 
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
@@ -69,8 +71,8 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' ); 	// production
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' ); 		// development
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' ); 	// production
+		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' ); 		// development
 	}
 
 	/**
@@ -106,6 +108,7 @@ class featured_video_plus_backend {
 		$featimg_is_fvp = empty($tmp2) ? false : true;
 		$has_post_video = $this->featured_video_plus->has_post_video($post_id);
 
+		$options = get_option( 'fvp-settings' );
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
 
 		echo "\n\n\n<!-- Featured Video Plus Metabox -->\n";
@@ -139,8 +142,7 @@ class featured_video_plus_backend {
 		echo "\n\t</p>\n</div>\n";
 
 		// no featured image warning
-		$fvp_settings = get_option( 'fvp-settings' );
-		$class = $has_featimg || !$has_post_video || (isset($fvp_settings['overwrite']) && !$fvp_settings['overwrite']) ? ' fvp_hidden' : '';
+		$class = $has_featimg || !$has_post_video || (isset($options['overwrite']) && !$options['overwrite']) ? ' fvp_hidden' : '';
 		echo '<div id="fvp_featimg_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">';
 		echo '<span style="font-weight: bold;">Featured Image:</span> For automatically displaying the Featured Video a Featured Image is required.';
 		echo "</p>\n</div>\n";
@@ -150,6 +152,10 @@ class featured_video_plus_backend {
 		$text  = 'Set as Featured Image';
 		echo '<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;'.$text.'</label>'."\n\t".'</span>'."\n";
 		echo "\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">'.$text.'</a>'."\n".'</p>'."\n";
+
+		// current theme does not support Featured Images
+		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] )
+			echo '<p class="fvp_warning description"><span style="font-weight: bold;">The current theme does not support Featured Images:</span> To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate "<em>Replace Featured Images</em>" in the <a href="'.get_admin_url(null, '/options-media.php').'">Media Settings</a>.</p>'."\n\n";
 
 		echo "<!-- Featured Video Plus Metabox End-->\n\n\n";
 	}
@@ -288,7 +294,8 @@ REGEX tested using: http://www.rubular.com/
 			case 'vimeo': // http://developer.vimeo.com/apis/simple
 				//preg_match('/vimeo.com\/([^#]+)/', $video, $video_data);
 
-				$pattern = '#(?:https?://)?(?:\w+.)?vimeo.com/(?:video/|moogaloop\.swf\?clip_id=)?(\w+)#x'
+				$pattern = '#(?:https?://)?(?:\w+.)?vimeo.com/(?:video/|moogaloop\.swf\?clip_id=)?(\w+)#x';
+				preg_match($pattern, $video, $video_data);
 				$video_id = $video_data[1];
 
 				// title, description, upload_date, thumbnail_large, user_name, tags
@@ -402,178 +409,6 @@ REGEX tested using: http://www.rubular.com/
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );
 
 		return;
-	}
-
-	/**
-	 * Initialises the plugin settings section, the settings fields and registers the options field and save function.
-	 *
-	 * @see http://codex.wordpress.org/Settings_API
-	 * @since 1.0
-	 */
-	function settings_init() {
-		add_settings_section('fvp-settings-section', 	'Featured Video', 			array( &$this, 'settings_content' ), 		'media');
-
-		add_settings_field('fvp-settings-overwrite', 	'Replace featured images', 	array( &$this, 'settings_overwrite' ), 		'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-width', 		'Video width', 				array( &$this, 'settings_width' ), 			'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-height', 		'Video height', 			array( &$this, 'settings_height' ), 		'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-vimeo', 		'Vimeo Player Design', 		array( &$this, 'settings_vimeo' ), 			'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-rate', 		'Support', 					array( &$this, 'settings_rate' ), 			'media', 'fvp-settings-section');
-
-		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
-	}
-
-	/**
-	 * The settings section content. Describes the plugin settings, the php functions and the WordPress shortcode.
-	 *
-	 * @since 1.0
-	 */
-	function settings_content() { ?>
-
-<p>To display your featured videos you can either make use of the automatical replacement, use the <code>[featured-video]</code>-shortcode or manually edit your theme's source files to make use of the plugins PHP-functions.</p>
-<table>
-	<tr style="vertical-align: top;">
-		<td style="width: 50%;">
-			<h4 style="margin-top: 0">WordPress Shortcode Usage</h4>
-			<table>
-				<tr style="vertical-align: top;">
-					<td><code>[featured-video]</code></td>
-					<td>Displays the video in its default size, if <code>width</code> below is set to <code>auto</code> 100%, elsewise 560px.</td>
-				</tr>
-				<tr style="vertical-align: top;">
-					<td><code>[featured-video width=300]</code></td>
-					<td>Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.</td>
-				</tr>
-			</table>
-		</td>
-		<td style="width: 50%;">
-			<h4 style="margin-top: 0">PHP Function Reference</h4>
-			<ul>
-				<li><code>the_post_video(array(width, height), allow_fullscreen = true)</code></li>
-				<li><code>has_post_video(post_id = null)</code></li>
-				<li><code>get_the_post_video(post_id = null, array(width, height), allow_fullscreen = true)</code></li>
-			</ul>
-			<p class="description">
-				All parameters are optional. If <code>post_id == null</code> the current post's id will be used.
-				The functions are implemented with their <a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">"featured image"-counterparts</a> in mind, they can be used the same way.
-			</p>
-		</td>
-	</tr>
-</table>
-
-<?php }
-
-	/**
-	 * Displays the setting if the plugin should display the featured video in place of featured images.
-	 *
-	 * @since 1.0
-	 */
-	function settings_overwrite() {
-		$options = get_option( 'fvp-settings' );
-		$overwrite = isset($options['overwrite']) ? $options['overwrite'] : false;
-?>
-
-<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-1" value="true" 	<?php checked( true, $overwrite, true ) ?>/><label for="fvp-settings-overwrite-1">&nbsp;yes&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-2" value="false" 	<?php checked( false, $overwrite, true ) ?>/><label for="fvp-settings-overwrite-2">&nbsp;no</label>
-<p class="description">If a featured video is available, it can be displayed in place of the featured image.<br />For some themes this could result in displaying errors. When using this, try different <code>width</code> and <code>height</code> settings.</p>
-
-<?php }
-
-	/**
-	 * Displays the setting if the plugin should fit the width of the videos automatically or use fixed widths.
-	 *
-	 * @since 1.0
-	 */
-	function settings_width() {
-		$options = get_option( 'fvp-settings' );
-		$width = isset($options['width']) ? $options['width'] : 'auto'; ?>
-
-<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-1" value="auto" 	<?php checked( 'auto', 	$width, true ) ?>/><label for="fvp-settings-width-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[width]" id="fvp-settings-width-2" value="fixed" 	<?php checked( 'fixed', $width, true ) ?>/><label for="fvp-settings-width-2">&nbsp;fixed</label>
-<p class="description">Using <code>auto</code> the video's width will be adjusted to fit the parent element. Works best in combination with height setted to <code>auto</code> as well.</p>
-
-<?php }
-
-	/**
-	 * Displays the setting if the plugin should fit the height of the videos automatically to their width/height ratio or use fixed heights, which might result in black bars.
-	 *
-	 * @since 1.0
-	 */
-	function settings_height() {
-		$options = get_option( 'fvp-settings' );
-		$height = isset($options['height']) ? $options['height'] : 'auto'; ?>
-
-<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-1" value="auto" 	<?php checked( 'auto', 	$height, true ) ?>/><label for="fvp-settings-height-1">&nbsp;auto&nbsp;<span style="font-style: italic;">(default)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[height]" id="fvp-settings-height-2" value="fixed" 	<?php checked( 'fixed', $height, true ) ?>/><label for="fvp-settings-height-2">&nbsp;fixed</label>
-<p class="description">If using <code>fixed</code> videos may lose their ascpect radio, resulting in <span style="font-style: italic;">not so pretty</span> black bars.</p>
-
-<?php }
-
-	/**
-	 * Displays the settings to style the vimeo video player. Default: &amp;title=1&amp;portrait=0&amp;byline=1&amp;color=00adef
-	 *
-	 * @see http://developer.vimeo.com/player/embedding
-	 * @see http://make.wordpress.org/core/2012/11/30/new-color-picker-in-wp-3-5/
-	 * @see http://codex.wordpress.org/Function_Reference/wp_style_is
-	 * @since 1.0
-	 */
-	function settings_vimeo() {
-		$options = get_option( 'fvp-settings' );
-		$vimeo['portrait'] 	= isset($options['vimeo']['portrait']) 	? $options['vimeo']['portrait'] : 0;
-		$vimeo['title'] 	= isset($options['vimeo']['title']) 	? $options['vimeo']['title'] 	: 1;
-		$vimeo['byline'] 	= isset($options['vimeo']['byline']) 	? $options['vimeo']['byline'] 	: 1;
-		$vimeo['color'] 	= isset($options['vimeo']['color']) 	? $options['vimeo']['color'] 	: '00adef'; ?>
-
-<div style="position: relative; bottom: .6em;">
-	<input type="checkbox" name="fvp-settings[vimeo][portrait]" id="fvp-settings-vimeo-1" value="display" <?php checked( 1, $vimeo['portrait'], 1 ) ?>/><label for="fvp-settings-vimeo-1">&nbsp;Portrait</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="checkbox" name="fvp-settings[vimeo][title]" 	id="fvp-settings-vimeo-2" value="display" <?php checked( 1, $vimeo['title'], 	1 ) ?>/><label for="fvp-settings-vimeo-2">&nbsp;Title</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="checkbox" name="fvp-settings[vimeo][byline]" 	id="fvp-settings-vimeo-3" value="display" <?php checked( 1, $vimeo['byline'], 	1 ) ?>/><label for="fvp-settings-vimeo-3">&nbsp;Byline</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[vimeo][color]" id="fvp-settings-vimeo-color" value="#<?php echo $vimeo['color'] ?>" data-default-color="#00adef" />
-		<label for="fvp-settings-vimeo-color" style="display: none;">&nbsp;Color</label>
-		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div style="position: absolute; bottom: 0; right: -197px; background-color: #fff; z-index: 100; border: 1px solid #ccc;" id="fvp-settings-vimeo-colorpicker"></div><?php } ?>
-	</span>
-</div>
-<p class="description">These settings could be overwritten by videos from Vimeo Plus members.</p>
-
-<?php
-	}
-
-	/**
-	 * Displays info about rating the plugin, giving feedback and requesting new features
-	 *
-	 * @since 1.0
-	 */
-	function settings_rate() { ?>
-
-<p>
-	Found a bug or <span style="font-weight: bold;">missing a specific video service</span>? <a href="http://wordpress.org/extend/plugins/featured-video/" title="Featured Video Plus Support Forum on wordpress.org" style="font-weight: bold;">Leave a note</a> in the plugins support forum!<br />
-	No? Than please <a href="http://wordpress.org/extend/plugins/featured-video/" title="Featured Video Plus on wordpress.org" style="font-weight: bold;">rate it</a>.<br />
-</p>
-
-<?php }
-
-	/**
-	 * Function through which all settings are passed before they are saved. Validate the data.
-	 *
-	 * @since 1.0
-	 */
-	function settings_save($input) {
-		$options = get_option( 'fvp-settings' );
-
-		$options['overwrite'] 	= isset($input['overwrite']) && $input['overwrite'] == 'true' ? true : false;
-
-		$options['vimeo']['portrait'] 	= isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
-		$options['vimeo']['title'] 		= isset($input['vimeo']['title']) 	&& ( $input['vimeo']['title'] 	 == 'display' ) ? 1 : 0;
-		$options['vimeo']['byline'] 	= isset($input['vimeo']['byline']) 	&& ( $input['vimeo']['byline'] 	 == 'display' ) ? 1 : 0;
-
-		if( isset($options['vimeo']['color']) ) {
-			preg_match('/#?([0123456789abcdef]{3}[0123456789abcdef]{0,3})/i', $input['vimeo']['color'], $color);
-			$options['vimeo']['color'] = $color[1];
-		} else
-			$options['vimeo']['color'] = '00adef';
-
-
-		return $options;
 	}
 
 	/**

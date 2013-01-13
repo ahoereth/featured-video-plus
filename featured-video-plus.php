@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Description: Featured Videos just like Featured Images.
 Author: Alexander Höreth
-Version: 1.2
+Version: 1.3
 Author URI: http://ahoereth.yrnxt.com
 License: GPL2
 
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.2');
+	define('FVP_VERSION', '1.3');
 
 if (!defined('FVP_NAME'))
 	define('FVP_NAME', 'featured-video-plus');
@@ -43,11 +43,14 @@ if (!defined('FVP_URL'))
 include_once( FVP_DIR . 'php/general.php' );
 $featured_video_plus = new featured_video_plus();
 
+load_plugin_textdomain('featured-video-plus', false, basename( dirname( __FILE__ ) ) . '/languages' );
+
 // only on backend / administration interface
 if(  is_admin() ) {
 	// plugin upgrade/setup
 	include_once( FVP_DIR . '/php/upgrade.php' );
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
+
 
 	// init backend class, located in php/backend.php
 	include_once( FVP_DIR . 'php/backend.php' );
@@ -56,9 +59,6 @@ if(  is_admin() ) {
 	// admin meta box
 	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
 	add_action('save_post',  array( &$featured_video_plus_backend, 'metabox_save' )	 );
-
-	// admin settings
-	add_action('admin_init', array( &$featured_video_plus_backend, 'settings_init' ) );
 
 	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
@@ -69,6 +69,13 @@ if(  is_admin() ) {
 
 	// add upload mime types for HTML5 videos
 	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
+
+	// admin settings
+	include_once( FVP_DIR . 'php/settings.php' );
+	$featured_video_plus_settings = new featured_video_plus_settings();
+	add_action('admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
+	if( get_bloginfo('version') >= 3.3 )
+		add_action( "load-options-media.php", array( &$featured_video_plus_settings, 'add_tabs' ), 20 ); // $GLOBALS['pagenow']
 }
 
 
