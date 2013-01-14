@@ -112,6 +112,11 @@ class featured_video_plus_backend {
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
 
 		echo "\n\n\n<!-- Featured Video Plus Metabox -->\n";
+
+		// WordPress Version not supported error
+		if( get_bloginfo('version') < 3.1 )
+			printf ('<div class="fvp_warning"><p class="description"><strong>'.__('Outdated WordPress Version', 'featured-video-plus').':</strong>&nbsp'.__('There is WordPress 3.5 out there! The plugin supports older versions way back to 3.1 - but %s is defenitly to old!', 'featured-video-plus').'</p></div>', get_bloginfo('version') );
+
 		// displays the current featured video
 		if( $has_post_video )
 			echo '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . "</div>\n";
@@ -130,7 +135,7 @@ class featured_video_plus_backend {
 
 		// local videos not distinct warning
 		echo '<div id="fvp_localvideo_notdistinct_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Fallback Video', 'featured-video-plus').':</span>'.__('The two input fields should contain the same video but in distinct formats.', 'featured-video-plus');
+		echo '<span style="font-weight: bold;">'.__('Fallback Video', 'featured-video-plus').':</span>&nbsp;'.__('The two input fields should contain the same video but in distinct formats.', 'featured-video-plus');
 		echo "\n\t</p>\n</div>\n";
 
 		// how to use a local video notice
@@ -139,13 +144,13 @@ class featured_video_plus_backend {
 		$urllabel 	= (get_bloginfo('version') >= 3.5) ? sprintf( __('Use the <code>Link To Media File</code> from your %1$sMedia Library%2$s.', 'featured-video-plus'), $mediahref, '</a>' ) :
 														 sprintf( __('Use the <code>File URL</code> from your %1$sMedia Library%2$s.', 			 'featured-video-plus'), $mediahref, '</a>' );
 		echo "<div id=\"fvp_localvideo_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Local Media', 'featured-video-plus').':</span>'.$urllable;
+		echo '<span style="font-weight: bold;">'.__('Local Media', 'featured-video-plus').':</span>&nbsp;'.$urllable;
 		echo "\n\t</p>\n</div>\n";
 
 		// no featured image warning
 		$class = $has_featimg || !$has_post_video || (isset($options['overwrite']) && !$options['overwrite']) ? ' fvp_hidden' : '';
 		echo '<div id="fvp_featimg_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">';
-		echo '<span style="font-weight: bold;">Featured Image:</span> '.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
+		echo '<span style="font-weight: bold;">Featured Image:</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
 		echo "</p>\n</div>\n";
 
 		// set as featured image
