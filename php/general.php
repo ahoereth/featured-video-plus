@@ -27,8 +27,8 @@ class featured_video_plus {
 
 			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
-				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp-min.js', array( 'jquery' ), '20121207', true ); 	// production
-				//wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true ); 		// development
+				//wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp-min.js', array( 'jquery' ), '20121207', true ); 	// production
+				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true ); 		// development
 		}
 	}
 
@@ -65,12 +65,12 @@ class featured_video_plus {
 			else
 				$width = 560;
 
-		} elseif( is_numeric( $size[0] ) )
+		} elseif( !empty( $size[0] ) && is_numeric( $size[0] ) )
 			$width  = $size[0];
 		else
 			$width = 560;
 
-		if( is_numeric( $size[1] ) )
+		if( !empty( $size[1] ) && is_numeric( $size[1] ) )
 			$height = $size[1];
 		else
 			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
@@ -124,6 +124,19 @@ class featured_video_plus {
 					$embed = "\n" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$dm['src'].'" frameborder="0"></iframe>' . "\n";
 					break;
 
+				case 'liveleak':
+					$embed = "\n" . '<iframe width="'.$width.'" height="'.$height.'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+					break;
+
+				case 'prochan':
+					$embed = "\n" . '<iframe width="'.$width.'" height="'.$height.'" src="http://www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+					break;
+
+				default:
+					$embed = '';
+					$container = false;
+					break;
+
 			}
 
 			if($container)
@@ -162,11 +175,11 @@ class featured_video_plus {
 	 */
 	function shortcode($atts){
 
-		$w = isset($atts['width'])  ? $atts['width'] : '560';
-		$h = isset($atts['height']) ? $atts['height'] : '315';
+		$w = isset($atts['width'])  ? $atts['width'] : '';
+		$h = isset($atts['height']) ? $atts['height'] : '';
 
 		if($this->has_post_video())
-			echo $this->get_the_post_video(null, $w, $h, true, false);
+			echo $this->get_the_post_video(null, array($w, $h), true, false);
 
 	}
 }

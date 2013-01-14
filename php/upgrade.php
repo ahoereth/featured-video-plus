@@ -5,7 +5,7 @@
  * @since 1.2
  */
 function featured_video_plus_upgrade() {
-	$options = get_option( 'fvp-settings', 'none' );
+	$options = $options_org = get_option( 'fvp-settings', 'none' );
 
 	if( !isset($options) || $options == 'none')
 		$version = '0';
@@ -49,6 +49,7 @@ function featured_video_plus_upgrade() {
 				$notice = isset($notice) ? $notice : 'upgrade_12';
 
 				$options['reg'] = '';
+				$options['reged'] = false;
 				$options['videojs'] = array(
 						'skin' => 'videojs' //videojs,moonfy,tubejs
 					);
@@ -84,18 +85,18 @@ function featured_video_plus_upgrade() {
 		add_action('admin_notices', array( &$featured_video_plus_notices, $notice ) );
 	}
 
+	// Logs Plugin Version, WordPress Version, WordPress Language once.
+	// Less than WordPress.org, but much more informative for future development
 	if( !isset($options['reged']) || !$options['reged'] || ($version != FVP_VERSION) ) {
-		$url = 'http://fvp.ahoereth.yrnxt.com/fvp_reg.php?fvp_reg='.$options['reg'].'&fvp_version='.urlencode(FVP_VERSION).'&wp_version='.urlencode(get_bloginfo('version')).'&wp_language='.urlencode(get_bloginfo('language'));
-		$result = wp_remote_get( $url );
-		if( strlen($result['body']) == 23 ) {
+		$options['reged'] = false;
+		$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp_reg.php', array('body' => array( 'fvp_reg' => isset($options['reg']) ? $options['reg'] : '', 'fvp_version' => FVP_VERSION, 'wp_version' => get_bloginfo('version'), 'wp_language' => get_bloginfo('language') )));
+		if( !is_wp_error( $response ) && strlen($response['body']) == 23 ) {
 			$options['reged'] = true;
-			$options['reg'] = $result['body'];
-		} else {
-			$options['reged'] = false;
+			$options['reg'] = $response['body'];
 		}
 	}
 
-	if( $options != get_option( 'fvp-settings', 'none' ) )
+	if( $options != $options_org )
 		update_option( 'fvp-settings', $options );
 }
 

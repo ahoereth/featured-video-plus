@@ -144,7 +144,7 @@ class featured_video_plus_backend {
 		$urllabel 	= (get_bloginfo('version') >= 3.5) ? sprintf( __('Use the <code>Link To Media File</code> from your %1$sMedia Library%2$s.', 'featured-video-plus'), $mediahref, '</a>' ) :
 														 sprintf( __('Use the <code>File URL</code> from your %1$sMedia Library%2$s.', 			 'featured-video-plus'), $mediahref, '</a>' );
 		echo "<div id=\"fvp_localvideo_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Local Media', 'featured-video-plus').':</span>&nbsp;'.$urllable;
+		echo '<span style="font-weight: bold;">'.__('Local Media', 'featured-video-plus').':</span>&nbsp;'.$urllabel;
 		echo "\n\t</p>\n</div>\n";
 
 		// no featured image warning
@@ -155,8 +155,7 @@ class featured_video_plus_backend {
 
 		// set as featured image
 		$class = $meta['prov'] == 'local' || !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
-		$text  = __('Set as Featured Image', 'featured-video-plus');
-		printf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus') );
+		printf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
 
 		// current theme does not support Featured Images
 		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] )
@@ -241,7 +240,7 @@ REGEX tested using: http://www.rubular.com/
 		$local = wp_upload_dir();
 		// match 		different provider(!)
 
-		preg_match('/(vimeo|youtu|dailymotion|' . preg_quote($local['baseurl'], '/') . ')/i', $video, $video_provider);
+		preg_match('/(vimeo|youtu|dailymotion|liveleak' . preg_quote($local['baseurl'], '/') . ')/i', $video, $video_provider);
 		if(!isset($video_provider[1]))
 			return;
 
@@ -350,13 +349,57 @@ REGEX tested using: http://www.rubular.com/
 					'url' => $data['url']
 				);
 				break;
+
+			case 'liveleak': // view-source:http://www.liveleak.com/view?i=45f_1358105976&ajax=1
+				preg_match('/(?:http:\/\/)?(?:www\.)?liveleak.com\/view\?i=([\d\w]{3}_\d{10})/', $video, $video_data);
+
+				$response = wp_remote_get( 'http://liveleak.com/view?i='.$video_data[1].'&ajax=1');
+				if( is_wp_error( $response ) )
+					break;
+
+				preg_match('#jwplayer\("player_([\d\w]{12})[\d\w]{2}"\)\.setup\({([^}}\))]+)#', $response['body'], $llmeta);
+				if( isset($llmeta[1]) || isset($llmeta[2]) ) {
+
+					$video_id = $llmeta[1];
+
+					$llmeta = explode(',', $llmeta[2]);
+					foreach( $llmeta as $line ) {
+						$thisline = explode(': ', $line);
+						$data[trim($thisline[0])] = trim($thisline[1]);
+					}
+
+					preg_match('#class="section_title".*>([\s\w]+)</span>#', $response['body'], $title);
+					preg_match('#id="body_text".*><p>(.*)<\/p><\/#', $response['body'], $desc);
+					$data['title'] = isset($title[1]) ? $title[1] : '';
+
+					$video_info = array(
+						'title' 		=> $data['title'],
+						'description' 	=> isset($desc[1]) ? $desc[1] : '',
+						'filename' 		=> sanitize_file_name($data['title']),
+						'timestamp' 	=> time(),
+						'author' 		=> '', // <strong>By:</strong> <a href="http://www.liveleak.com/c/k-doe">k-doe</a>
+						'tags' 			=> '', // <strong>Tags:</strong> <a href="browse?q=Drive By">Drive By</a>, <a href="browse?q=Fire Extinguisher">Fire Extinguisher</a><br />
+						'img' 			=> trim($data['image'],"\""),
+						'url' 			=> 'http://liveleak.com/view?i='.$video_data[1]
+					);
+					break;
+				}
+				$video_prov = 'prochan';
+				$type = 'iframe';
+
+				case 'prochan':
+					if($type == 'iframe') {
+						preg_match('#<iframe.*src="(?:http://)?(?:www\.)?prochan.com/embed\?f=([\d\w]{3}_\d{10})".*></iframe>#', $response['body'], $proframe);
+						$video_id = $proframe[1];
+					}
+					break;
 		}
 
 		if( !isset($video_id) )
 			return;
 
 		// do we have a screen capture to pull?
-		if( !empty($video_info['img']) ) {
+		if( isset($video_info['img']) && !empty($video_info['img']) ) {
 
 			// is this screen capture already existing in our media library?
 			$video_img = $this->get_post_by_custom_meta('_fvp_image', $video_prov . '?' . $video_id);
@@ -407,8 +450,7 @@ REGEX tested using: http://www.rubular.com/
 			'sec_id' => ( isset($video_sec_id) && !empty($video_sec_id) ) ? $video_sec_id : '',
 			'img' => isset($video_img) ? $video_img : '',
 			'prov' => $video_prov,
-			'attr' => isset($video_attr) ? $video_attr : '',
-			'warn_featimg' => true
+			'attr' => isset($video_attr) ? $video_attr : ''
 		);
 
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );

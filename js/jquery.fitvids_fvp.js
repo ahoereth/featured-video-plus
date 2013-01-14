@@ -53,6 +53,8 @@
         "iframe[src*='www.youtube.com']",
         "iframe[src*='www.youtube-nocookie.com']",
         "iframe[src*='www.kickstarter.com']",
+        "iframe[src*='www.liveleak.com']",
+        "iframe[src*='www.prochan.com']",
         "object",
         "embed"
       ];
