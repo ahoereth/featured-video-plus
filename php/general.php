@@ -27,8 +27,8 @@ class featured_video_plus {
 
 			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
-				//wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp-min.js', array( 'jquery' ), '20121207', true ); 	// production
-				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), '20121207', true ); 		// development
+				//wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
+				wp_enqueue_script('fvp_fitvids', FVP_URL . '/js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
 		}
 	}
 
@@ -42,7 +42,7 @@ class featured_video_plus {
 	 * @param bool $allowfullscreen
 	 * @param bool $container
 	 */
-	public function get_the_post_video($post_id = null, $size = null, $container = true) {
+	public function get_the_post_video($post_id = null, $size = null) {
 
 		if($post_id == null)
 			$post_id = $GLOBALS['post']->ID;
@@ -72,7 +72,7 @@ class featured_video_plus {
 		else
 			$width = 560;
 
-		if( !empty( $size[1] ) && is_numeric( $size[1] ) )
+		if( isset($size[1]) && !empty( $size[1] ) && is_numeric( $size[1] ) )
 			$height = $size[1];
 		else
 			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
@@ -141,8 +141,8 @@ class featured_video_plus {
 
 			}
 
-			if($container)
-				$embed = "<div class=\"featured_video_plus\">" . $embed . "</div>\n\n";
+			$containerstyle = isset($options['sizing']['align']) ? 'style="text-align: '.$options['sizing']['align'].'"' : '';
+			$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
 
 			$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
 
@@ -155,7 +155,7 @@ class featured_video_plus {
 	 * Checks if current post or post provided by parameter has a featured video.
 	 *
 	 * @since 1.0
-
+	 *
 	 * @param int $post_id id of post to check for featured video
 	 */
 	public function has_post_video($post_id = null){
@@ -185,7 +185,7 @@ class featured_video_plus {
 		$h = isset($atts['height']) ? $atts['height'] : '';
 
 		if($this->has_post_video())
-			echo $this->get_the_post_video(null, array($w, $h), true, false);
+			echo $this->get_the_post_video(null, array($w, $h));
 
 	}
 

@@ -9,17 +9,17 @@
  */
 class featured_video_plus_settings {
 
-	private static $fvp_shortcode_tab_content;
-	private static $fvp_functions_tab_content;
+	private $fvp_shortcode_tab_content;
+	private $fvp_functions_tab_content;
 
 	/**
-	 * Required to generate the contextual help contents. They need to be available for WP3.2- Versions.
+	 * Adds help tabs. WordPress 3.3+. For WordPress 3.2- it saves them in class variables.
 	 *
 	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
 	 *
 	 * @since 1.3
 	 */
-	function __construct() {
+	public function add_tabs() {
 		$this->fvp_shortcode_tab_content = '
 <ul>
 	<li>
@@ -35,45 +35,37 @@ class featured_video_plus_settings {
 		<span style="padding-left: 5px;">'.__('Displays the video with an fixed width and height.', 'featured-video-plus').'</span>
 	</li>
 </ul>'."\n";
+
 		$this->fvp_functions_tab_content ='
 <ul>
-	<li><code>the_post_video(array(width, height), allow_fullscreen = true)</code></li>
+	<li><code>the_post_video(array(width, height))</code></li>
 	<li><code>has_post_video(post_id = null)</code></li>
-	<li><code>get_the_post_video(post_id = null, array(width, height), allow_fullscreen = true)</code></li>
+	<li><code>get_the_post_video(post_id = null, array(width, height))</code></li>
 </ul>
 <p>
 	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used.', 'featured-video-plus'), '<code>post_id == null</code>').'<br />
 	'.sprintf(__('The functions are implemented corresponding to the original %sFeatured Image functions%s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
 </p>'."\n";
 
-	}
-
-	/**
-	 * Adds help tabs. WordPress 3.3+
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @since 1.3
-	 */
-	public function add_tabs() {
 		$screen = get_current_screen();
 		if( $screen->id != 'options-media' )
 			return;
 
-		// FUNCTIONS HELP TAB
-		$screen->add_help_tab( array(
-			'id' => 'fvp_functions_tab',
-			'title'   => 'Featured Video Plus PHP Functions',
-			'content' => $this->fvp_functions_tab_content
-		));
+		if( get_bloginfo('version') >= 3.3 ) {
+			// PHP FUNCTIONS HELP TAB
+			$screen->add_help_tab( array(
+				'id' => 'fvp_functions_tab',
+				'title'   => 'Featured Video Plus PHP Functions',
+				'content' => $this->fvp_functions_tab_content
+			));
 
-		// SHORTCODE HELP TAB
-		$screen->add_help_tab( array(
-			'id' => 'fvp_shortcode_tab',
-			'title'   => 'Featured Video Plus Shortcode',
-			'content' => $this->fvp_shortcode_tab_content
-		));
-
+			// SHORTCODE HELP TAB
+			$screen->add_help_tab( array(
+				'id' => 'fvp_shortcode_tab',
+				'title'   => 'Featured Video Plus Shortcode',
+				'content' => $this->fvp_shortcode_tab_content
+			));
+		}
 	}
 
 	/**
@@ -174,7 +166,8 @@ if( !current_theme_supports('post-thumbnails') )
 		$width = isset($options['sizing']['width' ]) ? $options['sizing']['width' ] : 560;
 		$height= isset($options['sizing']['height']) ? $options['sizing']['height'] : 315;
 		$wclass= $wmode == 'auto' ? ' fvp_readonly' : '';
-		$hclass= $hmode == 'auto' ? ' fvp_readonly' : ''; ?>
+		$hclass= $hmode == 'auto' ? ' fvp_readonly' : '';
+		$align = isset($options['sizing']['align']) ? $options['sizing']['align'] : 'left'; ?>
 
 <span class="fvp_toggle_input">
 	<label class="fvp_grouplable"><?php _e('Width', 'featured-video-plus'); ?>:</label>
@@ -198,6 +191,14 @@ if( !current_theme_supports('post-thumbnails') )
 <p class="description">
 	<?php _e('When using <code>auto</code> the video will be adjusted to fit it\'s parent element while sticking to it\'s ratio. Using a <code>fixed</code> height and width might result in <em>not so pretty</em> black bars.', 'featured-video-plus'); ?>
 </p>
+<span class="fvp_toggle_input">
+	<label class="fvp_grouplable"><?php _e('Align', 'featured-video-plus'); ?>:</label>
+	<span class="fvp_grouppart1">
+		<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-1" value="left" 	<?php checked( 'left', 	$align, true ) ?>/><label for="fvp-settings-align-1">&nbsp;<?php _e('left', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-2" value="center" <?php checked( 'center',$align, true ) ?>/><label for="fvp-settings-align-2">&nbsp;<?php _e('center', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-2" value="right"	<?php checked( 'right', $align, true ) ?>/><label for="fvp-settings-align-3">&nbsp;<?php _e('right', 'featured-video-plus'); ?></label>
+	</span>
+</span>
 
 <?php }
 
@@ -344,8 +345,9 @@ if( !current_theme_supports('post-thumbnails') )
 		preg_match($numbers, $input['sizing']['height']['fixed'], $height);
 		$options['sizing']['width' ] = isset($width[ 0]) ? $width[ 0] : 560;
 		$options['sizing']['height'] = isset($height[0]) ? $height[0] : 315;
-		$options['sizing']['wmode' ] = isset($input['sizing']['width' ]['auto'])  ? 'auto' : 'fixed';
-		$options['sizing']['hmode' ] = isset($input['sizing']['height']['auto'])  ? 'auto' : 'fixed';
+		$options['sizing']['wmode' ] = isset($input['sizing']['width' ]['auto'])?  'auto' 			: 'fixed';
+		$options['sizing']['hmode' ] = isset($input['sizing']['height' ]['auto'])? 'auto' 			: 'fixed';
+		$options['sizing']['align' ] = isset($input['sizing']['align']) ? $input['sizing']['align'] : 'left';
 
 		// VIDEOJS
 		//$options['videojs']['skin'] = isset( $input['videojs']['skin'] ) ? $input['videojs']['skin'] : 'videojs';

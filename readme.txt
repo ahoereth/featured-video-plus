@@ -36,9 +36,9 @@ The plugin adds some individualization options to your Media Settings. Beside ae
 = PHP functions =
 All parameters are optional. If no post_id is given the current post's id will be used.
 
-	the_post_video(array(width, height), fullscreen = true)
+	the_post_video(array(width, height))
 	has_post_video(post_id)
-	get_the_post_video(post_id, size(width, height), fullscreen = true)
+	get_the_post_video(post_id, size(width, height))
 
 
 

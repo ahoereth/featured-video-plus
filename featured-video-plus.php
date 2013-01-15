@@ -30,8 +30,7 @@ if (!defined('FVP_VERSION'))
 	define('FVP_VERSION', '1.3');
 
 if (!defined('FVP_NAME'))
-	define('FVP_NAME', 'featured-video-plus');
-	//define('FVP_NAME', trim(dirname(plugin_basename(__FILE__)), '/'));
+	define('FVP_NAME', trim(dirname(plugin_basename(__FILE__)), '/'));
 
 if (!defined('FVP_DIR'))
 	define('FVP_DIR', plugin_dir_path(__FILE__));
@@ -75,8 +74,7 @@ if(  is_admin() ) {
 	include_once( FVP_DIR . 'php/settings.php' );
 	$featured_video_plus_settings = new featured_video_plus_settings();
 	add_action('admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
-	if( get_bloginfo('version') >= 3.3 )
-		add_action( "load-options-media.php", array( &$featured_video_plus_settings, 'add_tabs' ), 20 ); // $GLOBALS['pagenow']
+	add_action( "load-options-media.php", array( &$featured_video_plus_settings, 'add_tabs' ), 20 ); // $GLOBALS['pagenow']
 }
 
 
@@ -96,14 +94,14 @@ if( !is_admin() ) {
 
 	// functions which are available to theme developers follow here:
 	// echos the current posts featured video
-	function the_post_video($width = '560', $height = '315', $allowfullscreen = true) {
-		echo get_the_post_video(null, $width, $height, $allowfullscreen, true);
+	function the_post_video( $size = null) {
+		echo get_the_post_video(null, $size);
 	}
 
 	// returns the posts featured video
-	function get_the_post_video($post_id = null, $width = '560', $height = '315', $allowfullscreen = true) {
+	function get_the_post_video($post_id = null, $size = null) {
 		global $featured_video_plus;
-		return $featured_video_plus->get_the_post_video($post_id, $width, $height, $allowfullscreen);
+		return $featured_video_plus->get_the_post_video($post_id, $size);
 	}
 
 	// checks if post has a featured video

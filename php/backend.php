@@ -46,22 +46,22 @@ class featured_video_plus_backend {
 			if( wp_style_is( 'wp-color-picker', 'registered' ) ) {
 				// >=WP3.5
 				wp_enqueue_style( 'wp-color-picker' );
-				wp_enqueue_script( 'fvp_backend_35', FVP_URL . '/js/backend_35.js', array( 'wp-color-picker', 'jquery' ) );
+				wp_enqueue_script( 'fvp_backend_35', FVP_URL . '/js/backend_35.js', array( 'wp-color-picker', 'jquery' ), FVP_VERSION );
 			} else {
 				// <WP3.5, fallback for the new WordPress Color Picker which was added in 3.5
 				wp_enqueue_style( 'farbtastic' );
 				wp_enqueue_script( 'farbtastic' );
-				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . '/js/backend_pre35.js', array( 'jquery' ) );
+				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . '/js/backend_pre35.js', array( 'jquery' ), FVP_VERSION );
 			}
-			//wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings-min.js', array( 'jquery' ) ); 	// production
-			wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings.js', array( 'jquery' ) ); 		// development
+			//wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings-min.js', array( 'jquery' ), FVP_VERSION ); 	// production
+			wp_enqueue_script( 'fvp_backend_settings', FVP_URL . '/js/backend_settings.js', array( 'jquery' ), FVP_VERSION ); 		// development
 		}
 
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
-			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ) );
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ) ); 	// production
-			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize' ) ); 		// development
+			wp_enqueue_script( 'jquery.autosize', FVP_URL . '/js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			wp_enqueue_script( 'fvp_backend', FVP_URL . '/js/backend.js', array( 'jquery','jquery.autosize', FVP_VERSION ) ); 		// development
 
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
@@ -71,8 +71,8 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css' ); 	// production
-		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css' ); 		// development
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend-min.css', array(), FVP_VERSION ); 	// production
+		wp_enqueue_style( 'fvp_backend', FVP_URL . '/css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
 	/**
@@ -119,7 +119,7 @@ class featured_video_plus_backend {
 
 		// displays the current featured video
 		if( $has_post_video )
-			echo '<div id="featured_video_preview" class="featured_video_plus" style="display:block">' . $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) ) . "</div>\n";
+			echo $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) );
 
 		// input box containing the featured video URL
 		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;

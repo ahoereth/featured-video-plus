@@ -71,7 +71,8 @@ function featured_video_plus_upgrade() {
 						'wmode'  => $options['width'],
 						'hmode'  => $options['height'],
 						'width'  => 560,
-						'height' => 315
+						'height' => 315,
+						'align'  => 'left'
 					);
 				unset( $options['width'], $options['height'] );
 
@@ -90,7 +91,7 @@ function featured_video_plus_upgrade() {
 	if( !isset($options['reged']) || !$options['reged'] || ($version != FVP_VERSION) ) {
 		$options['reged'] = false;
 		$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp_reg.php', array('body' => array( 'fvp_version' => FVP_VERSION, 'wp_version' => get_bloginfo('version'), 'wp_language' => get_bloginfo('language'), 'fvp_notice' => isset($options['notice']) ? $options['notice'] : 'initial_activation' )));
-		if( !is_wp_error( $response ) && strlen($response['body']) == 'success.' )
+		if( !is_wp_error( $response ) && ($response['body'] == 'success.') )
 			$options['reged'] = true;
 	}
 
@@ -115,7 +116,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_12() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('Version %s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), FVP_VERSION, '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" target="_blank">', '</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" target="_blank">', '</a>');
 		echo "</p></div>\n";
 	}
 
@@ -126,7 +127,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_11() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('Version %s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), FVP_VERSION, '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" traget="_blank">','</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" traget="_blank">','</a>');
 		echo "</p></div>\n";
 	}
 
