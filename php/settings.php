@@ -43,7 +43,7 @@ class featured_video_plus_settings {
 </ul>
 <p>
 	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used.', 'featured-video-plus'), '<code>post_id == null</code>').'<br />
-	'.sprintf(__('The functions are implemented corresponding to the original %1$sFeatured Image functions%2$s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
+	'.sprintf(__('The functions are implemented corresponding to the original %sFeatured Image functions%s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
 </p>'."\n";
 
 	}
@@ -117,7 +117,7 @@ class featured_video_plus_settings {
 	 */
 	function settings_content() { ?>
 
-<p><?php printf(__('To display your featured videos you can either make use of the automatical replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus'), '<code>[featured-video]</code>-Shortcode'); ?></p>
+<p><?php printf(__('To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus'), '<code>[featured-video]</code>-Shortcode'); ?></p>
 
 <?php 	if( get_bloginfo('version') < 3.3 ) { ?>
 
@@ -136,7 +136,7 @@ class featured_video_plus_settings {
 
 <?php 	} else { ?>
 
-<p><?php printf(__('For more information about Shortcode and PHP functions see the %1$sContextual Help%2$s.', 'featured-video-plus'), '<a href="#" id="fvp_help_toggle">', '</a>'); ?></p>
+<p><?php printf(__('For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus'), '<a href="#" id="fvp_help_toggle">', '</a>'); ?></p>
 
 <?php 	}
 	}

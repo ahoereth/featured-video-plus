@@ -12,7 +12,7 @@ Requires at least: 3.1
 Tested up to: 3.5
 Stable tag: 1.3
 
-Add Featured Videos to your posts and pages, just like you add Featured Images. Supports your Local Videos, YouTube, Vimeo and Dailymotion.
+Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Supports your Local Videos, YouTube, Vimeo and Dailymotion.
 
 
 == Description ==
@@ -21,7 +21,7 @@ Add Featured Videos to your posts and pages, just like you add Featured Images. 
 This plugin enables you to define Featured Videos in addition to Featured Images. There are three ways to get the videos onto your page:
 
 1. If your theme already makes use of Featured Images, these will __automatically__ be replaced by Featured Videos if available. Alternatively you can
-2. insert the `[featured-video-plus]` __shortcode__ in your entries or
+2. insert the `[featured-video-plus]`-__Shortcode__ in your entries or
 3. manually use the __PHP functions__ in your theme's source files.
 
 Beside your __Local Videos__ (`mp4`, `webM` & `ogg/ogv`) you can use videos from __YouTube__ (w/[time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618 "Link to a specific time in a video")), __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus).
@@ -56,6 +56,12 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+= 1.3 =
+* Revamped video sizing
+* Added customizations for YouTube and Dailymotion
+* Plenty better error handling
+* Liveleak (experimental, they do not have any API)
 
 = 1.2 =
 * __Added support for local videos__
@@ -104,34 +110,29 @@ On the technical side your theme needs to feature [Post Thumbnails](http://codex
 
 If the automatic integration does not work, you can tell me in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus) which theme you are using and I will take a look at it and might be able to develop a workaround.
 
-= Why do my videos do not fit their container? =
-Take a look at your media settings and try tweaking the video size. For most installations the sizing works fine by default, if it still does not: I'm [happy to help](http://wordpress.org/support/plugin/featured-video-plus).
+= How can I make the videos fit the theme? =
+Take a look at your media settings and try fixed sizes. For most installations the automatic sizing works fine. If tweaking does not help: [Tell me](http://wordpress.org/support/plugin/featured-video-plus) which theme you are using.
 
-= I activated local video support, how do I use it? =
-* Add a __mp4__, __webM__ or __ogv__ video to your Media Library
-* Copy the `Link To Media File` and paste it into the Featured Video box
-* For better [compatibility](http://videojs.com/#compatibilitychart) upload a second version of the same video with a different format and paste the URL in the second input box as a fallback.
-
-= What is the easiest way to get my video into these formats? =
+= What is the easiest way to get my video into the supported local video formats? =
 Take a look at the [Miro Video Converter](http://www.mirovideoconverter.com/). It is open source, lightweight and compatible with Windows, Mac and Linux.
 
 = What can I do about those errors I get when uploading my video? =
 * Read [this](http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/) on how to increase maximum file upload size.
-* WordPress by default does not support webM. The plugin activates it, but under some conditions this might not be enough and you might want to take a look at this [post](http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/).
+* WordPress by default does not support webM. The plugin activates it, but under some conditions this might not be enough and you might want to read this [post](http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/).
 
 = What happens if the user does not use a HTML5 compatible browser? =
-The video player, [VIDEOJS](http://videojs.com/), features an Adobe Flash fallback if you provide an MP4 video.
+The video player, [VIDEOJS](http://videojs.com/), features an Adobe Flash fallback if you provide an `mp4` video.
 
 = What about other video portals? =
 Leave me a note in the support forums which you would like and I will consider adding them in the next release.
 
-= Are there translations available? =
-Not yet, but I will add translation capabilities soon. Interested in translating the plugin? Contact me!
+= How can I translate the plugin? =
+Grap the [featured-video-plus.pot](https://github.com/ahoereth/featured-video-plus/blob/master/lng/featured-video-plus.pot) file, [translate it](http://urbangiraffe.com/articles/translating-wordpress-themes-and-plugins/) and post it in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus). It will very likely be shipped with the next version.
 
 = Which URL formats have been tested? =
 
-	[http(s)://](www.)youtu.be/ELEVENCHARS(?t=1m3s)
-	[http(s)://](www.)youtube.com/watch?v=ELEVENCHARS(?t=1m3s)
-	[http(s)://](www.)youtube.com/v/ELEVENCHARS(?random=13&t=1m3s)
-	(http(s)://)(www.)vimeo.com/UNIQUEID(#embed)
-	(http(s)://)(www.)dailymotion.com/video/UNIQUEID(_video_title)
+	[http(s)://](www.)youtu.be/ELEVENCHARS(?random=13)(?t=1m3s)
+	[http(s)://](www.)youtube.com/(v|watch?v=)ELEVENCHARS(?random=13)(?t=1m3s)
+	(http(s)://)(www.)vimeo.com/UNIQUEID(#stuff)
+	(http(s)://)(www.)dailymotion.com/video/UNIQUEID(_video_title)(#stuff)
+	(http(s)://)(www.)liveleak.com/view?i=LIV_ELEAKUNQID

@@ -72,3 +72,6 @@
 .fvp_readonly {
 	color: gray !important;
 }
+.fvp_invalid {
+	background-color: #FA8072;
+}

@@ -43,7 +43,8 @@ if (!defined('FVP_URL'))
 include_once( FVP_DIR . 'php/general.php' );
 $featured_video_plus = new featured_video_plus();
 
-load_plugin_textdomain('featured-video-plus', false, basename( dirname( __FILE__ ) ) . '/languages' );
+// init translations
+add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
 
 // only on backend / administration interface
 if(  is_admin() ) {

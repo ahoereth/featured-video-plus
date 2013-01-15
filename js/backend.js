@@ -62,8 +62,8 @@ jQuery(document).ready(function($){
      * @since 1.2
      */
     function handleVideoInput( obj ) {
-        var value = obj.val();
-        var sec = $('#fvp_sec').val();
+        var value = $.trim(obj.val());
+        var sec   = $.trim($('#fvp_sec').val());
 
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_video").css('backgroundColor', 'white');
@@ -74,7 +74,7 @@ jQuery(document).ready(function($){
 
         if ( value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
             var file_extension = /^.*\/(.*)\.(.*)$/g;
-            var match = file_extension.exec($.trim(value));
+            var match = file_extension.exec(value);
             if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
                 $("#fvp_sec").show('fast');
                 $("#fvp_video").css('backgroundColor', 'white');
@@ -105,8 +105,8 @@ jQuery(document).ready(function($){
      * @since 1.2
      */
     function handleSecInput( obj ) {
-        var value = obj.val();
-        var prim = $('#fvp_video').val();
+        var value = $.trim(obj.val());
+        var prim  = $.trim($('#fvp_video').val());
 
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_localvideo_format_warning").hide('fast');
@@ -116,7 +116,7 @@ jQuery(document).ready(function($){
 
         if ( value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
             var file_extension = /^.*\/(.*)\.(.*)$/g;
-            var match = file_extension.exec($.trim(value));
+            var match = file_extension.exec(value);
             if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
                 distinctContent();
                 $("#fvp_sec").css('backgroundColor', 'white');

@@ -3,7 +3,7 @@
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
  * @author ahoereth
- * @version 2013/01/09
+ * @version 2013/01/15
  * @see ../featured_video_plus.php
  * @see featured_video_plus_backend in backend.php
  * @see featured_video_plus_frontend in frontend.php
@@ -34,6 +34,8 @@ class featured_video_plus {
 
 	/**
 	 * Returns the featured video html, ready to echo.
+	 *
+	 * @since 1.0
 	 *
 	 * @param int $post_id
 	 * @param string|array $size
@@ -152,6 +154,8 @@ class featured_video_plus {
 	/**
 	 * Checks if current post or post provided by parameter has a featured video.
 	 *
+	 * @since 1.0
+
 	 * @param int $post_id id of post to check for featured video
 	 */
 	public function has_post_video($post_id = null){
@@ -171,6 +175,8 @@ class featured_video_plus {
 	/**
 	 * Shortcode for usage in post or page entries. Echos the post's featured video.
 	 *
+	 * @since 1.0
+	 *
 	 * @param array $atts can contain the width and/or height how the featured video should be displayed in px, optional
 	 */
 	function shortcode($atts){
@@ -181,6 +187,15 @@ class featured_video_plus {
 		if($this->has_post_video())
 			echo $this->get_the_post_video(null, array($w, $h), true, false);
 
+	}
+
+	/**
+	 * Initializes localization i18n
+	 *
+	 * @since 1.3
+	 */
+	function language() {
+		load_plugin_textdomain('featured-video-plus', FVP_DIR . 'lng/', FVP_NAME . '/lng/' );
 	}
 }
 ?>
