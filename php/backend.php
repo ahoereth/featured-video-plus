@@ -214,7 +214,6 @@ class featured_video_plus_backend {
 						$img = $this->get_post_by_custom_meta('_fvp_image', $meta['prov'] . '?' . $meta['id'] );
 						wp_delete_attachment( $img );
 						delete_post_meta( $img, '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
-						echo "hier";
 					}
 
 					delete_post_meta( $post_id, '_thumbnail_id' );
