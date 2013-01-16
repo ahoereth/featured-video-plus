@@ -8,79 +8,8 @@
  * @since 1.3
  */
 class featured_video_plus_settings {
-
-	private $fvp_shortcode_tab_content;
-	private $fvp_functions_tab_content;
-
-	/**
-	 * Adds help tabs. WordPress 3.3+. For WordPress 3.2- it saves them in class variables.
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @since 1.3
-	 */
-	public function add_tabs() {
-		$this->fvp_shortcode_tab_content = '
-<ul>
-	<li>
-		<code>[featured-video]</code><br />
-		<span style="padding-left: 5px;">'.__('Displays the video in its default size.', 'featured-video-plus').'</span>
-	</li>
-	<li>
-		<code>[featured-video width=560]</code><br />
-		<span style="padding-left: 5px;">'.__('Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus').'</span>
-	</li>
-	<li>
-		<code>[featured-video width=560 height=315]</code><br />
-		<span style="padding-left: 5px;">'.__('Displays the video with an fixed width and height.', 'featured-video-plus').'</span>
-	</li>
-</ul>'."\n";
-
-		$this->fvp_functions_tab_content ='
-<ul>
-	<li><code>the_post_video(array(width, height))</code></li>
-	<li><code>has_post_video(post_id = null)</code></li>
-	<li><code>get_the_post_video(post_id = null, array(width, height))</code></li>
-</ul>
-<p>
-	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used.', 'featured-video-plus'), '<code>post_id == null</code>').'<br />
-	'.sprintf(__('The functions are implemented corresponding to the original %sFeatured Image functions%s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
-</p>'."\n";
-
-		$screen = get_current_screen();
-		if( $screen->id != 'options-media' )
-			return;
-
-		if( get_bloginfo('version') >= 3.3 ) {
-			// PHP FUNCTIONS HELP TAB
-			$screen->add_help_tab( array(
-				'id' => 'fvp_functions_tab',
-				'title'   => 'Featured Video Plus PHP Functions',
-				'content' => $this->fvp_functions_tab_content
-			));
-
-			// SHORTCODE HELP TAB
-			$screen->add_help_tab( array(
-				'id' => 'fvp_shortcode_tab',
-				'title'   => 'Featured Video Plus Shortcode',
-				'content' => $this->fvp_shortcode_tab_content
-			));
-		}
-	}
-
-	/**
-	 * Prepares Help Tabs. WordPress 3.3+
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @since 1.3
-	 */
-	public function prepare( $screen, $tab ) {
-		printf(
-			'<p>%s</p>',
-			$tab['callback'][0]->help_tabs[ $tab['id'] ]['content']
-		);
-	}
+	private $help_shortcode;
+	private $help_functions;
 
 	/**
 	 * Initialises the plugin settings section, the settings fields and registers the options field and save function.
@@ -107,31 +36,15 @@ class featured_video_plus_settings {
 	 *
 	 * @since 1.0
 	 */
-	function settings_content() { ?>
+	function settings_content() {
+		$wrap = get_bloginfo('version') >= 3.3 ? '-wrap' : ''; ?>
 
-<p><?php printf(__('To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus'), '<code>[featured-video]</code>-Shortcode'); ?></p>
+<p>
+<?php printf(__('To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus'), '<code>[featured-video-plus]</code>-Shortcode'); ?>
+<?php printf(__('For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus'), '<a href="#contextual-help'.$wrap.'" id="fvp_help_toggle">', '</a>'); ?>
+</p>
 
-<?php 	if( get_bloginfo('version') < 3.3 ) { ?>
-
-<table>
-	<tr style="vertical-align: top;">
-		<td style="width: 50%;">
-			<h4 style="margin: 0; padding: 0;">WP Shortcode</h4>
-			<?php echo $this->fvp_shortcode_tab_content; ?>
-		</td>
-		<td style="width: 50%;">
-			<h4 style="margin: 0; padding: 0;">PHP Functions</h4>
-			<?php echo $this->fvp_functions_tab_content; ?>
-		</td>
-	</tr>
-</table>
-
-<?php 	} else { ?>
-
-<p><?php printf(__('For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus'), '<a href="#" id="fvp_help_toggle">', '</a>'); ?></p>
-
-<?php 	}
-	}
+<?php }
 
 	/**
 	 * Displays the setting if the plugin should display the featured video in place of featured images.
@@ -377,6 +290,86 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['dailymotion']['background'] 	= isset($dm_background[1]) && !empty($dm_background[1])? $dm_background[1] : '171d1b';
 
 		return $options;
+	}
+
+	/**
+	 * Initializes the help texts.
+	 *
+	 * @since 1.3
+	 */
+	public function help() {
+		$this->help_shortcode = '
+<ul>
+	<li>
+		<code>[featured-video]</code><br />
+		<span style="padding-left: 5px;">'.__('Displays the video in its default size.', 'featured-video-plus').'</span>
+	</li>
+	<li>
+		<code>[featured-video width=560]</code><br />
+		<span style="padding-left: 5px;">'.__('Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus').'</span>
+	</li>
+	<li>
+		<code>[featured-video width=560 height=315]</code><br />
+		<span style="padding-left: 5px;">'.__('Displays the video with an fixed width and height.', 'featured-video-plus').'</span>
+	</li>
+</ul>'."\n";
+
+		$this->help_functions ='
+<ul>
+	<li><code>the_post_video(array(width, height))</code></li>
+	<li><code>has_post_video(post_id = null)</code></li>
+	<li><code>get_the_post_video(post_id = null, array(width, height))</code></li>
+</ul>
+<p>
+	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used.', 'featured-video-plus'), '<code>post_id == null</code>').'<br />
+	'.sprintf(__('The functions are implemented corresponding to the original %sFeatured Image functions%s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
+</p>'."\n";
+	}
+
+	/**
+	 * Adds help tabs to contextual help. WordPress 3.3+
+	 *
+	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
+	 *
+	 * @since 1.3
+	 */
+	public function tabs() {
+		$screen = get_current_screen();
+		if( ($screen->id != 'options-media') || (get_bloginfo('version') < 3.3) )
+			return;
+
+		// PHP FUNCTIONS HELP TAB
+		$screen->add_help_tab( array(
+			'id' => 'fvp_help_functions',
+			'title'   => 'Featured Video Plus: '.__('PHP-Functions','featured-video-plus'),
+			'content' => $this->help_functions
+		));
+
+		// SHORTCODE HELP TAB
+		$screen->add_help_tab( array(
+			'id' => 'fvp_help_shortcode',
+			'title'   => 'Featured Video Plus: Shortcode',
+			'content' => $this->help_shortcode
+		));
+	}
+
+	/**
+	 * Adds help text to contextual help. WordPress 3.3-
+	 *
+	 * @see http://wordpress.stackexchange.com/a/35164
+	 *
+	 * @since 1.3
+	 */
+	public function help_pre_33( $contextual_help, $screen_id, $screen ) {
+		if( $screen->id != 'options-media' )
+			return $contextual_help;
+
+		$contextual_help .= '<hr /><h3>Featured Video Plus: '.__('PHP-Functions','featured-video-plus').'</h3>';
+		$contextual_help .= $this->help_functions;
+		$contextual_help .= '<h3>Featured Video Plus: Shortcode</h3>';
+		$contextual_help .= $this->help_shortcode;
+
+		return $contextual_help;
 	}
 
 }

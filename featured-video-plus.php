@@ -29,14 +29,16 @@ License: GPL2
 if (!defined('FVP_VERSION'))
 	define('FVP_VERSION', '1.3');
 
+// symlink proof
+$pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
 if (!defined('FVP_NAME'))
-	define('FVP_NAME', trim(dirname(plugin_basename(__FILE__)), '/'));
+	define('FVP_NAME', $pathinfo['filename']);
 
 if (!defined('FVP_DIR'))
 	define('FVP_DIR', plugin_dir_path(__FILE__));
 
 if (!defined('FVP_URL'))
-	define('FVP_URL', WP_PLUGIN_URL . '/' . FVP_NAME);
+	define('FVP_URL', plugins_url(FVP_NAME) . '/'); //
 
 // init general class, located in php/general.php
 include_once( FVP_DIR . 'php/general.php' );
@@ -70,11 +72,22 @@ if(  is_admin() ) {
 	// add upload mime types for HTML5 videos
 	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
+	// post edit help
+	add_action('admin_init', array( &$featured_video_plus_backend, 'help' ) );
+	add_action( 'load-post.php', array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
+	if( get_bloginfo('version') < 3.3 )
+		add_filter( 'contextual_help', array( &$featured_video_plus_backend, 'help_pre_33' ), 10, 3 );
+
 	// admin settings
 	include_once( FVP_DIR . 'php/settings.php' );
 	$featured_video_plus_settings = new featured_video_plus_settings();
-	add_action('admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
-	add_action( "load-options-media.php", array( &$featured_video_plus_settings, 'add_tabs' ), 20 ); // $GLOBALS['pagenow']
+	add_action( 'admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
+
+	// media settings help
+	add_action('admin_init', array( &$featured_video_plus_settings, 'help' ) );
+	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
+	if( get_bloginfo('version') < 3.3 )
+		add_filter( 'contextual_help', array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
 }
 
 

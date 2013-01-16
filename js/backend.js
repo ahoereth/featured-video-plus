@@ -64,11 +64,11 @@ jQuery(document).ready(function($){
     function handleVideoInput( obj ) {
         var value = $.trim(obj.val());
         var sec   = $.trim($('#fvp_sec').val());
+        $("#fvp_help_notice").show('fast');
 
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_video").css('backgroundColor', 'white');
             $("#fvp_sec").val( fvp_backend_data.default_value_sec ).blur().hide('fast');
-            $("#fvp_localvideo_notice").show('fast');
             $("#fvp_localvideo_format_warning").hide('fast');
         }
 
@@ -111,7 +111,6 @@ jQuery(document).ready(function($){
         if ( value.length === 0 || value == fvp_backend_data.default_value ) {
             $("#fvp_localvideo_format_warning").hide('fast');
             $("#fvp_sec").css('backgroundColor', 'white');
-            $("#fvp_localvideo_notice").hide('show');
         }
 
         if ( value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
@@ -121,7 +120,6 @@ jQuery(document).ready(function($){
                 distinctContent();
                 $("#fvp_sec").css('backgroundColor', 'white');
                 $("#fvp_localvideo_format_warning").hide('fast');
-                $("#fvp_localvideo_notice").hide('fast');
             } else {
                 distinctContent();
                 $("#fvp_sec").css('backgroundColor', 'lightYellow');
@@ -170,4 +168,11 @@ jQuery(document).ready(function($){
         $("#fvp_featimg_box_warning").addClass("fvp_hidden");
     });
 
+    /**
+     * Toggle for opening the contextual help
+     * @since 1.3
+     */
+    $('#fvp_help_toggle').bind( 'click', function() {
+        $('#contextual-help-link').trigger('click');
+    });
 });
