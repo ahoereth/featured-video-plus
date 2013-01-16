@@ -2,7 +2,7 @@
 /**
 Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
-Description: Featured Videos just like Featured Images.
+Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
 Version: 1.3
 Author URI: http://ahoereth.yrnxt.com
