@@ -141,7 +141,7 @@ class featured_video_plus {
 
 			}
 
-			$containerstyle = isset($options['sizing']['align']) ? 'style="text-align: '.$options['sizing']['align'].'"' : '';
+			$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
 			$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
 
 			$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
@@ -187,6 +187,32 @@ class featured_video_plus {
 		if($this->has_post_video())
 			echo $this->get_the_post_video(null, array($w, $h));
 
+	}
+
+	/**
+	 * Gets a post by an meta_key meta_value pair. Returns it's post_id.
+	 *
+	 * @see http://codex.wordpress.org/Class_Reference/wpdb
+	 * @see http://dev.mysql.com/doc/refman/5.0/en/regexp.html#operator_regexp
+	 * @since 1.0
+	 *
+	 * @param string $meta_key which meta_key to look for
+	 * @param string $meta_value which meta_value to look for
+	 */
+	function get_post_by_custom_meta($meta_key, $meta_value, $notThisId = 0) {
+		global $wpdb;
+		if( $notThisId > 0 )
+			$prepared = $wpdb->prepare(
+							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s AND post_id!=%d;",
+							$meta_key, $meta_value, $notThisId
+						);
+		else
+			$prepared = $wpdb->prepare(
+							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s;",
+							$meta_key, $meta_value
+						);
+
+		return $wpdb->get_var( $prepared );
 	}
 
 	/**

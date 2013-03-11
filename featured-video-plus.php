@@ -26,26 +26,27 @@ License: GPL2
 
 */
 
-if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.3');
-
 // symlink proof
 $pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
+
 if (!defined('FVP_NAME'))
 	define('FVP_NAME', $pathinfo['filename']);
-
+if (!defined('FVP_VERSION'))
+	define('FVP_VERSION', '1.3');
 if (!defined('FVP_DIR'))
 	define('FVP_DIR', plugin_dir_path(__FILE__));
-
 if (!defined('FVP_URL'))
 	define('FVP_URL', plugins_url(FVP_NAME) . '/'); //
+
 
 // init general class, located in php/general.php
 include_once( FVP_DIR . 'php/general.php' );
 $featured_video_plus = new featured_video_plus();
 
+
 // init translations
 add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
+
 
 // only on backend / administration interface
 if(  is_admin() ) {
@@ -104,27 +105,10 @@ if( !is_admin() ) {
 	// filter get_post_thumbnail output
 	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
 
+	// include api functions which are intended to be used by theme developers
+	include_once( FVP_DIR . 'php/api.php' );
 
-	// functions which are available to theme developers follow here:
-	// echos the current posts featured video
-	function the_post_video( $size = null) {
-		echo get_the_post_video(null, $size);
-	}
-
-	// returns the posts featured video
-	function get_the_post_video($post_id = null, $size = null) {
-		global $featured_video_plus;
-		return $featured_video_plus->get_the_post_video($post_id, $size);
-	}
-
-	// checks if post has a featured video
-	function has_post_video($post_id = null){
-		global $featured_video_plus;
-		return $featured_video_plus->has_post_video($post_id);
-	}
+	// shortcode
+	add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
 }
-
-// shortcode
-add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
-
 ?>
