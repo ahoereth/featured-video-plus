@@ -1,5 +1,5 @@
 <?php
-/* requires an featured_video_plus class instance, located in php/general.php
+/* Requires a featured_video_plus class instance, located in php/general.php
  *
  * @see featured-video-plus.php
  * @see php/general.php
@@ -39,7 +39,7 @@ function has_post_video($post_id = null){
  *
  * @since 1.4
  */
-function the_post_video_image_src($post_id = null) {
+function get_the_post_video_image_src($post_id = null) {
 	if($post_id == null)
 		$post_id = $GLOBALS['post']->ID;
 

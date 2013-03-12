@@ -27,7 +27,7 @@ jQuery(document).ready(function($){
      * @see http://www.jacklmoore.com/autosize
      * @since 1.0
      */
-    $(".fvp_input").autosize().blur().keypress(function(event) {
+    $(".fvp_input").autosize({append: "\n"}).blur().keypress(function(event) {
         if (event.keyCode == 13) { // enter
             event.preventDefault();
         }

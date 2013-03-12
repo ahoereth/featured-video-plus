@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
 Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
-Version: 1.3
+Version: 1.4
 Author URI: http://ahoereth.yrnxt.com
 License: GPL2
 
@@ -26,13 +26,13 @@ License: GPL2
 
 */
 
+if (!defined('FVP_VERSION'))
+	define('FVP_VERSION', '1.4');
+
 // symlink proof
 $pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
-
 if (!defined('FVP_NAME'))
 	define('FVP_NAME', $pathinfo['filename']);
-if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.3');
 if (!defined('FVP_DIR'))
 	define('FVP_DIR', plugin_dir_path(__FILE__));
 if (!defined('FVP_URL'))
@@ -64,20 +64,20 @@ if(  is_admin() ) {
 	add_action('save_post',  array( &$featured_video_plus_backend, 'metabox_save' )	 );
 
 	// enqueue admin scripts and styles
-	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 'enqueue' ) );
-	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
+	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
+	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 			'enqueue' ) );
 
 	// link to media settings on plugins overview
-	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
+	add_filter('plugin_action_links', 	array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
 
 	// add upload mime types for HTML5 videos
-	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
+	add_filter('upload_mimes', 			array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
 	// post edit help
-	add_action('admin_init', array( &$featured_video_plus_backend, 'help' ) );
-	add_action( 'load-post.php', array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
+	add_action('admin_init', 			array( &$featured_video_plus_backend, 'help' ) );
+	add_action( 'load-post.php', 		array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
-		add_filter( 'contextual_help', array( &$featured_video_plus_backend, 'help_pre_33' ), 10, 3 );
+		add_filter( 'contextual_help', 	array( &$featured_video_plus_backend, 'help_pre_33' ), 10, 3 );
 
 	// admin settings
 	include_once( FVP_DIR . 'php/settings.php' );
@@ -85,7 +85,7 @@ if(  is_admin() ) {
 	add_action( 'admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
 
 	// media settings help
-	add_action('admin_init', array( &$featured_video_plus_settings, 'help' ) );
+	add_action('admin_init',  array( &$featured_video_plus_settings, 'help' ) );
 	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
 		add_filter( 'contextual_help', array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
@@ -105,10 +105,11 @@ if( !is_admin() ) {
 	// filter get_post_thumbnail output
 	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
 
-	// include api functions which are intended to be used by theme developers
-	include_once( FVP_DIR . 'php/api.php' );
-
 	// shortcode
 	add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
 }
+
+
+// include api functions which are intended to be used by developers
+include_once( FVP_DIR . 'php/functions.php' );
 ?>

@@ -61,25 +61,31 @@ function featured_video_plus_upgrade() {
 						'fs' 	=> 1
 					);
 				$options['dailymotion'] = array(
-						'foreground' => 'F7FFFD',
-						'highlight' => 'FFC300',
-						'background' => '171D1B',
-						'logo' 	 => 1,
-						'info' 	 => 1
+						'foreground' 	=> 'F7FFFD',
+						'highlight' 	=> 'FFC300',
+						'background' 	=> '171D1B',
+						'logo' 		=> 1,
+						'info' 		=> 1
 					);
 				$options['sizing'] = array(
-						'wmode'  => $options['width'],
-						'hmode'  => $options['height'],
-						'width'  => 560,
-						'height' => 315,
-						'align'  => 'left'
+						'wmode' 	=> $options['width'],
+						'hmode' 	=> $options['height'],
+						'width' 	=> 560,
+						'height' 	=> 315,
+						'align' 	=> 'left'
 					);
 				unset( $options['width'], $options['height'] );
 
+			case '1.3':
+				$notice = isset($notice) ? $notice : 'upgrade_13';
 
-				// this has to be refreshed in every version, stays last
-				$options['version'] = FVP_VERSION;
-				break;
+				$options['autoplay'] 					= 0;
+				$options['youtube']['logo'] 			= 1;
+				$options['dailymotion']['syndication'] 	= '';
+
+		// *************************************************************
+			$options['version'] = FVP_VERSION;
+			break;
 		}
 
 		$featured_video_plus_notices = new featured_video_plus_notices();
@@ -108,6 +114,27 @@ function featured_video_plus_upgrade() {
  * @since 1.2
  */
 class featured_video_plus_notices {
+	private $pluginpage;
+
+	/**
+	 * Initialize class variables.
+	 *
+	 * @since 1.4
+	 */
+	function __construct( $featured_video_plus_instance ){
+		$this->$pluginpage = 'http://wordpress.org/extend/plugins/featured-video-plus#plugin-title';
+	}
+
+	/**
+	 * Upgrade notification 1.3 to current version
+	 *
+	 * @since 1.4
+	 */
+	function upgrade_13() {
+		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more plenty of awesome stuff.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" target="_blank">', '</a>');
+		echo "</p></div>\n";
+	}
 
 	/**
 	 * Upgrade notification 1.2 to current version
@@ -116,7 +143,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_12() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" target="_blank">', '</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" target="_blank">', '</a>');
 		echo "</p></div>\n";
 	}
 
@@ -127,7 +154,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_11() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="http://wordpress.org/extend/plugins/featured-video-plus/" traget="_blank">','</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" traget="_blank">','</a>');
 		echo "</p></div>\n";
 	}
 

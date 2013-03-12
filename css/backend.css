@@ -75,3 +75,8 @@
 .fvp_invalid {
 	background-color: #FA8072;
 }
+
+.fvp_radio_bumper {
+	float: left;
+	width: 100px;
+}

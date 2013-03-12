@@ -22,8 +22,8 @@ class featured_video_plus {
 		if( !is_admin() || ( $hook_suffix == 'post.php' && isset($_GET['post']) ) ) {
 
 			// http://videojs.com/
-			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js' );
-			wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css' );
+			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', array(), FVP_VERSION, true );
+			wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', array(), FVP_VERSION, true );
 
 			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
@@ -77,6 +77,8 @@ class featured_video_plus {
 		else
 			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
 
+		$autoplay = is_single() ? '&autoplay='.$options['autoplay'] : '';
+
 		if( isset($meta['id']) && !empty($meta['id']) ) {
 			switch( $meta['prov'] ) {
 
@@ -101,18 +103,19 @@ class featured_video_plus {
 
 				case 'vimeo':
 					$options = get_option( 'fvp-settings' );
-					$embed = "\n\t" . '<iframe src="http://player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].'" width="'.$width.'" height="'.$height.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
+					$src = 'http://player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].$autoplay;
+					$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$width.'" height="'.$height.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
 					break;
 
 				case 'youtube':
-					$youtube['attr'] 	= isset($meta['attr']) && !empty($meta['attr']) ? '#t=' . $meta['attr'] : '';
 					$youtube['theme'] 	= isset($options['youtube']['theme']) 	? $options['youtube']['theme'] 	: 'dark';
 					$youtube['color'] 	= isset($options['youtube']['color']) 	? $options['youtube']['color'] 	: 'red';
 					$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
+					$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
 					$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 	: 1;
 					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 	: 1;
 
-					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&origin='.home_url().'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].$youtube['attr'];
+					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['attr'].$autoplay;
 					$embed = "\n\t" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$src.'" type="text/html" frameborder="0"></iframe>' . "\n";
 					break;
 
@@ -122,7 +125,10 @@ class featured_video_plus {
 					$dm['background'] 	= isset($options['dailymotion']['background']) 	? 	$options['dailymotion']['background'] 	: '171D1B';
 					$dm['logo'] 		= isset($options['dailymotion']['logo']) 		? 	$options['dailymotion']['logo'] 		: 1;
 					$dm['hideinfo'] 	= isset($options['dailymotion']['info']) 		? 1-$options['dailymotion']['info'] 		: 0;
-					$dm['src'] = 'http://www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$dm['logo'].'&hideInfos='.$dm['hideinfo'].'&foreground=%23'.$dm['foreground'].'&highlight=%23'.$dm['highlight'].'&background=%23'.$dm['background'];
+					$dm['syndication'] 	= isset($options['dailymotion']['syndication']) ? 	$options['dailymotion']['syndication'] 	: '';
+					$dm['synd']			= !empty($dm['syndication']) 					? 	'&syndication='.$dm['syndication']		: '';
+
+					$dm['src'] = 'http://www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$dm['logo'].'&hideInfos='.$dm['hideinfo'].'&foreground=%23'.$dm['foreground'].'&highlight=%23'.$dm['highlight'].'&background=%23'.$dm['background'].$dm['synd'].'&start='.$meta['attr'].$autoplay;
 					$embed = "\n" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$dm['src'].'" frameborder="0"></iframe>' . "\n";
 					break;
 
