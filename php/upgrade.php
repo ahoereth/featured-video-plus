@@ -83,6 +83,9 @@ function featured_video_plus_upgrade() {
 				$options['youtube']['logo'] 			= 1;
 				$options['dailymotion']['syndication'] 	= '';
 
+				$options['align'] = $options['sizing']['wmode'] == 'auto' ? 'center' : $option['sizing']['align'];
+				unset( $options['sizing']['align'] );
+
 		// *************************************************************
 			$options['version'] = FVP_VERSION;
 			break;

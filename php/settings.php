@@ -21,8 +21,9 @@ class featured_video_plus_settings {
 		add_settings_section('fvp-settings-section', 	__('Featured Videos', 'featured-video-plus'), 				array( &$this, 'settings_content' ), 	'media');
 
 		add_settings_field('fvp-settings-overwrite', 	__('Replace Featured Images', 'featured-video-plus'), 		array( &$this, 'settings_overwrite' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-autoplay', 	__('Autoplay', 'featured-video-plus'), 						array( &$this, 'settings_autoplay' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-sizing', 		__('Video Sizing', 'featured-video-plus'), 					array( &$this, 'settings_sizing' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-autoplay', 	__('Autoplay', 'featured-video-plus'), 		array( &$this, 'settings_autoplay' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-align', 		__('Video Align', 'featured-video-plus'), 					array( &$this, 'settings_align' ), 		'media', 'fvp-settings-section');
 		//add_settings_field('fvp-settings-videojs', 		__('VIDEOJS Player Options', 'featured-video-plus'), 		array( &$this, 'settings_videojs' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-youtube', 		__('YouTube Player Options', 'featured-video-plus'), 		array( &$this, 'settings_youtube' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-vimeo', 		__('Vimeo Player Options', 'featured-video-plus'), 			array( &$this, 'settings_vimeo' ), 		'media', 'fvp-settings-section');
@@ -70,6 +71,25 @@ if( !current_theme_supports('post-thumbnails') )
 
 }
 
+
+	/**
+	 * Displays the setting if videos should autoplay when a single post/page is being viewed.
+	 *
+	 * @since 1.4
+	 */
+	function settings_autoplay() {
+		$options 	= get_option( 'fvp-settings' );
+		$autoplay 	= isset($options['autoplay']) ? $options['autoplay'] : 0;
+?>
+
+<span class="fvp_radio_bumper">
+	<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="true" 	<?php checked( 1, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?></label>
+</span>
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="false" 	<?php checked( 0, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
+<p class="description"><?php _e('YouTube, Vimeo and Dailymotion videos can autoplay when a single post/page is being viewed.', 'featured-video-plus'); ?></p>
+
+<?php }
+
 	/**
 	 * Displays the setting if the plugin should fit the width of the videos automatically or use fixed widths.
 	 *
@@ -82,8 +102,7 @@ if( !current_theme_supports('post-thumbnails') )
 		$width = isset($options['sizing']['width' ]) ? $options['sizing']['width' ] : 560;
 		$height= isset($options['sizing']['height']) ? $options['sizing']['height'] : 315;
 		$wclass= $wmode == 'auto' ? ' fvp_readonly' : '';
-		$hclass= $hmode == 'auto' ? ' fvp_readonly' : '';
-		$align = isset($options['sizing']['align']) ? $options['sizing']['align'] : 'left'; ?>
+		$hclass= $hmode == 'auto' ? ' fvp_readonly' : ''; ?>
 
 <span class="fvp_toggle_input">
 	<label class="fvp_grouplable"><?php _e('Width', 'featured-video-plus'); ?>:</label>
@@ -107,33 +126,23 @@ if( !current_theme_supports('post-thumbnails') )
 <p class="description">
 	<?php _e('When using <code>auto</code> the video will be adjusted to fit it\'s parent element while sticking to it\'s ratio. Using a <code>fixed</code> height and width might result in <em>not so pretty</em> black bars.', 'featured-video-plus'); ?>
 </p>
-<span class="fvp_toggle_input">
-	<label class="fvp_grouplable"><?php _e('Align', 'featured-video-plus'); ?>:</label>
-	<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-1" value="left" 	<?php checked( 'left', 	$align, true ) ?>/><label for="fvp-settings-align-1">&nbsp;<?php _e('left', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-2" value="center" <?php checked( 'center',$align, true ) ?>/><label for="fvp-settings-align-2">&nbsp;<?php _e('center', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="fvp-settings[sizing][align]" id="fvp-settings-align-3" value="right"	<?php checked( 'right', $align, true ) ?>/><label for="fvp-settings-align-3">&nbsp;<?php _e('right', 'featured-video-plus'); ?></label>
-</span>
 
 <?php }
 
 	/**
-	 * Displays the setting if videos should autoplay when a single post/page is being viewed.
+	 * How should the videos be aligned? Only interesting when wmode is set to fixed.
+	 * Feature integrated in 1.3, got it own function in 1.4
 	 *
 	 * @since 1.4
 	 */
-	function settings_autoplay() {
-		$options 	= get_option( 'fvp-settings' );
-		$autoplay 	= isset($options['autoplay']) ? $options['autoplay'] : 0;
-?>
+	function settings_align() {
+		$align = isset($options['align']) ? $options['align'] : 'center'; ?>
 
-<span class="fvp_radio_bumper">
-	<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="true" 	<?php checked( 1, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?></label>
-</span>
-<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="false" 	<?php checked( 0, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
-<p class="description"><?php _e('YouTube, Vimeo and Dailymotion videos can autoplay when a single post/page is being viewed.', 'featured-video-plus'); ?></p>
+<input type="radio" name="fvp-settings[align]" id="fvp-settings-align-1" value="left" 	<?php checked( 'left', 	$align, true ) ?>/><label for="fvp-settings-align-1">&nbsp;<?php _e('left', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[align]" id="fvp-settings-align-2" value="center" <?php checked( 'center',$align, true ) ?>/><label for="fvp-settings-align-2">&nbsp;<?php _e('center', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[align]" id="fvp-settings-align-3" value="right"	<?php checked( 'right', $align, true ) ?>/><label for="fvp-settings-align-3">&nbsp;<?php _e('right', 'featured-video-plus'); ?></label>
 
 <?php }
-
 	/**
 	 * Displays the settings to style the VIDEOJS player.
 	 *
@@ -290,7 +299,9 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['sizing']['height'] = isset($height[0]) ? $height[0] : 315;
 		$options['sizing']['wmode' ] = isset($input['sizing']['width' ]['auto'])?  'auto' 			: 'fixed';
 		$options['sizing']['hmode' ] = isset($input['sizing']['height' ]['auto'])? 'auto' 			: 'fixed';
-		$options['sizing']['align' ] = isset($input['sizing']['align']) ? $input['sizing']['align'] : 'left';
+
+		// Align
+		$options['align' ] = isset($input['align']) ? $input['align'] : 'center';
 
 		// Autoplay
 		$options['autoplay'] = isset($input['autoplay'])  && $input['autoplay'] == 'true' ? 1 : 0;
