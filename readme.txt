@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.5
-Stable tag: 1.3
+Stable tag: 1.4
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -56,9 +56,13 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Changelog ==
 
+= 1.4 =
+* time-links now available for YouTube and Dailymotion (append #t=1m2s)
+* Let your videos autoplay when a single post/page is being viewed
+* Specify your Dailymotion Syndication Key
+
 = 1.3 =
-* Added internationalization capabilities
-* Added German translation
+* __Internationalization__: Added German translations
 * Revamped video sizing
 * Added customizations for YouTube and Dailymotion
 * Plenty better error handling
@@ -66,7 +70,7 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 * Liveleak (experimental, they do not have any API)
 
 = 1.2 =
-* __Added support for local videos__
+* __Local Videos__
 * Allow webM mime type for media upload
 * Added Media Settings link in plugin info
 * More notices/warnings
@@ -75,10 +79,10 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 * fixed some other stuff
 
 = 1.1 =
-* __Added Dailymotion__
-* fixed youtube 'start at specific time' embeds
-* overhaul of the interaction between Featured Videos and Featured Images
-* existing featured images will no longer be replaced by newly added featured videos in the administration interface
+* __Dailymotion__
+* Fixed youtube 'start at specific time' embeds
+* Enhanced interaction of Featured Videos & Featured Images
+* Featured Images will no longer be replaced by newly added Featured Videos
 
 = 1.0 =
 * Release
