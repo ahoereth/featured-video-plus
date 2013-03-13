@@ -349,29 +349,37 @@ if( !current_theme_supports('post-thumbnails') )
 		$this->help_shortcode = '
 <ul>
 	<li>
-		<code>[featured-video]</code><br />
+		<code>[featured-video-plus]</code><br />
 		<span style="padding-left: 5px;">'.__('Displays the video in its default size.', 'featured-video-plus').'</span>
 	</li>
 	<li>
-		<code>[featured-video width=560]</code><br />
+		<code>[featured-video-plus width=560]</code><br />
 		<span style="padding-left: 5px;">'.__('Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus').'</span>
 	</li>
 	<li>
-		<code>[featured-video width=560 height=315]</code><br />
+		<code>[featured-video-plus width=560 height=315]</code><br />
 		<span style="padding-left: 5px;">'.__('Displays the video with an fixed width and height.', 'featured-video-plus').'</span>
 	</li>
 </ul>'."\n";
 
 		$this->help_functions ='
-<ul>
-	<li><code>the_post_video(array(width, height))</code></li>
-	<li><code>has_post_video(post_id = null)</code></li>
-	<li><code>get_the_post_video(post_id = null, array(width, height))</code></li>
+<ul class="fvp_code_list">
+	<li><code>the_post_video( $size )</code></li>
+	<li><code>has_post_video( $post_id )</code></li>
+	<li><code>get_the_post_video( $post_id, $size )</code></li>
+	<li><code>get_the_post_video_image_url( $post_id )</code></li>
+	<li><code>get_the_post_video_image( $post_id )</code></li>
 </ul>
 <p>
-	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used.', 'featured-video-plus'), '<code>post_id == null</code>').'<br />
-	'.sprintf(__('The functions are implemented corresponding to the original %sFeatured Image functions%s: They are intended to be used and to act the same way.', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" title="Post Thumbnails Function Reference">', '</a>').'
-</p>'."\n";
+	'.sprintf(__('All parameters are optional. If %s the current post\'s id will be used. %s is either a string keyword (thumbnail, medium, large or full) or a 2-item array representing width and height in pixels, e.g. array(32,32).', 'featured-video-plus'), '<code>post_id == null</code>', '<code>$size</code>').'<br />
+</p>
+<p style="margin-bottom: 0;">
+	'.sprintf(__('The functions are implemented corresponding to the original %sfunctions%s: They are intended to be used and to act the same way. Take a look into the WordPress Codex for further guidance:', 'featured-video-plus'), '<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank">'.__('Featured Image').'&nbsp;', '</a>').'
+</p>
+<ul class="fvp_code_list" style="margin-top: 0;">
+	<li><code><a href="http://codex.wordpress.org/Function_Reference/the_post_thumbnail" target="_blank">get_the_post_thumbnail</a></code></li>
+	<li><code><a href="http://codex.wordpress.org/Function_Reference/wp_get_attachment_image" target="_blank">wp_get_attachment_image</a></code></li>
+</ul>'."\n";
 	}
 
 	/**

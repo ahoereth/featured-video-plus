@@ -68,7 +68,8 @@ class featured_video_plus_backend {
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
 				'wp_upload_dir' 	=> $upload_dir['baseurl'],
 				'default_value' 	=> $this->default_value,
-				'default_value_sec' => $this->default_value_sec
+				'default_value_sec' => $this->default_value_sec,
+				'wp_version' 		=> get_bloginfo('version')
 			) );
 		}
 
@@ -107,7 +108,7 @@ class featured_video_plus_backend {
 		$tmp2 = get_post_meta( $tmp1, '_fvp_image', true);
 		$has_featimg = empty($tmp1) ? false : true;
 		$featimg_is_fvp = empty($tmp2) ? false : true;
-		$has_post_video = $this->featured_video_plus->has_post_video($post_id);
+		$has_post_video = has_post_video($post_id);
 
 		$options = get_option( 'fvp-settings' );
 		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
@@ -125,10 +126,17 @@ class featured_video_plus_backend {
 		// input box containing the featured video URL
 		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
 		$legal= isset($meta['valid']) && !$meta['valid'] ? ' fvp_invalid' : '';
-		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text" title="' . $this->default_value . '" />' . $full . '</textarea>' . "\n";
+		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
+		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
+		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
+		echo "</div>\n";
 
 		$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
-		echo '<textarea class="fvp_input" id="fvp_sec" name="fvp_sec" type="text" title="' . $this->default_value_sec . '" />' . $sec . '</textarea>' . "\n";
+		$class = $sec == $this->default_value_sec ? ' defaultTextActive' : '';
+		echo '<div class="fvp_input_wrapper" id="fvp_sec_wrapper" data-title="'.__('Set Featured Video Fallback', 'featured-video-plus').'" data-button="'.__('Set featured video fallback', 'featured-video-plus').'" data-target="#fvp_sec">'."\n\t";
+		echo '<textarea class="fvp_input'.$class.'" id="fvp_sec" name="fvp_sec" type="text">' . $sec . '</textarea>' . "\n\t";
+		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
+		echo "</div>\n";
 
 		// local video format warning
 		echo '<div id="fvp_localvideo_format_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
@@ -146,11 +154,12 @@ class featured_video_plus_backend {
 		echo "<div id=\"fvp_help_notice\" class=\"fvp_notice".$class."\">\n\t<p class=\"description\">\n\t\t";
 		echo '<span style="font-weight: bold;">'.__('Hint', 'featured-video-plus').':</span>&nbsp;'.sprintf(__('Take a look into the %sContextual Help%s.', 'featured-video-plus'), '<a href="#contextual-help'.$wrap.'" id="fvp_help_toggle">', '</a>');
 		echo "\n\t</p>\n</div>\n";
-
+?>
+<?php
 		// no featured image warning
 		$class = $has_featimg || !$has_post_video || (isset($options['overwrite']) && !$options['overwrite']) ? ' fvp_hidden' : '';
 		echo '<div id="fvp_featimg_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">';
-		echo '<span style="font-weight: bold;">Featured Image:</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
+		echo '<span style="font-weight: bold;">'.__('Featured Image').':</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
 		echo "</p>\n</div>\n";
 
 		// set as featured image
@@ -194,33 +203,10 @@ class featured_video_plus_backend {
 
 		$sec = isset($_POST['fvp_sec']) && !empty($_POST['fvp_sec']) && $_POST['fvp_sec'] != $this->default_value_sec ? trim($_POST['fvp_sec']) : '';
 
-		// something changed
-		if( ( empty($video) ) || 							// no video or
-			( isset($meta) && ($video != $meta['full'])) ) 	// new video?
-			{
+		// Did the video input field value change?
+		if( ( (isset($meta) && !empty($meta)) && empty($video) ) )
+			$this->delete_featured_video_image($post_id, $meta);
 
-			if(!empty($meta)) { // new video!
-
-				// get this post's featured image
-				$tmp = get_post_meta( get_post_thumbnail_id($post_id), '_fvp_image', true);
-				if( !empty( $tmp ) ) {
-
-					// are there other posts which use the same featured image?
-					$tmp2 = $this->featured_video_plus->get_post_by_custom_meta( '_thumbnail_id', $meta['img'], $post_id );
-					if( !empty( $tmp2 ) ) {
-						// no, we can safely delete it
-						$img = $this->featured_video_plus->get_post_by_custom_meta('_fvp_image', $meta['prov'] . '?' . $meta['id'] );
-						wp_delete_attachment( $img );
-						delete_post_meta( $img, '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
-					}
-
-					delete_post_meta( $post_id, '_thumbnail_id' );
-				}
-
-				delete_post_meta( $post_id, '_fvp_video' );
-			}
-
-		}
 
 		// there is no video to save, end process
 		if( empty($video) )
@@ -408,16 +394,17 @@ class featured_video_plus_backend {
 					break;
 
 				// run dirty regex on the websites source code to get the actual video URL
-				preg_match('#jwplayer\("player_([\d\w]{12})[\d\w]{2}"\)\.setup\({([^}}\))]+)#', $response['body'], $llmeta);
+				preg_match('#jwplayer\("(?:(?:file)|(?:player))_([\d\w]{10,14})"\)\.setup\({([^}}\))]+)#', $response['body'], $llmeta);
 				if( isset($llmeta[1]) || isset($llmeta[2]) ) {
-
 					$video_id = $llmeta[1];
+
 
 					$llmeta = explode(',', $llmeta[2]);
 					foreach( $llmeta as $line ) {
 						$thisline = explode(': ', $line);
 						$data[trim($thisline[0])] = trim($thisline[1]);
 					}
+					print_r($data);
 
 					preg_match('#class="section_title".*>([\s\w]+)</span>#', $response['body'], $title);
 					preg_match('#id="body_text".*><p>(.*)<\/p><\/#', $response['body'], $desc);
@@ -430,7 +417,7 @@ class featured_video_plus_backend {
 						'timestamp' 	=> time(),
 						'author' 		=> '', // <strong>By:</strong> <a href="http://www.liveleak.com/c/k-doe">k-doe</a>
 						'tags' 			=> '', // <strong>Tags:</strong> <a href="browse?q=Drive By">Drive By</a>, <a href="browse?q=Fire Extinguisher">Fire Extinguisher</a><br />
-						'img' 			=> trim($data['image'],"\""),
+						'img' 			=> isset($data['image']) ? trim($data['image'],"\"") : '',
 						'url' 			=> 'http://liveleak.com/view?i='.$video_data[1]
 					);
 					break;
@@ -455,18 +442,20 @@ class featured_video_plus_backend {
 		if( !isset($video_id) )
 			$valid = false;
 
-		// do we have a screen capture to pull?
+		// Do we have a screen capture to pull?
 		if( isset($video_info['img']) && !empty($video_info['img']) ) {
+			// First delete the old image
+			$this->delete_featured_video_image($post_id, $meta);
 
-			// is this screen capture already existing in our media library?
+			// Is this screen capture already existing in our media library?
 			$video_img = $this->featured_video_plus->get_post_by_custom_meta('_fvp_image', $video_prov . '?' . $video_id);
 			if( !isset($video_img) ) {
 
-				// generate attachment post metadata
+				// Generate attachment post metadata
 				$video_img_data = array(
-					'post_content' => $video_info['description'],
-					'post_title' => $video_info['title'],
-					'post_name' => $video_info['filename']
+					'post_content' 	=> $video_info['description'],
+					'post_title' 	=> $video_info['title'],
+					'post_name' 	=> $video_info['filename']
 				);
 
 				// pull external img to local server and add to media library
@@ -501,19 +490,39 @@ class featured_video_plus_backend {
 		}
 
 		$meta = array(
-			'full' 	=> ( isset($video_info['url']) && !empty($video_info['url']) ) ? $video_info['url'] : $video,
-			'id' 	=> isset($video_id) ? $video_id : '',
-			'sec' 	=> isset($sec) ? $sec : '',
-			'sec_id'=> ( isset($video_sec_id) && !empty($video_sec_id) ) ? $video_sec_id : '',
-			'img' 	=> isset($video_img) ? $video_img : '',
-			'prov' 	=> isset($video_prov) ? $video_prov : '',
-			'attr' 	=> isset($video_attr) ? $video_attr : '',
+			'full' 	=> isset($video_info['url']) && !empty($video_info['url']) 	? $video_info['url'] : $video,
+			'id' 	=> isset($video_id) 	? $video_id : '',
+			'sec' 	=> isset($sec) 			? $sec : '',
+			'sec_id'=> isset($video_sec_id) 	 && !empty($video_sec_id) 		? $video_sec_id 	 : '',
+			'img' 	=> isset($video_img) 	? $video_img : '',
+			'prov' 	=> isset($video_prov) 	? $video_prov : '',
+			'attr' 	=> isset($video_attr) 	? $video_attr : '',
 			'valid' => $valid
 		);
 
 		update_post_meta( $post_id, '_fvp_video', serialize($meta) );
 
 		return;
+	}
+
+	/**
+	 * Removes the old featured ima
+	 * Used since 1.0, got it own function in 1.4
+	 *
+	 * @since 1.4
+	 */
+	function delete_featured_video_image($post_id, $meta) {
+		delete_post_meta( $post_id, '_fvp_video' );
+
+		// Unset featured image if it is from this video
+		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
+
+		// Check if other posts use the image, if not we can delete it completely
+		$other = $this->featured_video_plus->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
+		if( empty( $other ) ) {
+			wp_delete_attachment( $meta['img'] );
+			delete_post_meta( $meta['img'], '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
+		}
 	}
 
 	/**
@@ -573,14 +582,14 @@ class featured_video_plus_backend {
 			return;
 
 		if( get_bloginfo('version') >= 3.3 ) {
-			// PHP FUNCTIONS HELP TAB
+			// LOCALVIDEOS HELP TAB
 			$screen->add_help_tab( array(
 				'id' => 'fvp_help_localvideos',
 				'title'   => __('Featured Video','featured-video-plus').':&nbsp;'.__('Local Media', 'featured-video-plus'),
 				'content' => $this->help_localmedia
 			));
 
-			// SHORTCODE HELP TAB
+			// LEGAL URLs HELP TAB
 			$screen->add_help_tab( array(
 				'id' => 'fvp_help_urls',
 				'title'   => __('Featured Video','featured-video-plus').':&nbsp;'.__('Valid URLs', 'featured-video-plus'),

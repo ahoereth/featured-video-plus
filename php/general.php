@@ -22,8 +22,8 @@ class featured_video_plus {
 		if( !is_admin() || ( $hook_suffix == 'post.php' && isset($_GET['post']) ) ) {
 
 			// http://videojs.com/
-			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', array(), FVP_VERSION, true );
-			wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', array(), FVP_VERSION, true );
+			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', array(), FVP_VERSION, false );
+			wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', array(), FVP_VERSION, false );
 
 			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
@@ -43,39 +43,17 @@ class featured_video_plus {
 	 * @param bool $container
 	 */
 	public function get_the_post_video($post_id = null, $size = null) {
+		$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
-		if($post_id == null)
-			$post_id = $GLOBALS['post']->ID;
-
-		if( !$this->has_post_video($post_id) )
+		if( !has_post_video($post_id) )
 			return false;
 
-		$meta = unserialize( get_post_meta($post_id, '_fvp_video', true) );
-		$options = get_option( 'fvp-settings' );
+		$meta 	= unserialize( get_post_meta($post_id, '_fvp_video', true) );
+		$options= get_option( 'fvp-settings' );
 
-		if( !is_array($size) ) {
-			if( isset($_wp_additional_image_sizes[$size]) )
-				$width = $_wp_additional_image_sizes[$size]['width'];
-			elseif( $size == 'thumbnail' || $size == 'thumb' )
-				$width = get_option( 'thumbnail_size_w' );
-			else if( $size == 'medium' )
-				$width = get_option( 'medium_size_w' );
-			else if( $size == 'large' )
-				$width = get_option( 'large_size_w' );
-			elseif( isset($options['sizing']['wmode']) && $options['sizing']['wmode'] == 'fixed' )
-				$width = $options['sizing']['width']; // auto width is applied by fitvids JS
-			else
-				$width = 560;
-
-		} elseif( !empty( $size[0] ) && is_numeric( $size[0] ) )
-			$width  = $size[0];
-		else
-			$width = 560;
-
-		if( isset($size[1]) && !empty( $size[1] ) && is_numeric( $size[1] ) )
-			$height = $size[1];
-		else
-			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
+		$size 	= $this->get_size($size);
+		$width 	= $size[0];
+		$height = $size[1];
 
 		$autoplay = is_single() ? '&autoplay='.$options['autoplay'] : '';
 
@@ -88,7 +66,7 @@ class featured_video_plus {
 					$ext = pathinfo( $meta['full'], PATHINFO_EXTENSION );
 					if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' ) break;
 					$ext = $ext == 'ogv' ? 'ogg' : $ext;
-					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" poster="" data-setup="{}">'; // poster="'.$featimg.'" data-setup="{}"
+					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" data-setup="{}">'; // poster="'.$featimg.'" data-setup="{}"
 					$embed .= "\n\t\t".'<source src="' . $meta['full'] . '" type="video/'.$ext.'">';
 
 					if( isset($meta['sec_id']) && !empty($meta['sec_id']) ) {
@@ -158,41 +136,36 @@ class featured_video_plus {
 	}
 
 	/**
-	 * Checks if current post or post provided by parameter has a featured video.
-	 *
-	 * @since 1.0
-	 *
-	 * @param int $post_id id of post to check for featured video
+	 * Determine featured video size
 	 */
-	public function has_post_video($post_id = null){
+	function get_size($size = null) {
+		$options = get_option( 'fvp-settings' );
 
-		if($post_id == null)
-			$post_id = $GLOBALS['post']->ID;
+		if( !is_array($size) ) {
+			if( isset($_wp_additional_image_sizes[$size]) )
+				$width = $_wp_additional_image_sizes[$size]['width'];
+			elseif( $size == 'thumbnail' || $size == 'thumb' )
+				$width = get_option( 'thumbnail_size_w' );
+			else if( $size == 'medium' )
+				$width = get_option( 'medium_size_w' );
+			else if( $size == 'large' )
+				$width = get_option( 'large_size_w' );
+			elseif( isset($options['sizing']['wmode']) && $options['sizing']['wmode'] == 'fixed' )
+				$width = $options['sizing']['width']; // auto width is applied by fitvids JS
+			else
+				$width = 560;
 
-		$meta = unserialize( get_post_meta( $post_id, '_fvp_video', true ) );
+		} elseif( !empty( $size[0] ) && is_numeric( $size[0] ) )
+			$width  = $size[0];
+		else
+			$width = 560;
 
-		if( !isset($meta) || empty($meta['id']) )
-			return false;
+		if( isset($size[1]) && !empty( $size[1] ) && is_numeric( $size[1] ) )
+			$height = $size[1];
+		else
+			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
 
-		return true;
-
-	}
-
-	/**
-	 * Shortcode for usage in post or page entries. Echos the post's featured video.
-	 *
-	 * @since 1.0
-	 *
-	 * @param array $atts can contain the width and/or height how the featured video should be displayed in px, optional
-	 */
-	function shortcode($atts){
-
-		$w = isset($atts['width'])  ? $atts['width'] : '';
-		$h = isset($atts['height']) ? $atts['height'] : '';
-
-		if($this->has_post_video())
-			echo $this->get_the_post_video(null, array($w, $h));
-
+		return array( $width, $height );
 	}
 
 	/**
@@ -205,19 +178,12 @@ class featured_video_plus {
 	 * @param string $meta_key which meta_key to look for
 	 * @param string $meta_value which meta_value to look for
 	 */
-	function get_post_by_custom_meta($meta_key, $meta_value, $notThisId = 0) {
+	function get_post_by_custom_meta($meta_key, $meta_value) {
 		global $wpdb;
-		if( $notThisId > 0 )
-			$prepared = $wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s AND post_id!=%d;",
-							$meta_key, $meta_value, $notThisId
-						);
-		else
-			$prepared = $wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s;",
-							$meta_key, $meta_value
-						);
-
+		$prepared = $wpdb->prepare(
+						"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s;",
+						$meta_key, $meta_value
+					);
 		return $wpdb->get_var( $prepared );
 	}
 

@@ -43,6 +43,8 @@ if (!defined('FVP_URL'))
 include_once( FVP_DIR . 'php/general.php' );
 $featured_video_plus = new featured_video_plus();
 
+// include api functions which are intended to be used by developers
+include_once( FVP_DIR . 'php/functions.php' );
 
 // init translations
 add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
@@ -100,16 +102,13 @@ if( !is_admin() ) {
 
 	// enqueue scripts and styles
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
-	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 'enqueue' ) );
+	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 		 'enqueue' ) );
 
 	// filter get_post_thumbnail output
-	add_filter('post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
+	add_filter(		'post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
 
 	// shortcode
-	add_shortcode( 'featured-video-plus', array( &$featured_video_plus, 'shortcode' ) );
+	add_shortcode( 	'featured-video-plus', array( &$featured_video_plus_frontend, 'shortcode' ) );
 }
 
-
-// include api functions which are intended to be used by developers
-include_once( FVP_DIR . 'php/functions.php' );
 ?>

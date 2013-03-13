@@ -33,12 +33,14 @@ The plugin adds customization options to your Media Settings. Beside aesthetic i
 	[featured-video-plus width=300]
 
 = PHP functions =
-All parameters are optional. If no post_id is given the current post's id will be used.
 
-	the_post_video(array(width, height))
-	has_post_video(post_id)
-	get_the_post_video(post_id, size(width, height))
+	the_post_video( $size )
+	has_post_video( $post_id )
+	get_the_post_video( $post_id, $size )
+	get_the_post_video_image_url( $post_id )
+	get_the_post_video_image( $post_id )
 
+All parameters are optional. If no `$post_id` is given the current post's id will be used. `$size` is either a string keyword (thumbnail, medium, large or full) or a 2-item array representing width and height in pixels, e.g. array(32,32).
 
 
 
@@ -58,33 +60,31 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 = 1.4 =
 * time-links now available for YouTube and Dailymotion (append #t=1m2s)
-* Let your videos autoplay when a single post/page is being viewed
+* `autoplay` setting now available in media settings
 * Specify your Dailymotion Syndication Key
+* Added `get_the_post_video_image` & `get_the_post_video_image_url`
+* WP 3.5 Media Manager now seamless integrated
+* Fixed LiveLeak
 
-= 1.3 =
+= 1.3: 2013-01-16 =
 * __Internationalization__: Added German translations
-* Revamped video sizing
 * Added customizations for YouTube and Dailymotion
-* Plenty better error handling
-* Added contextual help on media settings and post edit screen
-* Liveleak (experimental, they do not have any API)
+* Revamped video sizing
+* Better error handling
+* Contextual help on media settings and post edit screen
+* LiveLeak (experimental)
 
-= 1.2 =
-* __Local Videos__
-* Allow webM mime type for media upload
-* Added Media Settings link in plugin info
-* More notices/warnings
-* More JS
-* minimized JS and CSS
-* fixed some other stuff
+= 1.2: 2013-01-09 =
+* __Local Videos__: mp4, webm, ogg
+* More dynamic user interface
+* Minimized JS and CSS
 
-= 1.1 =
+= 1.1: 2012-12-16 =
 * __Dailymotion__
-* Fixed youtube 'start at specific time' embeds
+* Fixed YouTube time-links
 * Enhanced interaction of Featured Videos & Featured Images
-* Featured Images will no longer be replaced by newly added Featured Videos
 
-= 1.0 =
+= 1.0: 2012-12-13 =
 * Release
 
 

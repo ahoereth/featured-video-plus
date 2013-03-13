@@ -51,10 +51,25 @@ class featured_video_plus_frontend {
 		global $_wp_additional_image_sizes;
 
 		$options = get_option( 'fvp-settings' );
-		if( !$options['overwrite'] || !$this->featured_video_plus->has_post_video( $post_id ) )
+		if( !$options['overwrite'] || !has_post_video( $post_id ) )
 			return $html;
 
-		return $this->featured_video_plus->get_the_post_video( $post_id, $size );
+		return get_the_post_video( $post_id, $size );
+	}
+
+	/**
+	 * Shortcode for usage in post or page entries. Echos the post's featured video.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array $atts can contain the width and/or height how the featured video should be displayed in px, optional
+	 */
+	function shortcode($atts){
+		$w = isset($atts['width'])  ? $atts['width'] : '';
+		$h = isset($atts['height']) ? $atts['height'] : '';
+
+		if(has_post_video())
+			echo get_the_post_video(null, array($w, $h));
 	}
 }
 ?>

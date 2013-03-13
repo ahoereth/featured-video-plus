@@ -124,8 +124,8 @@ class featured_video_plus_notices {
 	 *
 	 * @since 1.4
 	 */
-	function __construct( $featured_video_plus_instance ){
-		$this->$pluginpage = 'http://wordpress.org/extend/plugins/featured-video-plus#plugin-title';
+	function __construct(){
+		$this->pluginpage = 'http://wordpress.org/extend/plugins/featured-video-plus#plugin-title';
 	}
 
 	/**
@@ -135,7 +135,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_13() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more plenty of awesome stuff.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" target="_blank">', '</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more plenty of awesome stuff.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
 		echo "</p></div>\n";
 	}
 
@@ -146,7 +146,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_12() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" target="_blank">', '</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features more customization settings, internationalization, better error handling and experimental LiveLeak integration.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
 		echo "</p></div>\n";
 	}
 
@@ -157,7 +157,7 @@ class featured_video_plus_notices {
 	 */
 	function upgrade_11() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->$pluginpage.'" traget="_blank">','</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s now supports <strong>Local Videos</strong>, LiveLeak integration (experimental), many more customization settings and better error handling.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" traget="_blank">','</a>');
 		echo "</p></div>\n";
 	}
 

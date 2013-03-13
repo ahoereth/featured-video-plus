@@ -80,3 +80,21 @@
 	float: left;
 	width: 100px;
 }
+
+.fvp_input_wrapper {
+	position: relative;
+}
+.fvp_input {
+	padding-right: 21px;
+}
+.fvp_media_icon {
+	background: transparent no-repeat top left;
+	display: block;
+	width: 15px;
+	height: 15px;
+	position: absolute; top: 4px; right: 4px;
+}
+
+.fvp_code_list li {
+	margin-bottom: 0;
+}
