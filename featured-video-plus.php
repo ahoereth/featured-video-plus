@@ -36,8 +36,7 @@ if (!defined('FVP_NAME'))
 if (!defined('FVP_DIR'))
 	define('FVP_DIR', plugin_dir_path(__FILE__));
 if (!defined('FVP_URL'))
-	define('FVP_URL', plugins_url(FVP_NAME) . '/'); //
-
+	define('FVP_URL', plugins_url(FVP_NAME) . '/');
 
 // init general class, located in php/general.php
 include_once( FVP_DIR . 'php/general.php' );
@@ -51,8 +50,9 @@ add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
 
 
 // only on backend / administration interface
-if(  is_admin() ) {
+if( is_admin() ) {
 	// plugin upgrade/setup
+	$fvp_upgrade = false;
 	include_once( FVP_DIR . '/php/upgrade.php' );
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
@@ -90,7 +90,7 @@ if(  is_admin() ) {
 	add_action('admin_init',  array( &$featured_video_plus_settings, 'help' ) );
 	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
-		add_filter( 'contextual_help', array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
+		add_filter( 'contextual_help', 	array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
 }
 
 

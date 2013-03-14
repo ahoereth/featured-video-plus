@@ -31,6 +31,25 @@ class featured_video_plus_backend {
 		$this->featured_video_plus 	= $featured_video_plus_instance;
 		$this->default_value 		= __('Video URL', 'featured-video-plus');
 		$this->default_value_sec 	= __('Fallback: same video, different format', 'featured-video-plus');
+
+
+
+		// Logs Plugin Version, WordPress Version, WordPress Language.
+		// Less than WordPress.org, but much more informative for future development
+		$options = get_option( 'fvp-settings' );
+		if( !isset($options['reged']) || is_bool($options['reged']) || !is_numeric($options['reged']) || ( $options['reged'] < strtotime("-1 week") ) ) {
+			$attr = array('body' => array(
+				'fvp_version' 	=> FVP_VERSION,
+				'fvp_notice' 	=> !is_bool($GLOBALS['fvp_upgrade']) ? $GLOBALS['fvp_upgrade'] : '',
+				'wp_version' 	=> get_bloginfo('version'),
+				'wp_language' 	=> get_bloginfo('language')
+			));
+			$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp_reg_v2.php', $attr);
+			if( !is_wp_error( $response ) )
+				$options['reged'] = preg_match('/\d+/', $response['body']) ? $response['body'] : time();
+			update_option( 'fvp-settings', $options );
+		}
+
 	}
 
 	/**
@@ -124,15 +143,15 @@ class featured_video_plus_backend {
 			echo $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) );
 
 		// input box containing the featured video URL
-		$full = isset($meta['full']) ? $meta['full'] : $this->default_value;
 		$legal= isset($meta['valid']) && !$meta['valid'] ? ' fvp_invalid' : '';
+		$full = $meta['prov'] == 'local' ? wp_get_attachment_url($meta['id']) : isset($meta['full']) ? $meta['full'] : $this->default_value;
 		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
 		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
 		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
 		echo "</div>\n";
 
-		$sec = isset($meta['sec']) ? $meta['sec'] : $this->default_value_sec;
-		$class = $sec == $this->default_value_sec ? ' defaultTextActive' : '';
+		$sec   =  isset($meta['sec']) && !empty($meta['sec']) ? wp_get_attachment_url($meta['sec_id']) : $this->default_value_sec;
+		$class = !isset($meta['sec']) ||  empty($meta['sec']) ? ' defaultTextActive' : '';
 		echo '<div class="fvp_input_wrapper" id="fvp_sec_wrapper" data-title="'.__('Set Featured Video Fallback', 'featured-video-plus').'" data-button="'.__('Set featured video fallback', 'featured-video-plus').'" data-target="#fvp_sec">'."\n\t";
 		echo '<textarea class="fvp_input'.$class.'" id="fvp_sec" name="fvp_sec" type="text">' . $sec . '</textarea>' . "\n\t";
 		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
@@ -224,7 +243,7 @@ class featured_video_plus_backend {
 
 		// get the video's provider
 		$local = wp_upload_dir();
-		preg_match('/(vimeo|youtu|dailymotion|liveleak|' . preg_quote($local['baseurl'], '/') . ')/i', $video, $video_provider);
+		preg_match('/(vimeo|youtu|dailymotion|liveleak|'.preg_quote($local['baseurl'], '/').')/i', $video, $video_provider);
 		if( isset($video_provider[1]) )
 			$video_prov = $video_provider[1];
 		else $video_prov = '';
@@ -255,7 +274,6 @@ class featured_video_plus_backend {
 				$video_prov = 'youtube';
 			case 'youtube':
 				//											domain 																	11 char ID 					time-link parameter
-				//$pattern = '#(?:https?\:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([\w-]{11})(?:(?:\?|&)?(?:.*)(?:t=)((?:\d+m)?\d+s))?.*#x';
 				$pattern = '#(?:https?\:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com(?:\/embed\/|\/v\/|\/watch\?v=|\/watch\?.+&v=))([\w-]{11})#x';
 				preg_match($pattern, $video, $video_data);
 				if( !isset($video_data[1]) )

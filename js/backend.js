@@ -190,6 +190,13 @@ jQuery(document).ready(function($){
     });
 
 
+    /**
+     * Button in the top right of the Featured Video box. Planned for a feature release.
+     *
+     * @since 1.#
+     */
+    //$('#featured_video_plus-box .handlediv').after('<div class="box_topright"><a href="#" id="fvp_remove" title="Remove Featured Video"><br /></div></div>');
+
     if( fvp_backend_data.wp_version < 3.5 )
         $('.fvp_video_choose').hide().addClass('fvp_hidden');
 

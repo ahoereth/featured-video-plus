@@ -269,10 +269,7 @@ if( !current_theme_supports('post-thumbnails') )
 	function settings_rate() {
 		echo '<p>';
 		printf(
-			__('
-				If you have found a bug or are missing a specific video service, please %slet me know%s in the support forum.
-				Elsewise, if you like the plugin: Please %srate it!%s', 'featured-video-plus'
-			),
+			__('If you have found a bug or are missing a specific video service, please %slet me know%s in the support forum. Elsewise, if you like the plugin: Please %srate it!%s', 'featured-video-plus'),
 			'<a href="http://wordpress.org/support/plugin/featured-video-plus#plugin-title" 				title="Featured Video Plus Support Forum on WordPress.org" 	target="_blank" style="font-weight: bold;">', '</a>',
 			'<a href="http://wordpress.org/support/view/plugin-reviews/featured-video-plus#plugin-title" 	title="Rate Featured Video Plus on WordPress.org" 			target="_blank" style="font-weight: bold;">', '</a>'
 		);
