@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: featured-video-plus 1.3 de_DE\n"
-"POT-Creation-Date: 2013-01-16 00:57+0100\n"
-"PO-Revision-Date: 2013-01-16 00:57+0100\n"
+"POT-Creation-Date: 2013-03-14 20:15+0100\n"
+"PO-Revision-Date: 2013-03-14 20:20+0100\n"
 "Last-Translator: Alexander Höreth <a.hoereth@gmail.com>\n"
 "Language-Team: a.hoereth <a.hoereth@gmail.com>\n"
 "Language: de_DE\n"
@@ -23,16 +23,16 @@ msgstr "Video URL"
 msgid "Fallback: same video, different format"
 msgstr "Fallback: gleiche Video, anderes Format"
 
-#: php/backend.php:89 php/backend.php:533 php/backend.php:540
-#: php/backend.php:557 php/backend.php:559
+#: php/backend.php:108 php/backend.php:606 php/backend.php:613
+#: php/backend.php:630 php/backend.php:632
 msgid "Featured Video"
-msgstr "Artikelvideo"
+msgstr "Beitragsvideo"
 
-#: php/backend.php:120
+#: php/backend.php:139
 msgid "Outdated WordPress Version"
 msgstr "Veraltete WordPress Version"
 
-#: php/backend.php:120
+#: php/backend.php:139
 #, php-format
 msgid ""
 "There is WordPress 3.5 out there! The plugin supports older versions way "
@@ -41,66 +41,86 @@ msgstr ""
 "Es gibt schon WordPress 3.5! Das Plugin unterstützt alle Versionen ab 3.1 - "
 "aber %s ist wirklich zu alt!"
 
-#: php/backend.php:136 php/backend.php:486
+#: php/backend.php:148
+msgid "Set Featured Video"
+msgstr "Beitragsvideo festlegen"
+
+#: php/backend.php:148
+msgid "Set featured video"
+msgstr "Beitragsvideo festlegen"
+
+#: php/backend.php:155
+msgid "Set Featured Video Fallback"
+msgstr "Beitragsvideo-Ersatz festlegen"
+
+#: php/backend.php:155
+msgid "Set featured video fallback"
+msgstr "Beitragsvideo Fallback festlegen"
+
+#: php/backend.php:162 php/backend.php:559
 msgid "Supported Video Formats"
 msgstr "Unterstützte Videoformate"
 
-#: php/backend.php:136
+#: php/backend.php:162
 msgid "or"
 msgstr "oder"
 
-#: php/backend.php:136 php/backend.php:485
+#: php/backend.php:162 php/backend.php:558
 msgid "More information"
 msgstr "Mehr Informationen"
 
-#: php/backend.php:141
+#: php/backend.php:167
 msgid "Fallback Video"
 msgstr "Fallback Video"
 
-#: php/backend.php:141
+#: php/backend.php:167
 msgid ""
 "The two input fields should contain the same video but in distinct formats."
 msgstr ""
 "Die zwei Eingabefelder sollen das gleiche Video in unterschiedlichen "
 "Formaten enthalten."
 
-#: php/backend.php:148
+#: php/backend.php:174
 msgid "Hint"
 msgstr "Hinweis"
 
-#: php/backend.php:148
+#: php/backend.php:174
 #, php-format
 msgid "Take a look into the %sContextual Help%s."
 msgstr "Wirf einen Blick in die %sHilfe%s."
 
-#: php/backend.php:154
+#: php/backend.php:181 php/settings.php:374
+msgid "Featured Image"
+msgstr ""
+
+#: php/backend.php:181
 msgid ""
 "For automatically displaying the Featured Video a Featured Image is required."
 msgstr ""
 "Um das Artikelvideo automatisch im Theme anzeigen zu können, muss ein "
 "Artikelbild festgelegt werden."
 
-#: php/backend.php:159
+#: php/backend.php:186
 msgid "Set as Featured Image"
-msgstr "Als Artikelbild festlegen"
+msgstr "Als Beitragsbild festlegen"
 
-#: php/backend.php:163 php/settings.php:66
+#: php/backend.php:190 php/settings.php:70
 msgid "The current theme does not support Featured Images"
-msgstr "Das aktuelle Theme nutzt keine Artikelbilder."
+msgstr "Das aktuelle Theme nutzt keine Beitragsbilder."
 
-#: php/backend.php:163
+#: php/backend.php:190
 #, php-format
 msgid ""
 "To display Featured Videos you need to use the <code>Shortcode</code> or "
 "<code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace "
 "Featured Images</em>&quot; in the %sMedia Settings%s."
 msgstr ""
-"Damit Artikelvideos in deinem Theme angezeigt werden, musst du den "
+"Damit Beitragsvideos in deinem Theme angezeigt werden, musst du den "
 "<code>Shortcode</code> oder die <code>PHP-Funktionen</code> verwenden. Um "
 "diese Warnung zu verstecken, deaktiviere &quot;<em>Artikelbilder ersetzen</"
 "em>&quot; in deinen %sMedien Einstellungen%s."
 
-#: php/backend.php:480
+#: php/backend.php:553
 #, php-format
 msgid ""
 "To use local videos, copy the <code>Link To Media File</code> from your "
@@ -109,7 +129,7 @@ msgstr ""
 "Um lokale Videos zu nutzen, kopiere den <code>Link zur Medien-Datei</code> "
 "aus deiner %sMediathek%s und füge ihn in das Textfeld ein."
 
-#: php/backend.php:481
+#: php/backend.php:554
 #, php-format
 msgid ""
 "To use local videos, copy the <code>File URL</code> from your %sMedia Library"
@@ -118,7 +138,7 @@ msgstr ""
 "Um lokale Videos zu nutzen, kopiere die <code>Datei-URL</code> aus deiner "
 "%sMediathek%s und füge sie in das Textfeld ein."
 
-#: php/backend.php:485
+#: php/backend.php:558
 msgid ""
 "The second text field is intended to hold the URL to the same video in a "
 "different format. It will be used as fallback if the primary file can not be "
@@ -128,11 +148,11 @@ msgstr ""
 "Videoformat gedacht. Dieses zweite Video wird dann als Fallback benutzt, "
 "falls das erste Video nicht kompatibel ist."
 
-#: php/backend.php:488
+#: php/backend.php:561
 msgid "Converting your videos"
 msgstr "Videos konvertieren"
 
-#: php/backend.php:489
+#: php/backend.php:562
 #, php-format
 msgid ""
 "Take a look at the %sMiro Video Converter%s. It is open source, lightweight "
@@ -141,11 +161,11 @@ msgstr ""
 "Schau dir den %sMiro Video Converter%s an. Er is Open Source, klein, einfach "
 "zu verwenden und mit Windows, Mac und Linux kompatibel."
 
-#: php/backend.php:490
+#: php/backend.php:563
 msgid "Fixing upload errors"
 msgstr "Videoupload Fehler beheben"
 
-#: php/backend.php:492
+#: php/backend.php:565
 #, php-format
 msgid ""
 "Read %sthis%s on how to increase the <strong>maximum file upload size</"
@@ -154,7 +174,7 @@ msgstr ""
 "Lies %sdas hier%s, um zu erfahren, wie man das <strong>Dateigrößenlimit</"
 "strong> erhöht."
 
-#: php/backend.php:493
+#: php/backend.php:566
 #, php-format
 msgid ""
 "WordPress by default does not support <code>webM</code>. The plugin "
@@ -165,11 +185,11 @@ msgstr ""
 "aktiviert die unterstützung, aber manchmal reicht das noch nicht. %sHier%s "
 "gibt es mehr Informationen."
 
-#: php/backend.php:495
+#: php/backend.php:568
 msgid "Flash Fallback"
 msgstr "Flash Fallback"
 
-#: php/backend.php:496
+#: php/backend.php:569
 #, php-format
 msgid ""
 "The video player, %sVIDEOJS%s, features an Adobe Flash fallback. All you "
@@ -178,7 +198,7 @@ msgstr ""
 "Der Video Player, %sVIDEOJS%s, bietet einen Adobe Flash Fallback. Du musst "
 "einfach nur ein <code>mp4</code>-Video einbinden."
 
-#: php/backend.php:500
+#: php/backend.php:573
 msgid ""
 "These are some of the tested URL formats. Everything in bold is required, "
 "everything in brackets is optional."
@@ -186,39 +206,51 @@ msgstr ""
 "Das hier sind einige getestete URL Formate. Alles fettgedruckte ist "
 "notwendig, alles in Klammern optional."
 
-#: php/backend.php:533 php/backend.php:557
+#: php/backend.php:606 php/backend.php:630
 msgid "Local Media"
 msgstr "Lokale Medien"
 
-#: php/backend.php:540 php/backend.php:559
+#: php/backend.php:613 php/backend.php:632
 msgid "Valid URLs"
 msgstr "Video URLs"
 
+#: php/settings.php:21
+msgid "Featured Videos"
+msgstr "Beitragsvideos"
+
 #: php/settings.php:23
 msgid "Replace Featured Images"
-msgstr "Artikelbilder ersetzen"
+msgstr "Beitragsbilder ersetzen"
 
 #: php/settings.php:24
+msgid "Autoplay"
+msgstr ""
+
+#: php/settings.php:25
 msgid "Video Sizing"
 msgstr "Videogröße"
 
 #: php/settings.php:26
+msgid "Video Align"
+msgstr "Video-Ausrichtung"
+
+#: php/settings.php:28
 msgid "YouTube Player Options"
 msgstr "YouTube Player Optionen"
 
-#: php/settings.php:27
+#: php/settings.php:29
 msgid "Vimeo Player Options"
 msgstr "Vimeo Player Optionen"
 
-#: php/settings.php:28
+#: php/settings.php:30
 msgid "Dailymotion Player Options"
 msgstr "Dailymotion Player Optionen"
 
-#: php/settings.php:29
+#: php/settings.php:31
 msgid "Support"
 msgstr "Support"
 
-#: php/settings.php:43
+#: php/settings.php:45
 #, php-format
 msgid ""
 "To display your featured videos you can either make use of the automatic "
@@ -229,7 +261,7 @@ msgstr ""
 "der Artikelbilder nutzen, auf den %s zurückgreifen oder manuel die PHP-"
 "Funktionen in deine Theme Dateien integrieren."
 
-#: php/settings.php:44
+#: php/settings.php:46
 #, php-format
 msgid ""
 "For more information about Shortcode and PHP functions see the %sContextual "
@@ -238,20 +270,20 @@ msgstr ""
 "Für mehr Informationen über den Shortcode und die PHP-Funktionen schaue in "
 "die %sHilfe%s."
 
-#: php/settings.php:59
+#: php/settings.php:62 php/settings.php:86
 msgid "yes"
 msgstr "ja"
 
-#: php/settings.php:59 php/settings.php:89 php/settings.php:99
-#: php/settings.php:130
+#: php/settings.php:62 php/settings.php:88 php/settings.php:111
+#: php/settings.php:121 php/settings.php:142 php/settings.php:160
 msgid "default"
 msgstr "default"
 
-#: php/settings.php:60
+#: php/settings.php:64 php/settings.php:88
 msgid "no"
 msgstr "nein"
 
-#: php/settings.php:61
+#: php/settings.php:65
 msgid ""
 "If a Featured Video is available it can be displayed in place of the "
 "Featured Image. Still, a Featured Image is required."
@@ -259,7 +291,7 @@ msgstr ""
 "Wenn ein Artikelvideo vorhanden ist kann es anstelle des Artikelbildes "
 "angezeigt werden. Dafür muss trotzdem ein Artikelbild gesetzt sein!"
 
-#: php/settings.php:66
+#: php/settings.php:70
 msgid ""
 "To display Featured Videos you need to use the <code>Shortcode</code> or "
 "<code>PHP functions</code>."
@@ -267,15 +299,23 @@ msgstr ""
 "Um Artikelvideos anzuzeigen musst du den <code>Shortcode</code> oder die "
 "<code>PHP-Funktionen</code> nutzen."
 
-#: php/settings.php:86
+#: php/settings.php:89
+msgid ""
+"YouTube, Vimeo and Dailymotion videos can autoplay when a single post/page "
+"is being viewed."
+msgstr ""
+"Wenn gesetzt, starten YouTube, Vimeo und Dailymotion Videos automatisch wenn "
+"sie auf der Seite eines einzelnen Beitrags angezeigt werden."
+
+#: php/settings.php:108
 msgid "Width"
 msgstr "Breite"
 
-#: php/settings.php:96
+#: php/settings.php:118
 msgid "Height"
 msgstr "Höhe"
 
-#: php/settings.php:105
+#: php/settings.php:127
 msgid ""
 "When using <code>auto</code> the video will be adjusted to fit it's parent "
 "element while sticking to it's ratio. Using a <code>fixed</code> height and "
@@ -286,105 +326,102 @@ msgstr ""
 "beizubehalten. Feste Breite und/oder Höhe kann zu <em>nicht so schönen</em> "
 "schwarzen Balken führen."
 
-#: php/settings.php:108
-msgid "Align"
-msgstr "Ausrichtung"
-
-#: php/settings.php:110
+#: php/settings.php:141
 msgid "left"
 msgstr "links"
 
-#: php/settings.php:111
+#: php/settings.php:142
 msgid "center"
 msgstr "zentriert"
 
-#: php/settings.php:112
+#: php/settings.php:143
 msgid "right"
 msgstr "rechts"
 
-#: php/settings.php:135
+#: php/settings.php:165
 msgid "VIDEOJS Player Options"
 msgstr "VIDEOJS Player Optionen"
 
-#: php/settings.php:152
+#: php/settings.php:183
 msgid "Light Theme"
-msgstr "Helle Theme"
+msgstr "Helles Design"
 
-#: php/settings.php:153
-msgid "White Progressbar"
-msgstr "Weißer Fortschrittsbalken"
+#: php/settings.php:184
+msgid "Info"
+msgstr "Info"
 
-#: php/settings.php:154
-msgid "Show Info"
-msgstr "Info anzeigen"
-
-#: php/settings.php:155
+#: php/settings.php:185
 msgid "Fullscreen Button"
 msgstr "Vollbildschalter"
 
-#: php/settings.php:156
+#: php/settings.php:186
 msgid "Related Videos"
 msgstr "Verwandte Videos"
 
-#: php/settings.php:177
-msgid "Portrait"
-msgstr "Portrait"
+#: php/settings.php:187
+msgid "White Progressbar"
+msgstr "Weißer Fortschrittsbalken"
 
-#: php/settings.php:178
-msgid "Title"
-msgstr "Titel"
-
-#: php/settings.php:179
-msgid "Byline"
-msgstr "Author"
-
-#: php/settings.php:182
-msgid "Color"
-msgstr "Farbe"
-
-#: php/settings.php:186
-msgid "Vimeo Plus Videos might ignore these settings."
-msgstr "Vimeo Plus Videos können diese Einstellungen ignorieren."
-
-#: php/settings.php:207
+#: php/settings.php:189 php/settings.php:241
 msgid "Logo"
 msgstr "Logo"
 
-#: php/settings.php:208
+#: php/settings.php:210
+msgid "Portrait"
+msgstr "Portrait"
+
+#: php/settings.php:211
+msgid "Title"
+msgstr "Titel"
+
+#: php/settings.php:212
+msgid "Byline"
+msgstr "Author"
+
+#: php/settings.php:215
+msgid "Color"
+msgstr "Farbe"
+
+#: php/settings.php:219
+msgid "Vimeo Plus Videos might ignore these settings."
+msgstr "Vimeo Plus Videos können diese Einstellungen ignorieren."
+
+#: php/settings.php:242
 msgid "Videoinfo"
 msgstr "Videoinfo"
 
-#: php/settings.php:212
+#: php/settings.php:243
+msgid "Syndication Key"
+msgstr "Syndication Schlüssel"
+
+#: php/settings.php:247
 msgid "Foreground"
 msgstr "Vordergrund"
 
-#: php/settings.php:217
+#: php/settings.php:252
 msgid "Highlight"
 msgstr "Hervorhebung"
 
-#: php/settings.php:222
+#: php/settings.php:257
 msgid "Background"
 msgstr "Hintergrund"
 
-#: php/settings.php:236
-msgid "Found a bug or <strong>missing a specific video service</strong>?"
+#: php/settings.php:272
+#, php-format
+msgid ""
+"If you have found a bug or are missing a specific video service, please "
+"%slet me know%s in the support forum. Elsewise, if you like the plugin: "
+"Please %srate it!%s"
 msgstr ""
-"Hast du einen Fehler gefunden oder <strong>fehlt dir eine bestimmte Video "
-"Plattform</strong>?"
+"Wenn du einen Fehler gefunden hast oder einen bestimmten Video-Anbieter "
+"vermisst, %ssag bescheid%s; Ansonsten, wenn dir das Plugin gefällt, bitte "
+"%sbewerte es!%s"
 
-#: php/settings.php:238
-msgid "Do you like the plugin?"
-msgstr "Gefällt dir das Plugin?"
-
-#: php/settings.php:238
-msgid "rate it"
-msgstr "bewerte es"
-
-#: php/settings.php:305
+#: php/settings.php:350
 msgid "Displays the video in its default size."
 msgstr "Stellt das Video in seiner Standardgröße dar."
 
-#: php/settings.php:309
+#: php/settings.php:354
 msgid ""
 "Displays the video with an width of 300 pixel. Height will be fitted to the "
 "aspect ratio."
@@ -392,58 +429,81 @@ msgstr ""
 "Stellt das Video mit einer breite von 300 Pixeln dar. Die Höhe wird "
 "automatisch angepasst, so dass das Seitenverhältniss erhalten bleibt."
 
-#: php/settings.php:313
+#: php/settings.php:358
 msgid "Displays the video with an fixed width and height."
 msgstr "Stellt das Video mit fester Breite und Höhe dar."
 
-#: php/settings.php:324
-#, php-format
-msgid "All parameters are optional. If %s the current post's id will be used."
-msgstr ""
-"Alle Parameter sind optional. Wenn %s gilt, wird die ID vom aktuellen "
-"Eintrag verwendet."
-
-#: php/settings.php:325
+#: php/settings.php:371
 #, php-format
 msgid ""
-"The functions are implemented corresponding to the original %sFeatured Image "
-"functions%s: They are intended to be used and to act the same way."
+"All parameters are optional. If %s the current post's id will be used. %s is "
+"either a string keyword (thumbnail, medium, large or full) or a 2-item array "
+"representing width and height in pixels, e.g. array(32,32)."
 msgstr ""
-"Die Funktionen sind so implementiert, dass sie sich genauso verhalten wie "
-"die originalen %sArtikelbilder-Funktionen%s."
+"Alle Parameter sind optional. Wenn %s gilt, wird die ID des aktuellen "
+"Beitrags genutzt. %s ist entweder ein String (thumbnail, medium, large oder "
+"full) oder ein Array mit zwei Stellen (Breite und Höhe); Zum Beispiel array"
+"(32,32)."
 
-#: php/settings.php:344 php/settings.php:367
+#: php/settings.php:374
+#, php-format
+msgid ""
+"The functions are implemented corresponding to the original %sfunctions%s: "
+"They are intended to be used and to act the same way. Take a look into the "
+"WordPress Codex for further guidance:"
+msgstr ""
+"Die Funktionen sind nach den original %sFunktionen%s implementiert. Sie "
+"sollten genauso genutzt werden können und sich genauso verhalten. Schau dir "
+"für mehr Informationen den WordPress Codex an:"
+
+#: php/settings.php:397 php/settings.php:420
 msgid "PHP-Functions"
 msgstr "PHP-Funktionen"
 
-#: php/upgrade.php:119 php/upgrade.php:130
+#: php/upgrade.php:129 php/upgrade.php:140 php/upgrade.php:151
 msgid "Featured Video Plus was <strong>upgraded</strong>."
 msgstr "Featured Video Plus wurde <strong>aktualisiert</strong>."
 
-#: php/upgrade.php:119
+#: php/upgrade.php:129
 #, php-format
 msgid ""
-"%s features more customization settings, internationalization, better error "
-"handling and experimental LiveLeak integration."
+"%s features a seamless <strong>WP3.5 Media Manager</strong> integration, "
+"time-links (#t=4m2s) for YouTube and Dailymotion, some new options and new "
+"PHP functions for developers."
 msgstr ""
-"%s  integriert mehr Einstellungsmöglichkeiten, Internationalisierung, "
-"bessere Fehlerbehandlung und experimentelle LiveLeak Integration."
+"%s unterstützt jetzt den neuen <strong>WP3.5 Media Manager</strong>, Links "
+"zu einer bestimmten Startzeit bei YouTube und Dailymotion Videos (#t=4m2s), "
+"ein paar mehr Einstellungsmöglichkeiten und neue PHP Funktionen für "
+"Entwickler."
 
-#: php/upgrade.php:119 php/upgrade.php:130
+#: php/upgrade.php:129 php/upgrade.php:140 php/upgrade.php:151
 #, php-format
 msgid "If you like the plugin, please %srate it%s."
 msgstr "Wenn dir das Plugin gefällt, bitte %sbewerte es%s."
 
-#: php/upgrade.php:130
+#: php/upgrade.php:140
 #, php-format
 msgid ""
-"%s now supports <strong>Local Videos</strong>, LiveLeak integration "
-"(experimental), many more customization settings and better error handling."
+"%s features a seamless WP3.5 Media Manager integration, time-links (#t=4m2s) "
+"for YouTube and Dailymotion, more customization settings and "
+"internationalization."
 msgstr ""
-"%s integriert unterstützung für <strong>lokale Videos</strong> und LiveLeak "
-"(experimentell), mehr Einstellungsmöglichkeiten und bessere Fehlerbehandlung."
+"%s unterstützt jetzt den neuen WP3.5 Media Manager, Links für eine bestimmte "
+"Startzeit in YouTube und Dailymotion Videos (#t=4m2s), Internationalisierung "
+"und mehr Einstellungsmöglichkeiten."
 
-#: php/upgrade.php:142
+#: php/upgrade.php:151
+#, php-format
+msgid ""
+"%s features support for <strong>Local Videos</strong>, a seamless WP3.5 "
+"Media Manager integration, time-links (#t=4m2s) for YouTube and Dailymotion "
+"and many more customization settings."
+msgstr ""
+"%s unterstützt jetzt <strong>lokale Videos</strong>, den neuen WP3.5 Media "
+"Manager, Links für eine bestimmte Startzeit (#t=4m2s) bei YouTube und "
+"Dailymotion Videos und viel mehr Einstellungsmöglichkeiten."
+
+#: php/upgrade.php:163
 #, php-format
 msgid ""
 "Featured Video Plus is <strong>ready to use</strong>. There is a new box on "
@@ -453,6 +513,33 @@ msgstr ""
 "Featured Video Plus wurde <strong>aktiviert</strong>. Beim bearbeiten deiner "
 "Einträge gibt es eine neue Box um Artikelvideos hinzuzufügen. Außerdem: "
 "<strong>Schau in deine %sMedien Einstellungen%s</strong>."
+
+#~ msgid ""
+#~ "%s features more customization settings, internationalization, better "
+#~ "error handling and experimental LiveLeak integration."
+#~ msgstr ""
+#~ "%s integriert mehr Einstellungsmöglichkeiten, Internationalisierung, "
+#~ "bessere Fehlerbehandlung und experimentelle LiveLeak Integration."
+
+#~ msgid "Align"
+#~ msgstr "Ausrichtung"
+
+#~ msgid "Found a bug or <strong>missing a specific video service</strong>?"
+#~ msgstr ""
+#~ "Hast du einen Fehler gefunden oder <strong>fehlt dir eine bestimmte Video "
+#~ "Plattform</strong>?"
+
+#~ msgid "Do you like the plugin?"
+#~ msgstr "Gefällt dir das Plugin?"
+
+#~ msgid "rate it"
+#~ msgstr "bewerte es"
+
+#~ msgid ""
+#~ "All parameters are optional. If %s the current post's id will be used."
+#~ msgstr ""
+#~ "Alle Parameter sind optional. Wenn %s gilt, wird die ID vom aktuellen "
+#~ "Eintrag verwendet."
 
 #~ msgid ""
 #~ "Featured Video Plus was <strong>upgraded</strong>. Version <strong>%s</"
