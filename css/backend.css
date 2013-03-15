@@ -84,7 +84,7 @@
 .fvp_input_wrapper {
 	position: relative;
 }
-.fvp_input {
+#featured_video_plus-box .fvp_input {
 	padding-right: 21px;
 }
 .fvp_media_icon {

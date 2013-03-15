@@ -5,7 +5,7 @@ jQuery(document).ready(function($){
      * @since 1.0
      */
     $(".fvp_input").blur(function() {
-        $(this).val( $.trim($(this).val()) ).trigger('autosize');
+        $(this).val( $.trim($(this).val()) );
         value = $(this).val();
         if((value.length === 0)                          ||
            (value == fvp_backend_data.default_value    ) ||
@@ -16,6 +16,7 @@ jQuery(document).ready(function($){
             else
                 $(this).val( fvp_backend_data.default_value_sec );
         }
+        $(this).trigger('autosize');
     });
 
     /**
@@ -36,7 +37,7 @@ jQuery(document).ready(function($){
      * @see http://www.jacklmoore.com/autosize
      * @since 1.0
      */
-    $(".fvp_input").trigger("blur").autosize().keypress(function(event) { //{append: "\n"}
+    $(".fvp_input").autosize().trigger("blur").keypress(function(event) { //{append: "\n"}
         if (event.keyCode == 13) { // enter
             event.preventDefault();
         }
@@ -197,9 +198,6 @@ jQuery(document).ready(function($){
      */
     //$('#featured_video_plus-box .handlediv').after('<div class="box_topright"><a href="#" id="fvp_remove" title="Remove Featured Video"><br /></div></div>');
 
-    if( fvp_backend_data.wp_version < 3.5 )
-        $('.fvp_video_choose').hide().addClass('fvp_hidden');
-
     /**
      * Making use of the WordPress 3.5 Media Manager
      *
@@ -252,6 +250,7 @@ jQuery(document).ready(function($){
             });
         }
     };
-    mediaControl.init();
 
+    if(fvp_backend_data.wp_35 == 1)
+        mediaControl.init();
 });

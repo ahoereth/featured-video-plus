@@ -51,15 +51,13 @@ add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
 
 // only on backend / administration interface
 if( is_admin() ) {
-	// plugin upgrade/setup
-	$fvp_upgrade = false;
-	include_once( FVP_DIR . '/php/upgrade.php' );
-	add_action( 'admin_init', 'featured_video_plus_upgrade' );
-
-
 	// init backend class, located in php/backend.php
 	include_once( FVP_DIR . 'php/backend.php' );
 	$featured_video_plus_backend = new featured_video_plus_backend($featured_video_plus);
+
+	// plugin upgrade/setup
+	include_once( FVP_DIR . '/php/upgrade.php' );
+	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
 	// admin meta box
 	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );

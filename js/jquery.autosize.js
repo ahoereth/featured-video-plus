@@ -1,10 +1,9 @@
 /*
-	jQuery Autosize v1.16.6
+	jQuery Autosize v1.16.5
 	(c) 2013 Jack Moore - jacklmoore.com
-	updated: 2013-03-12
+	updated: 2013-02-11
 	license: http://www.opensource.org/licenses/mit-license.php
 */
-
 
 
 (function ($) {
@@ -167,13 +166,13 @@
 				ta[oninput] = adjust;
 			}
 
-			$(window).on('resize', function(){
+			$(window).resize(function(){
 				active = false;
 				adjust();
 			});
 
 			// Allow for manual triggering if needed.
-			$ta.on('autosize', function(){
+			$ta.bind('autosize', function(){
 				active = false;
 				adjust();
 			});

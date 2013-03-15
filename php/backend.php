@@ -31,25 +31,6 @@ class featured_video_plus_backend {
 		$this->featured_video_plus 	= $featured_video_plus_instance;
 		$this->default_value 		= __('Video URL', 'featured-video-plus');
 		$this->default_value_sec 	= __('Fallback: same video, different format', 'featured-video-plus');
-
-
-
-		// Logs Plugin Version, WordPress Version, WordPress Language.
-		// Less than WordPress.org, but much more informative for future development
-		$options = get_option( 'fvp-settings' );
-		if( !isset($options['reged']) || is_bool($options['reged']) || !is_numeric($options['reged']) || ( $options['reged'] < strtotime("-1 week") ) ) {
-			$attr = array('body' => array(
-				'fvp_version' 	=> FVP_VERSION,
-				'fvp_notice' 	=> !is_bool($GLOBALS['fvp_upgrade']) ? $GLOBALS['fvp_upgrade'] : '',
-				'wp_version' 	=> get_bloginfo('version'),
-				'wp_language' 	=> get_bloginfo('language')
-			));
-			$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp_reg_v2.php', $attr);
-			if( !is_wp_error( $response ) )
-				$options['reged'] = preg_match('/\d+/', $response['body']) ? $response['body'] : time();
-			update_option( 'fvp-settings', $options );
-		}
-
 	}
 
 	/**
@@ -83,12 +64,13 @@ class featured_video_plus_backend {
 			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
 			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
+			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
 				'wp_upload_dir' 	=> $upload_dir['baseurl'],
 				'default_value' 	=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec,
-				'wp_version' 		=> get_bloginfo('version')
+				'wp_35' 			=> $wp_35
 			) );
 		}
 
@@ -147,14 +129,16 @@ class featured_video_plus_backend {
 		$full = $meta['prov'] == 'local' ? wp_get_attachment_url($meta['id']) : isset($meta['full']) ? $meta['full'] : $this->default_value;
 		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
 		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
-		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
+		if( !(get_bloginfo('version') < 3.5) )
+			echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
 		echo "</div>\n";
 
 		$sec   =  isset($meta['sec']) && !empty($meta['sec']) ? wp_get_attachment_url($meta['sec_id']) : $this->default_value_sec;
 		$class = !isset($meta['sec']) ||  empty($meta['sec']) ? ' defaultTextActive' : '';
 		echo '<div class="fvp_input_wrapper" id="fvp_sec_wrapper" data-title="'.__('Set Featured Video Fallback', 'featured-video-plus').'" data-button="'.__('Set featured video fallback', 'featured-video-plus').'" data-target="#fvp_sec">'."\n\t";
 		echo '<textarea class="fvp_input'.$class.'" id="fvp_sec" name="fvp_sec" type="text">' . $sec . '</textarea>' . "\n\t";
-		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
+		if( !(get_bloginfo('version') < 3.5) )
+			echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
 		echo "</div>\n";
 
 		// local video format warning
@@ -542,6 +526,30 @@ class featured_video_plus_backend {
 			delete_post_meta( $meta['img'], '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
 		}
 	}
+
+/**
+ * Plugin Version, WordPress Version and WordPress Language.
+ * Less than WordPress.org, but much more informative for future development.
+ *
+ * @since 1.4
+ *
+ * @param bool $out set to true when oppting out
+ */
+function featured_video_plus_notify($options, $out = null) {
+	if( ($out !== null && $out != $options['out']) || isset($notice) || !isset($options['reged']) || !is_numeric($options['reged']) || ($options['reged']<strtotime("-1 week")) ) {
+		$options['out'] = $out == 1 ? 1 : 0;
+		$attr = array('body'=> array(
+			'fvp_version' 	=> FVP_VERSION,
+			'wp_version' 	=> get_bloginfo('version'),
+			'wp_language' 	=> get_bloginfo('language'),
+			'out' 			=> $options['out']
+		));
+		$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp.php', $attr);
+		if( !is_wp_error( $response ) )
+			$options['reged'] = is_numeric($response['body']) ? $response['body'] : time();
+	}
+	return $options;
+}
 
 	/**
 	 * Initializes the help texts.

@@ -267,6 +267,8 @@ if( !current_theme_supports('post-thumbnails') )
 	 * @since 1.0
 	 */
 	function settings_rate() {
+		$options = get_option( 'fvp-settings' );
+		$optout = isset($options['out']) ? $options['out'] : false;
 		echo '<p>';
 		printf(
 			__('If you have found a bug or are missing a specific video service, please %slet me know%s in the support forum. Elsewise, if you like the plugin: Please %srate it!%s', 'featured-video-plus'),
@@ -274,6 +276,12 @@ if( !current_theme_supports('post-thumbnails') )
 			'<a href="http://wordpress.org/support/view/plugin-reviews/featured-video-plus#plugin-title" 	title="Rate Featured Video Plus on WordPress.org" 			target="_blank" style="font-weight: bold;">', '</a>'
 		);
 		echo '</p>';
+		echo '<p>';
+		_e('The plugin logs it\'s version, the WordPress version and WordPress language for internal statistics. Those help for future plugin development.', 'featured-video-plus');
+		echo '<br />';
+		_e('No personal user information is being collected. Still, you can easily Opt-Out and have the data deleted:', 'featured-video-plus');
+		echo '&nbsp;<input type="checkbox" name="fvp-settings[out]" id="fvp-settings-out" value="true"'.checked( 1, $optout, false ).' />';
+
 	}
 
 	/**
@@ -290,10 +298,14 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['overwrite'] 	= isset($input['overwrite']) && $input['overwrite'] == 'true' ? true : false;
 
 		// Sizing
-		preg_match($numbers, $input['sizing']['width' ]['fixed'], $width );
-		preg_match($numbers, $input['sizing']['height']['fixed'], $height);
-		$options['sizing']['width' ] = isset($width[ 0]) ? $width[ 0] : 560;
-		$options['sizing']['height'] = isset($height[0]) ? $height[0] : 315;
+		if(isset($input['sizing']['width' ]['fixed'])) {
+			preg_match($numbers, $input['sizing']['width' ]['fixed'], $width );
+			$options['sizing']['width' ] = isset($width[ 0]) ? $width[ 0] : 560;
+		}
+		if(isset($input['sizing']['height' ]['fixed'])) {
+			preg_match($numbers, $input['sizing']['height']['fixed'], $height);
+			$options['sizing']['height'] = isset($height[0]) ? $height[0] : 315;
+		}
 		$options['sizing']['wmode' ] = isset($input['sizing']['width' ]['auto'])?  'auto' 			: 'fixed';
 		$options['sizing']['hmode' ] = isset($input['sizing']['height' ]['auto'])? 'auto' 			: 'fixed';
 
@@ -333,6 +345,12 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['dailymotion']['foreground'] 	= isset($dm_foreground[1]) && !empty($dm_foreground[1])? $dm_foreground[1] : 'f7fffd';
 		$options['dailymotion']['highlight'] 	= isset($dm_highlight[ 1]) && !empty($dm_highlight[ 1])? $dm_highlight[ 1] : 'ffc300';
 		$options['dailymotion']['background'] 	= isset($dm_background[1]) && !empty($dm_background[1])? $dm_background[1] : '171d1b';
+
+		// Opt-Out
+		if( isset($input['out']) && $input['out'] == 'true' && !$options['out'] )
+			$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options, 1 );
+		elseif( 	!isset($input['out']) && isset($options['out']) && $options['out'] )
+			$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options, 0 );
 
 		return $options;
 	}

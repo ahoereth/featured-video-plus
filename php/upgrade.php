@@ -5,9 +5,9 @@
  * @since 1.2
  */
 function featured_video_plus_upgrade() {
-	$options = $options_org = get_option( 'fvp-settings', 'none' );
+	$options = $options_org = get_option( 'fvp-settings' );
 
-	if( !isset($options) || $options == 'none')
+	if( !isset($options['overwrite']) )
 		$version = '0';
 	elseif( !isset($options['version']) )
 		$version = '1.1';
@@ -21,13 +21,13 @@ function featured_video_plus_upgrade() {
 
 				$options = array(
 					'overwrite' => true,
-					'width' => 'auto',
-					'height' => 'auto',
-					'vimeo' => array(
-						'portrait' => 0,
-						'title' => 1,
-						'byline' => 1,
-						'color' => '00adef'
+					'width' 	=> 'auto',
+					'height' 	=> 'auto',
+					'vimeo' 	=> array(
+						'portrait' 	=> 0,
+						'title' 	=> 1,
+						'byline' 	=> 1,
+						'color' 	=> '00adef'
 					)
 				);
 
@@ -80,13 +80,13 @@ function featured_video_plus_upgrade() {
 				$options['autoplay'] 					= 0;
 				$options['youtube']['logo'] 			= 1;
 				$options['dailymotion']['syndication'] 	= '';
+				$options['out'] 						= 0;
 
-				$options['align'] = $options['sizing']['wmode'] == 'auto' ? 'center' : $option['sizing']['align'];
+				$options['align'] = $options['sizing']['wmode'] == 'auto' ? 'center' : $options['sizing']['align'];
 				unset( $options['sizing']['align'] );
 
 		// *************************************************************
 			$options['version'] = FVP_VERSION;
-			$options['notice' ] = $GLOBALS['fvp_upgrade'] = $notice;
 			$options['reged'  ] = false;
 			break;
 		}
@@ -95,8 +95,11 @@ function featured_video_plus_upgrade() {
 		add_action('admin_notices', array( &$featured_video_plus_notices, $notice ) );
 	}
 
+	$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options);
+
 	if( $options != $options_org )
 		update_option( 'fvp-settings', $options );
+
 }
 
 /**
