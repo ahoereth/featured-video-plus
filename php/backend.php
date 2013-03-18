@@ -122,7 +122,7 @@ class featured_video_plus_backend {
 			printf ('<div class="fvp_warning"><p class="description"><strong>'.__('Outdated WordPress Version', 'featured-video-plus').':</strong>&nbsp'.__('There is WordPress 3.5 out there! The plugin supports older versions way back to 3.1 - but %s is defenitly to old!', 'featured-video-plus').'</p></div>', get_bloginfo('version') );
 
 		// current featured video
-		echo '<div id="fvp_current_video">';
+		echo '<div id="fvp_current_video" style="width: 256px; height: 144px; background: url(\''.get_admin_url(null,'images/loading.gif').'\') no-repeat center center;">';
 		if( $has_post_video )
 			echo get_the_post_video( $post_id, array(256,144) );
 		echo '</div>'."\n\n";
@@ -241,7 +241,7 @@ class featured_video_plus_backend {
 		$set_featimg = isset($post['fvp_set_featimg']) && !empty($post['fvp_set_featimg']) ? true : false;
 
 		// video is empty or default value
-		if( !isset($post['fvp_video']) || empty($post['fvp_video']) || $post['fvp_video'] == $this->default_value 	 )
+		if( !isset($post['fvp_video'])  || empty($post['fvp_video']) || $post['fvp_video'] == $this->default_value 	 )
 			 $url = '';
 		else $url = trim($post['fvp_video']);
 
@@ -264,7 +264,7 @@ class featured_video_plus_backend {
 			return false;
 		}
 
-		$data = $this->get_video_data($url);
+		$data = $this->get_video_data($url, $sec);
 
 		$valid = true;
 		if( !isset($data['id']) )
@@ -300,7 +300,7 @@ class featured_video_plus_backend {
 	 *
 	 * @param string video a video url
 	 */
-	function get_video_data($url) {
+	function get_video_data($url, $sec = '') {
 		$local = wp_upload_dir();
 		preg_match('/(vimeo|youtu|dailymotion|liveleak|'.preg_quote($local['baseurl'], '/').')/i', $url, $prov_data);
 		if( isset($prov_data[1]) )
@@ -441,7 +441,7 @@ class featured_video_plus_backend {
 					$sek = !empty($attr[2]) ? $attr[2] 		: 0;
 					$video_time = $min + $sek;
 				} else {
-					preg_match('/start=(\d+)/', $video, $attr);
+					preg_match('/start=(\d+)/', $url, $attr);
 					if( !empty($attr[1] ) )
 						$video_time = $attr[1];
 					else

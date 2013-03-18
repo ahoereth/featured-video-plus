@@ -260,17 +260,16 @@ jQuery(document).ready(function($){
      *
      * @since 1.5
      */
-    $('#fvp_ajax_send').click(function() {
-
-    $.post( ajaxurl,
-        {
-            'action'    : 'fvp_ajax',
-            'id'        : $('#post_ID').val(),
-            'fvp_nonce' : $('#fvp_nonce').val(),
-            'fvp_video' : $('#fvp_video').val(),
-            'fvp_sec'   : $('#fvp_sec').val()
-        }
-    ).done(function(data) { $('#fvp_current_video').html(data); });
-
+    $('#fvp_video,#fvp_sec').blur(function() {
+        $('#fvp_current_video').html('');
+        $.post( ajaxurl,
+            {
+                'action'    : 'fvp_ajax',
+                'id'        : $('#post_ID').val(),
+                'fvp_nonce' : $('#fvp_nonce').val(),
+                'fvp_video' : $('#fvp_video').val(),
+                'fvp_sec'   : $('#fvp_sec').val()
+            }
+        ).done(function(data) { $('#fvp_current_video').html(data); });
     });
 });
