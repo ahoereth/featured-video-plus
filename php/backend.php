@@ -61,21 +61,22 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
 			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
 				'wp_upload_dir' 	=> $upload_dir['baseurl'],
+				'fvp_ajax_url' 		=> FVP_URL . "/php/ajax.php",
 				'default_value' 	=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec,
 				'wp_35' 			=> $wp_35
 			) );
 		}
 
-		wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
+		wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
 	/**
@@ -120,9 +121,11 @@ class featured_video_plus_backend {
 		if( get_bloginfo('version') < 3.1 )
 			printf ('<div class="fvp_warning"><p class="description"><strong>'.__('Outdated WordPress Version', 'featured-video-plus').':</strong>&nbsp'.__('There is WordPress 3.5 out there! The plugin supports older versions way back to 3.1 - but %s is defenitly to old!', 'featured-video-plus').'</p></div>', get_bloginfo('version') );
 
-		// displays the current featured video
+		// current featured video
+		echo '<div id="fvp_current_video">';
 		if( $has_post_video )
-			echo $this->featured_video_plus->get_the_post_video( $post_id, array(256,144) );
+			echo get_the_post_video( $post_id, array(256,144) );
+		echo '</div>'."\n\n";
 
 		// input box containing the featured video URL
 		$legal= isset($meta['valid']) && !$meta['valid'] ? ' fvp_invalid' : '';
@@ -173,6 +176,7 @@ class featured_video_plus_backend {
 		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] )
 			echo '<p class="fvp_warning description"><span style="font-weight: bold;">'.__('The current theme does not support Featured Images', 'featured-video-plus').':</span>&nbsp;'.sprintf(__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.', 'featured-video-plus'), '<a href="'.get_admin_url(null, '/options-media.php').'">', '</a>' )."</p>\n\n";
 
+		echo '<a href="#" id="fvp_ajax_send">ajax submit</a>';
 		echo "<!-- Featured Video Plus Metabox End-->\n\n\n";
 	}
 
@@ -191,45 +195,74 @@ class featured_video_plus_backend {
 			( false !== wp_is_post_revision( $post_id ) ) 			// Return if it's a post revision
 		   ) return;
 
-		if( ( isset($_POST['fvp_nonce']) && 							// WP Form submitted..
-				!wp_verify_nonce( $_POST['fvp_nonce'], FVP_NAME ) ) )
-			return;
+		$post = array(
+			'id' 				=> $post_id,
+			'fvp_nonce' 		=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
+			'fvp_set_featimg' 	=> isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
+			'fvp_video' 		=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
+			'fvp_sec' 			=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
+		);
+		$this->save($post);
 
+		return;
+	}
+
+	public function ajax() {
+		$post = array(
+			'id' 				=> $_POST['id'],
+			'fvp_nonce' 		=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
+			'fvp_set_featimg' 	=> isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
+			'fvp_video' 		=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
+			'fvp_sec' 			=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
+		);
+		$this->save($post);
+
+		if( has_post_video($post['id']) )
+			echo get_the_post_video( $post['id'], array(256,144) );
+		die();
+	}
+
+	/**
+	 * Used for processing an (AJAX) save request.
+	 *
+	 * @since 1.5
+	 *
+	 * @see http://codex.wordpress.org/Function_Reference/update_post_meta
+	 */
+	function save($post) {
+
+		if( ( isset($post['fvp_nonce']) && 							// WP Form submitted..
+			  !wp_verify_nonce( $post['fvp_nonce'], FVP_NAME ) ) )
+			return false;
 
 		// get fvp_video post meta data
-		$meta = get_post_meta($post_id, '_fvp_video', true);
+		$meta = get_post_meta($post['id'], '_fvp_video', true);
 
-		$set_featimg = isset($_POST['fvp_set_featimg']) && !empty($_POST['fvp_set_featimg']) ? true : false;
-
-		// break if:
-		// video and sec did not change
-		// set_featimg is wrong
+		$set_featimg = isset($post['fvp_set_featimg']) && !empty($post['fvp_set_featimg']) ? true : false;
 
 		// video is empty or default value
-		if( !isset($_POST['fvp_video']) || empty($_POST['fvp_video']) || $_POST['fvp_video'] == $this->default_value 	 )
+		if( !isset($post['fvp_video']) || empty($post['fvp_video']) || $post['fvp_video'] == $this->default_value 	 )
 			 $url = '';
-		else $url = trim($_POST['fvp_video']);
+		else $url = trim($post['fvp_video']);
 
 		// fallback video is empty or default value
-		if( !isset($_POST['fvp_sec']) 	|| empty($_POST['fvp_sec'])   || $_POST['fvp_sec']   == $this->default_value_sec )
+		if( !isset($post['fvp_sec']) 	|| empty($post['fvp_sec'])   || $post['fvp_sec']   == $this->default_value_sec )
 			 $sec = '';
-		else $sec = trim($_POST['fvp_sec']);
+		else $sec = trim($post['fvp_sec']);
 
 		// neither primary nor fallback did change OR primary is and was empty
 		// AND we do not want to set
 		if( ( (  isset($meta['full']) && $url == $meta['full'] && $sec == $meta['sec'] ) ||
 		      ( !isset($meta['full']) && empty($url) ) ) &&
 			( !$set_featimg ) )
-			return;
+			return false;
 
-
-		// there was a video but it should be deleted
+		// there was a video and we want to delete it
 		if( isset($meta['full']) && empty($url) ) {
-			delete_post_meta( $post_id, '_fvp_video' );
-			$this->delete_featured_video_image($post_id, $meta);
-			return;
+			delete_post_meta( $post['id'], '_fvp_video' );
+			$this->delete_featured_video_image($post['id'], $meta);
+			return false;
 		}
-
 
 		$data = $this->get_video_data($url);
 
@@ -239,8 +272,8 @@ class featured_video_plus_backend {
 
 		// Do we have a screen capture to pull?
 		if( isset($data['img']) && !empty($data['img']) ) {
-			$this->delete_featured_video_image($post_id, $meta);
-			$this->set_featured_video_image($post_id, $data);
+			$this->delete_featured_video_image( $post['id'], $meta );
+			$this->set_featured_video_image(	$post['id'], $data );
 		}
 
 		$meta = array(
@@ -254,25 +287,9 @@ class featured_video_plus_backend {
 			'valid' => $valid
 		);
 
-		update_post_meta( $post_id, '_fvp_video', $meta );
+		update_post_meta( $post['id'], '_fvp_video', $meta );
 
-		return;
-	}
-
-	/**
-	 * Used for processing an AJAX save request.
-	 *
-	 * @since 1.5
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/update_post_meta
-	 */
-	function ajax_save() {
-
-	}
-
-	function has_been_updated() {
-
-		return false;
+		return true;
 	}
 
 	/**

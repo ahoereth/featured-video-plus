@@ -90,10 +90,10 @@ function featured_video_plus_upgrade() {
 
 				$options['videojs'] = true;
 
-				// update video data ('attr' to 'time')
+				// update video data ('attr' to 'time') and fix serialization
 				$ids = $GLOBALS['featured_video_plus']->get_post_by_custom_meta('_fvp_video');
 				foreach( $ids as $id ) {
-					$meta = maybe_unserialize(get_post_meta( $id, '_fvp_video', true )); //fix serialization
+					$meta = maybe_unserialize(get_post_meta( $id, '_fvp_video', true ));
 					if( isset( $meta['attr'] ) ) {
 						$meta['time'] = $meta['attr'];
 						unset($meta['attr']);

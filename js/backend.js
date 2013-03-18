@@ -190,14 +190,6 @@ jQuery(document).ready(function($){
         $('#contextual-help-link').trigger('click');
     });
 
-
-    /**
-     * Button in the top right of the Featured Video box. Planned for a feature release.
-     *
-     * @since 1.#
-     */
-    //$('#featured_video_plus-box .handlediv').after('<div class="box_topright"><a href="#" id="fvp_remove" title="Remove Featured Video"><br /></div></div>');
-
     /**
      * Making use of the WordPress 3.5 Media Manager
      *
@@ -251,6 +243,34 @@ jQuery(document).ready(function($){
         }
     };
 
+    // Media Manager was implemented in WordPress 3.5
     if(fvp_backend_data.wp_35 == 1)
         mediaControl.init();
+
+
+    /**
+     * Button in the top right of the Featured Video box. Planned for a feature release.
+     *
+     * @since 1.#
+     */
+    //$('#featured_video_plus-box .handlediv').after('<div class="box_topright"><a href="#" id="fvp_remove" title="Remove Featured Video"><br /></div></div>');
+
+    /**
+     *
+     *
+     * @since 1.5
+     */
+    $('#fvp_ajax_send').click(function() {
+
+    $.post( ajaxurl,
+        {
+            'action'    : 'fvp_ajax',
+            'id'        : $('#post_ID').val(),
+            'fvp_nonce' : $('#fvp_nonce').val(),
+            'fvp_video' : $('#fvp_video').val(),
+            'fvp_sec'   : $('#fvp_sec').val()
+        }
+    ).done(function(data) { $('#fvp_current_video').html(data); });
+
+    });
 });

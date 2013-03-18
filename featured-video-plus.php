@@ -60,8 +60,9 @@ if( is_admin() ) {
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
 	// admin meta box
-	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
-	add_action('save_post',  array( &$featured_video_plus_backend, 'metabox_save' )	 );
+	add_action('admin_menu', 		array( &$featured_video_plus_backend, 'metabox_register' ) );
+	add_action('save_post', 		array( &$featured_video_plus_backend, 'metabox_save' 	 ) );
+	add_action('wp_ajax_fvp_ajax', 	array( &$featured_video_plus_backend, 'ajax' 			 ) );
 
 	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
