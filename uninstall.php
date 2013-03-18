@@ -14,7 +14,7 @@ foreach( $post_types as $post_type )
 	if( $post_type != 'attachment' ) {
 		$allposts = get_posts('numberposts=-1&post_type=' . $post_type . '&post_status=any');
 		foreach( $allposts as $post ) {
-			$meta = unserialize(get_post_meta( $post->ID, '_fvp_video', true ));
+			$meta = get_post_meta( $post->ID, '_fvp_video', true );
 			wp_delete_attachment( $meta['img'] );
 			delete_post_meta($meta['img'], 	'_fvp_image');
 			delete_post_meta($post->ID, 	'_fvp_video');

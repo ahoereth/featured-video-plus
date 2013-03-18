@@ -85,6 +85,23 @@ function featured_video_plus_upgrade() {
 				$options['align'] = $options['sizing']['wmode'] == 'auto' ? 'center' : $options['sizing']['align'];
 				unset( $options['sizing']['align'] );
 
+			case '1.4':
+				$notice = isset($notice) ? $notice : 'upgrade_14';
+
+				$options['videojs'] = true;
+
+				// update video data ('attr' to 'time')
+				$ids = $GLOBALS['featured_video_plus']->get_post_by_custom_meta('_fvp_video');
+				foreach( $ids as $id ) {
+					$meta = maybe_unserialize(get_post_meta( $id, '_fvp_video', true )); //fix serialization
+					if( isset( $meta['attr'] ) ) {
+						$meta['time'] = $meta['attr'];
+						unset($meta['attr']);
+						update_post_meta($id, '_fvp_video', $meta);
+					}
+				}
+
+
 		// *************************************************************
 			$options['version'] = FVP_VERSION;
 			$options['reged'  ] = false;
