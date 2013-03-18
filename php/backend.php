@@ -61,8 +61,8 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
 			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
 			$upload_dir = wp_upload_dir();
@@ -74,8 +74,8 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
-		wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+		wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
+		//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
 	/**
@@ -400,13 +400,11 @@ class featured_video_plus_backend {
 				if( isset($llmeta[1]) || isset($llmeta[2]) ) {
 					$video_id = $llmeta[1];
 
-
 					$llmeta = explode(',', $llmeta[2]);
 					foreach( $llmeta as $line ) {
 						$thisline = explode(': ', $line);
 						$data[trim($thisline[0])] = trim($thisline[1]);
 					}
-					print_r($data);
 
 					preg_match('#class="section_title".*>([\s\w]+)</span>#', $response['body'], $title);
 					preg_match('#id="body_text".*><p>(.*)<\/p><\/#', $response['body'], $desc);
@@ -536,6 +534,9 @@ class featured_video_plus_backend {
  * @param bool $out set to true when oppting out
  */
 function featured_video_plus_notify($options, $out = null) {
+	if($options['out'] == 1 && $out != 0)
+		return $options;
+
 	if( ($out !== null && $out != $options['out']) || isset($notice) || !isset($options['reged']) || !is_numeric($options['reged']) || ($options['reged']<strtotime("-1 week")) ) {
 		$options['out'] = $out == 1 ? 1 : 0;
 		$attr = array('body'=> array(

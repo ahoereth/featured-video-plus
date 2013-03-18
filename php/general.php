@@ -27,8 +27,8 @@ class featured_video_plus {
 
 			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
-				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
-				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
+				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
+				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
 		}
 	}
 
