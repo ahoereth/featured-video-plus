@@ -72,7 +72,7 @@ class featured_video_plus {
 					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" data-setup="{}">'; // poster="'.$featimg.'" data-setup="{}"
 					$embed .= "\n\t\t".'<source src="' . $a . '" type="video/'.$ext.'">';
 
-					if( isset($meta['sec_id']) && !empty($meta['sec_id']) ) {
+					if( isset($meta['sec_id']) && !empty($meta['sec_id']) && $meta['sec_id'] != $meta['id'] ) {
 						$b = wp_get_attachment_url($meta['sec_id']);
 						$ext2 = pathinfo( $b, PATHINFO_EXTENSION );
 						$ext2 = $ext2 == 'ogv' ? 'ogg' : $ext2;
