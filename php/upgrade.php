@@ -140,6 +140,17 @@ class featured_video_plus_notices {
 	}
 
 	/**
+	 * Upgrade notification 1.4 to current version
+	 *
+	 * @since 1.5
+	 */
+	function upgrade_14() {
+		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features a seamless <strong>WP3.5 Media Manager</strong> integration, time-links (#t=4m2s) for YouTube and Dailymotion, some new options and new PHP functions for developers.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
+		echo "</p></div>\n";
+	}
+
+	/**
 	 * Upgrade notification 1.3 to current version
 	 *
 	 * @since 1.4
