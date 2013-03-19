@@ -20,12 +20,18 @@ class featured_video_plus {
 	public function enqueue($hook_suffix) {
 		// just required on post.php
 		if( !is_admin() || ( $hook_suffix == 'post.php' && isset($_GET['post']) ) ) {
+			$options = get_option( 'fvp-settings' );
 
 			// http://videojs.com/
-			wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', array(), FVP_VERSION, false );
-			wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', array(), FVP_VERSION, false );
+			if( $options['local']['videojs']['js'] )
+				if( $options['local']['videojs']['cdn'] )
+					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', 		array(), FVP_VERSION, false );
+				else wp_enqueue_script( 'videojs', FVP_URL . 'js/videojs-min.js', 			array(), FVP_VERSION, false );
+			if( $options['local']['videojs']['css'] )
+				if( $options['local']['videojs']['cdn'] )
+					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', 	array(), FVP_VERSION, false );
+				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs-min.css', 			array(), FVP_VERSION, false );
 
-			$options = get_option( 'fvp-settings' );
 			if( $options['sizing']['wmode'] == 'auto' )
 				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
 				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
@@ -96,8 +102,9 @@ class featured_video_plus {
 					$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
 					$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 	: 1;
 					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 	: 1;
+					$youtube['wmode'] 	= isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
 
-					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
+					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
 					$embed = "\n\t" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$src.'" type="text/html" frameborder="0"></iframe>' . "\n";
 					break;
 

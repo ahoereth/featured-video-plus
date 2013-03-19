@@ -24,10 +24,10 @@ class featured_video_plus_settings {
 		add_settings_field('fvp-settings-autoplay', 	__('Autoplay', 'featured-video-plus'), 						array( &$this, 'settings_autoplay' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-sizing', 		__('Video Sizing', 'featured-video-plus'), 					array( &$this, 'settings_sizing' ), 	'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-align', 		__('Video Align', 'featured-video-plus'), 					array( &$this, 'settings_align' ), 		'media', 'fvp-settings-section');
-		//add_settings_field('fvp-settings-videojs', 		__('VIDEOJS Player Options', 'featured-video-plus'), 		array( &$this, 'settings_videojs' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-youtube', 		__('YouTube Player Options', 'featured-video-plus'), 		array( &$this, 'settings_youtube' ), 	'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-vimeo', 		__('Vimeo Player Options', 'featured-video-plus'), 			array( &$this, 'settings_vimeo' ), 		'media', 'fvp-settings-section');
-		add_settings_field('fvp-settings-dailymotion', 	__('Dailymotion Player Options', 'featured-video-plus'), 	array( &$this, 'settings_dailymotion' ),'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-local', 		__('Local Video Options', 'featured-video-plus'), 			array( &$this, 'settings_local' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-youtube', 		__('YouTube Options', 'featured-video-plus'), 				array( &$this, 'settings_youtube' ), 	'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-vimeo', 		__('Vimeo Options', 'featured-video-plus'), 				array( &$this, 'settings_vimeo' ), 		'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-dailymotion', 	__('Dailymotion Options', 'featured-video-plus'), 			array( &$this, 'settings_dailymotion' ),'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-rate', 		__('Support', 'featured-video-plus'), 						array( &$this, 'settings_rate' ), 		'media', 'fvp-settings-section');
 
 		register_setting('media', 'fvp-settings', array( &$this, 'settings_save' ));
@@ -144,26 +144,25 @@ if( !current_theme_supports('post-thumbnails') )
 
 <?php }
 	/**
-	 * Displays the settings to style the VIDEOJS player.
+	 * Displays the settings for local videos
 	 *
 	 * @see https://github.com/zencoder/video-js/blob/master/docs/skins.md
 	 * @see http://jlofstedt.com/moonify/
 	 * @see http://videojs.com/
-	 * @since 1.3
-	 *
-	 * NOTE: NOT IN USE YET!
+	 * @since 1.5
 	 */
-	function settings_videojs() {
+	function settings_local() {
 		$options = get_option( 'fvp-settings' );
-		$videojs['skin'] 	= isset($options['videojs']['skin']) ? $options['videojs']['skin'] : 'default'; ?>
+		$videojs['js'] 	= isset($options['local']['videojs']['js'])  ? $options['local']['videojs']['js']  : true;
+		$videojs['css'] = isset($options['local']['videojs']['css']) ? $options['local']['videojs']['css'] : true;
+		$videojs['cdn'] = isset($options['local']['videojs']['cdn']) ? $options['local']['videojs']['cdn'] : false; ?>
 
-<input type="radio" name="fvp-settings[videojs][skin]" id="fvp-settings-videojs-skin-1" value="videojs" <?php checked( 'videojs', $videojs['skin'], true ) ?>/><label for="fvp-settings-videojs-skin-1">&nbsp;<?php _e('default', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[videojs][skin]" id="fvp-settings-videojs-skin-2" value="tubecss" <?php checked( 'tubecss', $videojs['skin'], true ) ?>/><label for="fvp-settings-videojs-skin-2">&nbsp;TubeCSS</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[videojs][skin]" id="fvp-settings-videojs-skin-3" value="moonify" <?php checked( 'moonify', $videojs['skin'], true ) ?>/><label for="fvp-settings-videojs-skin-3">&nbsp;Moonify</label>&nbsp;(<a style="font-style: italic;" href="http://jlofstedt.com/moonify/" target="_blank">info</a>)&nbsp;&nbsp;&nbsp;&nbsp;
+VideoJS:&nbsp;
+<input type="checkbox" name="fvp-settings[local][videojs][cdn]" id="fvp-settings-local-videojs-cdn" value="true" <?php checked( true, $videojs['cdn'], 	1 ) ?>/><label for="fvp-settings-local-videojs-cdn">&nbsp;<?php _e('Use CDN', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[local][videojs][js]" 	id="fvp-settings-local-videojs-js" 	value="true" <?php checked( true, $videojs['js'], 	1 ) ?>/><label for="fvp-settings-local-videojs-js">&nbsp;<?php  _e('Include JS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[local][videojs][css]" id="fvp-settings-local-videojs-css" value="true" <?php checked( true, $videojs['css'], 	1 ) ?>/><label for="fvp-settings-local-videojs-css">&nbsp;<?php _e('Include CSS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<?php
-		__('VIDEOJS Player Options', 'featured-video-plus'); // translate it, even if not yet integrated
-	}
+<?php }
 
 	/**
 	 * Displays the settings to style the YouTube video player.
@@ -175,15 +174,24 @@ if( !current_theme_supports('post-thumbnails') )
 		$options = get_option( 'fvp-settings' );
 		$youtube['theme'] 	= isset($options['youtube']['theme']) 	? $options['youtube']['theme'] 	: 'dark';
 		$youtube['color'] 	= isset($options['youtube']['color']) 	? $options['youtube']['color'] 	: 'red';
+		$youtube['wmode'] 	= isset($options['youtube']['wmode']) 	? $options['youtube']['wmode'] 	: 'auto';
 		$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
 		$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
 		$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 	: 1;
 		$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 	: 1; ?>
 
-<input type="checkbox" name="fvp-settings[youtube][theme]" 	id="fvp-settings-youtube-theme" value="light" 	<?php checked( 'light', $youtube['theme'], 	1 ) ?>/><label for="fvp-settings-youtube-theme">&nbsp;<?php _e('Light Theme', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[youtube][info]" 	id="fvp-settings-youtube-info" 	value="true" 	<?php checked( 1, 		$youtube['info'], 	1 ) ?>/><label for="fvp-settings-youtube-info">&nbsp;<?php _e('Info', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[youtube][fs]" 	id="fvp-settings-youtube-fs" 	value="true" 	<?php checked( 1, 		$youtube['fs'], 	1 ) ?>/><label for="fvp-settings-youtube-fs">&nbsp;<?php _e('Fullscreen Button', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[youtube][rel]" 	id="fvp-settings-youtube-rel" 	value="true" 	<?php checked( 1, 		$youtube['rel'], 	1 ) ?>/><label for="fvp-settings-youtube-rel">&nbsp;<?php _e('Related Videos', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][theme]" 	id="fvp-settings-youtube-theme" value="light" 	<?php checked( 'light', $youtube['theme'], 	1 ) ?>/><label for="fvp-settings-youtube-theme">&nbsp;<?php _e('Light Theme', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][fs]" 	id="fvp-settings-youtube-fs" 	value="true" 	<?php checked( 1, 		$youtube['fs'], 	1 ) ?>/><label for="fvp-settings-youtube-fs">&nbsp;<?php 	_e('Fullscreen Button', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select name="fvp-settings[youtube][wmode]" id="fvp-settings-youtube-wmode" size="1">
+	<option <?php selected($youtube['wmode'],'auto'); 		 ?>>auto</option>
+	<option <?php selected($youtube['wmode'],'transparent'); ?>>transparent</option>
+	<option <?php selected($youtube['wmode'],'opaque'); 	 ?>>opaque</option>
+</select>
+<label for="fvp-settings-youtube-wmode">&quot;wmode&quot;</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br />
+<input type="checkbox" name="fvp-settings[youtube][info]" 	id="fvp-settings-youtube-info" 	value="true" 	<?php checked( 1, 		$youtube['info'], 	1 ) ?>/><label for="fvp-settings-youtube-info">&nbsp;<?php 	_e('Info', 				'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+<input type="checkbox" name="fvp-settings[youtube][rel]" 	id="fvp-settings-youtube-rel" 	value="true" 	<?php checked( 1, 		$youtube['rel'], 	1 ) ?>/><label for="fvp-settings-youtube-rel">&nbsp;<?php 	_e('Related Videos', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[youtube][color]" 	id="fvp-settings-youtube-color" value="white" 	<?php checked( 'white', $youtube['color'], 	1 ) ?>/><label for="fvp-settings-youtube-color">&nbsp;<?php _e('White Progressbar', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <span id="youtube_logoinput_wrapper"<?php if($youtube['color'] != 'red') echo ' class="fvp_hidden"'; ?>>
 	<input type="checkbox" name="fvp-settings[youtube][logo]" 	id="fvp-settings-youtube-logo" 	value="true" 	<?php checked( 1, 		$youtube['logo'], 	1 ) ?>/><label for="fvp-settings-youtube-logo">&nbsp;<?php _e('Logo', 'featured-video-plus'); ?></label>
@@ -315,12 +323,15 @@ if( !current_theme_supports('post-thumbnails') )
 		// Autoplay
 		$options['autoplay'] = isset($input['autoplay'])  && $input['autoplay'] == 'true' ? 1 : 0;
 
-		// VIDEOJS
-		//$options['videojs']['skin'] = isset( $input['videojs']['skin'] ) ? $input['videojs']['skin'] : 'videojs';
+		// Local
+		$options['local']['videojs']['js']  = isset( $input['local']['videojs']['js']  ) ? true : false;
+		$options['local']['videojs']['css'] = isset( $input['local']['videojs']['css'] ) ? true : false;
+		$options['local']['videojs']['cdn'] = isset( $input['local']['videojs']['cdn'] ) ? true : false;
 
 		// YouTube
 		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme']  == 'light' ) ? 'light' : 'dark';
 		$options['youtube']['color'] 	= isset($input['youtube']['color']) && ( $input['youtube']['color']  == 'white' ) ? 'white' : 'red';
+		$options['youtube']['wmode'] 	= isset($input['youtube']['wmode']) ? 	 $input['youtube']['wmode']  :  'auto';
 		$options['youtube']['info'] 	= isset($input['youtube']['info'])	&& ( $input['youtube']['info'] 	 == 'true' 	) ? 1 		: 0;
 		$options['youtube']['logo'] 	= isset($input['youtube']['logo'])	&& ( $input['youtube']['logo'] 	 == 'true' 	) ? 1 		: 0;
 		$options['youtube']['rel'] 		= isset($input['youtube']['rel'])	&& ( $input['youtube']['rel'] 	 == 'true' 	) ? 1 		: 0;

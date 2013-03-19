@@ -88,7 +88,11 @@ function featured_video_plus_upgrade() {
 			case '1.4':
 				$notice = isset($notice) ? $notice : 'upgrade_14';
 
-				$options['videojs'] = true;
+				$options['youtube']['wmode'] = 'auto';
+				$options['local']['videojs']['js']  = true;
+				$options['local']['videojs']['css'] = true;
+				$options['local']['videojs']['cdn'] = false;
+				unset($options['videojs']);
 
 				// update video data ('attr' to 'time') and fix serialization
 				$ids = $GLOBALS['featured_video_plus']->get_post_by_custom_meta('_fvp_video');
