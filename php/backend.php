@@ -122,7 +122,7 @@ class featured_video_plus_backend {
 			printf ('<div class="fvp_warning"><p class="description"><strong>'.__('Outdated WordPress Version', 'featured-video-plus').':</strong>&nbsp'.__('There is WordPress 3.5 out there! The plugin supports older versions way back to 3.1 - but %s is defenitly to old!', 'featured-video-plus').'</p></div>', get_bloginfo('version') );
 
 		// current featured video
-		echo '<div id="fvp_current_video" style="width: 256px; height: 144px; background: url(\''.get_admin_url(null,'images/loading.gif').'\') no-repeat center center;">';
+		echo '<div id="fvp_current_video" style="background: no-repeat center center;">'; //url(\''.get_admin_url(null,'images/loading.gif').'\')
 		if( $has_post_video )
 			echo get_the_post_video( $post_id, array(256,144) );
 		echo '</div>'."\n\n";
@@ -171,7 +171,7 @@ class featured_video_plus_backend {
 
 		// set as featured image
 		$class = isset($meta['prov']) && $meta['prov'] == 'local' || !$has_post_video || ($has_featimg && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
-		printf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a style="display: none;" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
+		printf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a class="fvp_hidden" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
 
 		// current theme does not support Featured Images
 		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] )
@@ -217,10 +217,16 @@ class featured_video_plus_backend {
 		);
 		$meta = $this->save($post);
 
-		if( has_post_video($post['id']) )
-			$video = get_the_post_video( $post['id'], array(256,144) );
+		if(isset($meta['id'])) {
+			if( has_post_video($post['id']) )
+				$video = get_the_post_video( $post['id'], array(256,144) );
 
-		echo json_encode(array( 'valid' => $meta['valid'], 'video' => $video ));
+			if( has_post_thumbnail($post['id']) )
+				$img   = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
+
+			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
+		} else
+			echo json_encode(array( 'typ' => 'removed' ));
 		die();
 	}
 
@@ -295,14 +301,6 @@ class featured_video_plus_backend {
 		update_post_meta( $post['id'], '_fvp_video', $meta );
 
 		return $meta;
-	}
-
-	/**
-	 *
-	 *
-	 */
-	function video_changed() {
-
 	}
 
 	/**

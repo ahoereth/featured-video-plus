@@ -183,9 +183,9 @@ VideoJS:&nbsp;
 <input type="checkbox" name="fvp-settings[youtube][theme]" 	id="fvp-settings-youtube-theme" value="light" 	<?php checked( 'light', $youtube['theme'], 	1 ) ?>/><label for="fvp-settings-youtube-theme">&nbsp;<?php _e('Light Theme', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[youtube][fs]" 	id="fvp-settings-youtube-fs" 	value="true" 	<?php checked( 1, 		$youtube['fs'], 	1 ) ?>/><label for="fvp-settings-youtube-fs">&nbsp;<?php 	_e('Fullscreen Button', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <select name="fvp-settings[youtube][wmode]" id="fvp-settings-youtube-wmode" size="1">
-	<option <?php selected($youtube['wmode'],'auto'); 		 ?>>auto</option>
-	<option <?php selected($youtube['wmode'],'transparent'); ?>>transparent</option>
-	<option <?php selected($youtube['wmode'],'opaque'); 	 ?>>opaque</option>
+	<option<?php selected($youtube['wmode'],'auto'); 		?>>auto</option>
+	<option<?php selected($youtube['wmode'],'transparent'); ?>>transparent</option>
+	<option<?php selected($youtube['wmode'],'opaque'); 		?>>opaque</option>
 </select>
 <label for="fvp-settings-youtube-wmode">&quot;wmode&quot;</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <br />
