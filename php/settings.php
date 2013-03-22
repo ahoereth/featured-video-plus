@@ -173,13 +173,13 @@ VideoJS:&nbsp;
 	 */
 	function settings_youtube() {
 		$options = get_option( 'fvp-settings' );
-		$youtube['theme'] 	= isset($options['youtube']['theme']) 	? $options['youtube']['theme'] 	: 'dark';
-		$youtube['color'] 	= isset($options['youtube']['color']) 	? $options['youtube']['color'] 	: 'red';
-		$youtube['wmode'] 	= isset($options['youtube']['wmode']) 	? $options['youtube']['wmode'] 	: 'auto';
+		$youtube['theme'] = isset($options['youtube']['theme']) ? $options['youtube']['theme'] 	: 'dark';
+		$youtube['color'] = isset($options['youtube']['color']) ? $options['youtube']['color'] 	: 'red';
+		$youtube['wmode'] = isset($options['youtube']['wmode']) ? $options['youtube']['wmode'] 	: 'auto';
 		$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
 		$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
-		$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 	: 1;
-		$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 	: 1; ?>
+		$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 		: 1;
+		$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 		: 1; ?>
 
 <input type="checkbox" name="fvp-settings[youtube][theme]" 	id="fvp-settings-youtube-theme" value="light" 	<?php checked( 'light', $youtube['theme'], 	1 ) ?>/><label for="fvp-settings-youtube-theme">&nbsp;<?php _e('Light Theme', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[youtube][fs]" 	id="fvp-settings-youtube-fs" 	value="true" 	<?php checked( 1, 		$youtube['fs'], 	1 ) ?>/><label for="fvp-settings-youtube-fs">&nbsp;<?php 	_e('Fullscreen Button', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

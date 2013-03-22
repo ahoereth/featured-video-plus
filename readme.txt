@@ -2,7 +2,7 @@
 Contributors: a.hoereth
 Plugin Name: Featured Video Plus
 Plugin URI: https://github.com/ahoereth/featured-video-plus
-Tags: featured video, featured image, featured, video, post video, post thumbnail, post, thumbnail, html5, flash, youtube, vimeo, dailymotion, mp4, webm, ogg, ogv, embed
+Tags: featured, post, video, image, thumbnail, html5, flash, youtube, vimeo, dailymotion, mp4, webm, ogg, embed, ajax
 Author: Alexander Höreth
 Author URI: http://ahoereth.yrnxt.com/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ehoereth%40gmail%2ecom
@@ -17,15 +17,15 @@ Add Featured Videos to your posts and pages. Works like magic with most themes w
 == Description ==
 *A picture is worth a thousand words. How many words is a video worth?*
 
-This plugin enables you to define Featured Videos in addition to Featured Images. There are three ways to get the videos onto your page:
+This plugin enables you to define Featured Videos, which, if set, take the place of Featured Images. There are three ways to get the videos onto your page:
 
-1. If your theme already makes use of Featured Images, these will __automatically__ be replaced by Featured Videos if available. Alternatively you can
+1. If your theme already makes use of  [Featured Images](http://codex.wordpress.org/Post_Thumbnails), these will in most themes __automatically__ be replaced by your Featured Videos if available. Alternatively you can
 2. insert the `[featured-video-plus]`-__Shortcode__ in your posts or
-3. manually use the __PHP functions__ in your theme's source files.
+3. manually make use of the __PHP functions__ in your theme's source files.
 
 Beside your __Local Videos__ (`mp4`, `webM` & `ogg/ogv`) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
 
-The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic integration, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width.
+The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic integration, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
 
 = Shortcode =
 
@@ -58,6 +58,10 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+= 1.5: 2013-03-22 =
+* __AJAX__ified the Featured Video box - just like Featured Images
+* Added options for a) disabling VideoJS JS/CSS, b) enabling VideoJS CDN and c) YouTube `wmode`
+* Plugin no longer breaks WP image editor ([*](http://wordpress.org/support/topic/breaks-image-scaling-shows-nan))
 
 = 1.4: 2013-03-15 =
 * __WP 3.5 Media Manager__ seamless integrated
@@ -91,6 +95,9 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Upgrade Notice ==
+
+= 1.5 =
+AJAX!
 
 = 1.4 =
 WP3.5 Media Manager, time-links...
