@@ -162,6 +162,7 @@ VideoJS:&nbsp;
 <input type="checkbox" name="fvp-settings[local][videojs][js]" 	id="fvp-settings-local-videojs-js" 	value="true" <?php checked( true, $videojs['js'], 	1 ) ?>/><label for="fvp-settings-local-videojs-js">&nbsp;<?php  _e('Include JS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[local][videojs][css]" id="fvp-settings-local-videojs-css" value="true" <?php checked( true, $videojs['css'], 	1 ) ?>/><label for="fvp-settings-local-videojs-css">&nbsp;<?php _e('Include CSS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+<p class="description"><?php _e('Disabling JS and/or CSS will break the local video player. Disable only when you want to replace VideoJS with a different script and know what you are doing.', 'featured-video-plus'); ?></p>
 <?php }
 
 	/**
@@ -219,7 +220,7 @@ VideoJS:&nbsp;
 	<input type="checkbox" name="fvp-settings[vimeo][title]" 	id="fvp-settings-vimeo-2" value="display" <?php checked( 1, $vimeo['title'], 	1 ) ?>/><label for="fvp-settings-vimeo-2">&nbsp;<?php _e('Title', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<input type="checkbox" name="fvp-settings[vimeo][byline]" 	id="fvp-settings-vimeo-3" value="display" <?php checked( 1, $vimeo['byline'], 	1 ) ?>/><label for="fvp-settings-vimeo-3">&nbsp;<?php _e('Byline', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[vimeo][color]" id="fvp-settings-vimeo-color" value="#<?php echo $vimeo['color'] ?>" data-default-color="#00adef" />
+		<input type="text" name="fvp-settings[vimeo][color]" id="fvp-settings-vimeo-color" class="fvp_colorpicker_input" value="#<?php echo $vimeo['color'] ?>" data-default-color="#00adef" />
 		<label for="fvp-settings-vimeo-color" style="display: none;">&nbsp;<?php _e('Color', 'featured-video-plus'); ?></label>
 		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-vimeo-colorpicker"></div><?php } ?>
 	</span>
@@ -251,17 +252,17 @@ VideoJS:&nbsp;
 	<input type="text" 		name="fvp-settings[dailymotion][synd]" id="fvp-settings-dailymotion-synd" value="<?php echo $dailymotion['synd']; ?>" size="6" />	<label for="fvp-settings-dailymotion-synd">&nbsp;<?php _e('Syndication Key', 'featured-video-plus'); ?></label>
 	<br />
 	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[dailymotion][foreground]" id="fvp-settings-dailymotion-foreground" value="#<?php echo $dailymotion['foreground'] ?>" data-default-color="#f7fffd" />
+		<input type="text" name="fvp-settings[dailymotion][foreground]" id="fvp-settings-dailymotion-foreground" class="fvp_colorpicker_input" value="#<?php echo $dailymotion['foreground'] ?>" data-default-color="#f7fffd" />
 		<label for="fvp-settings-dailymotion-foreground" style="display: none;">&nbsp;<?php _e('Foreground', 'featured-video-plus'); ?></label>
 		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-dailymotion-foreground-colorpicker"></div><?php } ?>
 	</span>
 	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[dailymotion][highlight]" id="fvp-settings-dailymotion-highlight" value="#<?php echo $dailymotion['highlight'] ?>" data-default-color="#ffc300" />
+		<input type="text" name="fvp-settings[dailymotion][highlight]" id="fvp-settings-dailymotion-highlight" class="fvp_colorpicker_input" value="#<?php echo $dailymotion['highlight'] ?>" data-default-color="#ffc300" />
 		<label for="fvp-settings-dailymotion-highlight" style="display: none;">&nbsp;<?php _e('Highlight', 'featured-video-plus'); ?></label>
 		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-dailymotion-highlight-colorpicker"></div><?php } ?>
 	</span>
 	<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
-		<input type="text" name="fvp-settings[dailymotion][background]" id="fvp-settings-dailymotion-background" value="#<?php echo $dailymotion['background'] ?>" data-default-color="#171d1b" />
+		<input type="text" name="fvp-settings[dailymotion][background]" id="fvp-settings-dailymotion-background" class="fvp_colorpicker_input" value="#<?php echo $dailymotion['background'] ?>" data-default-color="#171d1b" />
 		<label for="fvp-settings-dailymotion-background" style="display: none;">&nbsp;<?php _e('Background', 'featured-video-plus'); ?></label>
 		<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-dailymotion-background-colorpicker"></div><?php } ?>
 	</span>

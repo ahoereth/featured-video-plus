@@ -85,10 +85,12 @@ jQuery(document).ready(function($){
      * hide secondary input initially
      * @since 1.2
      */
-    var value = $("#fvp_video").val();
-    if ( value.length === 0 || value == fvp_backend_data.default_value || !value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
-        $("#fvp_sec").val( fvp_backend_data.default_value_sec );
-        $("#fvp_sec_wrapper").hide();
+    if ($("#fvp_video").length > 0){
+        var value = $("#fvp_video").val();
+        if ( value.length === 0 || value == fvp_backend_data.default_value || !value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
+            $("#fvp_sec").val( fvp_backend_data.default_value_sec );
+            $("#fvp_sec_wrapper").hide();
+        }
     }
 
     /**

@@ -61,8 +61,8 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if($hook_suffix == 'post.php' && isset($_GET['post']) ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
 			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
 			$upload_dir = wp_upload_dir();
@@ -75,8 +75,9 @@ class featured_video_plus_backend {
 			) );
 		}
 
-		//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
-		wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+		if( ($hook_suffix == 'options-media.php') || ($hook_suffix == 'post.php' && isset($_GET['post'])) )
+			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
+			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
 	/**
