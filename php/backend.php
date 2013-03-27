@@ -218,16 +218,15 @@ class featured_video_plus_backend {
 		);
 		$meta = $this->save($post);
 
+		$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
+
 		if(isset($meta['id'])) {
 			if( has_post_video($post['id']) )
 				$video = get_the_post_video( $post['id'], array(256,144) );
 
-			if( has_post_thumbnail($post['id']) )
-				$img   = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
-
 			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
 		} else
-			echo json_encode(array( 'typ' => 'removed' ));
+			echo json_encode(array( 'typ' => 'removed', 'img' => $img ));
 		die();
 	}
 
