@@ -19,7 +19,7 @@ class featured_video_plus {
 	 */
 	public function enqueue($hook_suffix) {
 		// just required on post.php
-		if( !is_admin() || ( $hook_suffix == 'post.php' && isset($_GET['post']) ) ) {
+		if( !is_admin() || ( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') ) {
 			$options = get_option( 'fvp-settings' );
 
 			// http://videojs.com/
