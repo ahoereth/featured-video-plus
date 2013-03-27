@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.5.1
-Stable tag: 1.5
+Stable tag: 1.5.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -58,8 +58,13 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+= 1.5.1: 2013-03-27 =
+* Fixed Featured Video box on new-post.php
+* Enhanced Featured Image ajax behavior
+
 = 1.5: 2013-03-22 =
-* __AJAX__ified the Featured Video box - just like Featured Images
+* __AJAXified__ the Featured Video box - just like Featured Images
 * Added options for a) disabling VideoJS JS/CSS, b) enabling VideoJS CDN and c) YouTube `wmode`
 * Plugin no longer breaks WP image editor ([*](http://wordpress.org/support/topic/breaks-image-scaling-shows-nan))
 

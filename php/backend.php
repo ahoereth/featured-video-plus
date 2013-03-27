@@ -3,7 +3,7 @@
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
  * @author ahoereth
- * @version 2013/01/09
+ * @version 2013/03/27
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0

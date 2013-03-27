@@ -3,7 +3,7 @@
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
  * @author ahoereth
- * @version 2013/01/15
+ * @version 2013/03/27
  * @see ../featured_video_plus.php
  * @see featured_video_plus_backend in backend.php
  * @see featured_video_plus_frontend in frontend.php

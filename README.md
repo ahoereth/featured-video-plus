@@ -34,8 +34,12 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 ## Changelog ##
 
+### 1.5.1: 2013-03-27 ###
+* Fixed Featured Video box on new-post.php
+* Enhanced Featured Image ajax behavior
+
 ### 1.5: 2013-03-22 ###
-* __AJAX__ified the Featured Video box - just like Featured Images
+* __AJAXified__ the Featured Video box - just like Featured Images
 * Added options for a) disabling VideoJS JS/CSS, b) enabling VideoJS CDN and c) YouTube `wmode`
 * Plugin no longer breaks WP image editor ([*](http://wordpress.org/support/topic/breaks-image-scaling-shows-nan))
 
