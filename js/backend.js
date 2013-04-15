@@ -38,7 +38,8 @@ jQuery(document).ready(function($){
                     t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', bg);
                     if(data.typ == 'removed'){
                         $('#fvp_current_video').html('').css({'backgroundImage':'','width':'','height':''});
-                        $('#postimagediv .inside').html(data.img);
+                        if( data.img != '' )
+                            $('#postimagediv .inside').html(data.img);
                     } else
                         if(data.valid) {
                             $('#postimagediv .inside').html(data.img);

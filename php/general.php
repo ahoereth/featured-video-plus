@@ -33,7 +33,7 @@ class featured_video_plus {
 				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs.min.css', 			array(), FVP_VERSION, false );
 
 			if( $options['sizing']['wmode'] == 'auto' )
-				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
+				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
 				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
 		}
 	}
