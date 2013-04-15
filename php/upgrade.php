@@ -107,6 +107,7 @@ function featured_video_plus_upgrade() {
 
 			case '1.5':
 			case '1.5.1':
+				$options['youtube']['jsapi'] = 0;
 				unset($options['reged'], $options['out']);
 			default:
 

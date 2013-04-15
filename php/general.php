@@ -96,15 +96,16 @@ class featured_video_plus {
 					break;
 
 				case 'youtube':
-					$youtube['theme'] 	= isset($options['youtube']['theme']) 	? $options['youtube']['theme'] 	: 'dark';
-					$youtube['color'] 	= isset($options['youtube']['color']) 	? $options['youtube']['color'] 	: 'red';
+					$youtube['theme'] = isset($options['youtube']['theme']) ? $options['youtube']['theme'] 	: 'dark';
+					$youtube['color'] = isset($options['youtube']['color']) ? $options['youtube']['color'] 	: 'red';
+					$youtube['jsapi'] = isset($options['youtube']['jsapi'])	? $options['youtube']['jsapi'] 	: 0;
 					$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
 					$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
-					$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 	: 1;
-					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 	: 1;
-					$youtube['wmode'] 	= isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
+					$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 		: 1;
+					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 		: 1;
+					$youtube['wmode'] = isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
 
-					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
+					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
 					$embed = "\n\t" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$src.'" type="text/html" frameborder="0"></iframe>' . "\n";
 					break;
 
@@ -215,4 +216,3 @@ class featured_video_plus {
 		load_plugin_textdomain('featured-video-plus', FVP_DIR . 'lng/', FVP_NAME . '/lng/' );
 	}
 }
-?>

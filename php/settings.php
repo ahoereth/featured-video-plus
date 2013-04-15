@@ -176,6 +176,7 @@ VideoJS:&nbsp;
 		$youtube['theme'] = isset($options['youtube']['theme']) ? $options['youtube']['theme'] 	: 'dark';
 		$youtube['color'] = isset($options['youtube']['color']) ? $options['youtube']['color'] 	: 'red';
 		$youtube['wmode'] = isset($options['youtube']['wmode']) ? $options['youtube']['wmode'] 	: 'auto';
+		$youtube['jsapi'] = isset($options['youtube']['jsapi'])	? $options['youtube']['jsapi'] 	: 0;
 		$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
 		$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
 		$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 		: 1;
@@ -190,12 +191,13 @@ VideoJS:&nbsp;
 </select>
 <label for="fvp-settings-youtube-wmode">&quot;wmode&quot;</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <br />
-<input type="checkbox" name="fvp-settings[youtube][info]" 	id="fvp-settings-youtube-info" 	value="true" 	<?php checked( 1, 		$youtube['info'], 	1 ) ?>/><label for="fvp-settings-youtube-info">&nbsp;<?php 	_e('Info', 				'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][info]" 	id="fvp-settings-youtube-info" 	value="true" 	 <?php checked( 1, 			$youtube['info'], 1 ) ?>/><label for="fvp-settings-youtube-info">&nbsp;<?php 	_e('Info', 					   'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-<input type="checkbox" name="fvp-settings[youtube][rel]" 	id="fvp-settings-youtube-rel" 	value="true" 	<?php checked( 1, 		$youtube['rel'], 	1 ) ?>/><label for="fvp-settings-youtube-rel">&nbsp;<?php 	_e('Related Videos', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[youtube][color]" 	id="fvp-settings-youtube-color" value="white" 	<?php checked( 'white', $youtube['color'], 	1 ) ?>/><label for="fvp-settings-youtube-color">&nbsp;<?php _e('White Progressbar', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][rel]" 		id="fvp-settings-youtube-rel" 	value="true" 	 <?php checked( 1, 			$youtube['rel'], 	1 ) ?>/><label for="fvp-settings-youtube-rel">&nbsp;<?php 	_e('Related Videos', 	 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][jsapi]" 	id="fvp-settings-youtube-jsapi" value="true" 	 <?php checked( 1, 			$youtube['jsapi'],1 ) ?>/><label for="fvp-settings-youtube-jsapi">&nbsp;<?php _e('Javascript API', 	 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[youtube][color]" 	id="fvp-settings-youtube-color" value="white"  <?php checked( 'white',$youtube['color'],1 ) ?>/><label for="fvp-settings-youtube-color">&nbsp;<?php _e('White Progressbar','featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <span id="youtube_logoinput_wrapper"<?php if($youtube['color'] != 'red') echo ' class="fvp_hidden"'; ?>>
-	<input type="checkbox" name="fvp-settings[youtube][logo]" 	id="fvp-settings-youtube-logo" 	value="true" 	<?php checked( 1, 		$youtube['logo'], 	1 ) ?>/><label for="fvp-settings-youtube-logo">&nbsp;<?php _e('Logo', 'featured-video-plus'); ?></label>
+	<input type="checkbox" name="fvp-settings[youtube][logo]" 	id="fvp-settings-youtube-logo" 	value="true" 	<?php checked( 1, 		$youtube['logo'], 1 ) ?>/><label for="fvp-settings-youtube-logo">&nbsp;<?php  _e('Logo', 'featured-video-plus'); ?></label>
 </span>
 <?php
 	}
@@ -324,13 +326,14 @@ VideoJS:&nbsp;
 		$options['local']['videojs']['cdn'] = isset( $input['local']['videojs']['cdn'] ) ? true : false;
 
 		// YouTube
-		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme']  == 'light' ) ? 'light' : 'dark';
-		$options['youtube']['color'] 	= isset($input['youtube']['color']) && ( $input['youtube']['color']  == 'white' ) ? 'white' : 'red';
-		$options['youtube']['wmode'] 	= isset($input['youtube']['wmode']) ? 	 $input['youtube']['wmode']  :  'auto';
-		$options['youtube']['info'] 	= isset($input['youtube']['info'])	&& ( $input['youtube']['info'] 	 == 'true' 	) ? 1 		: 0;
-		$options['youtube']['logo'] 	= isset($input['youtube']['logo'])	&& ( $input['youtube']['logo'] 	 == 'true' 	) ? 1 		: 0;
-		$options['youtube']['rel'] 		= isset($input['youtube']['rel'])	&& ( $input['youtube']['rel'] 	 == 'true' 	) ? 1 		: 0;
-		$options['youtube']['fs'] 		= isset($input['youtube']['fs'])	&& ( $input['youtube']['fs'] 	 == 'true' 	) ? 1 		: 0;
+		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme'] == 'light') ? 'light' : 'dark';
+		$options['youtube']['color'] 	= isset($input['youtube']['color']) && ( $input['youtube']['color'] == 'white') ? 'white' : 'red';
+		$options['youtube']['wmode'] 	= isset($input['youtube']['wmode']) ? 	 $input['youtube']['wmode'] :  'auto';
+		$options['youtube']['jsapi'] 	= isset($input['youtube']['jsapi']) && ( $input['youtube']['jsapi'] == 'true' ) ? 1 : 0;
+		$options['youtube']['info'] 	= isset($input['youtube']['info'])	&& ( $input['youtube']['info'] 	== 'true' ) ? 1 : 0;
+		$options['youtube']['logo'] 	= isset($input['youtube']['logo'])	&& ( $input['youtube']['logo'] 	== 'true' ) ? 1 : 0;
+		$options['youtube']['rel'] 		= isset($input['youtube']['rel'])		&& ( $input['youtube']['rel'] 	== 'true' ) ? 1 : 0;
+		$options['youtube']['fs'] 		= isset($input['youtube']['fs'])		&& ( $input['youtube']['fs'] 	 	== 'true' ) ? 1 : 0;
 
 		// Vimeo
 		$options['vimeo']['portrait'] 	= isset($input['vimeo']['portrait'])&& ( $input['vimeo']['portrait'] == 'display' ) ? 1 : 0;
