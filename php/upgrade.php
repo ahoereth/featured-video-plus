@@ -106,12 +106,13 @@ function featured_video_plus_upgrade() {
 				}
 
 			case '1.5':
+			case '1.5.1':
+				unset($options['reged'], $options['out']);
 			default:
 
 
 		// *************************************************************
 			$options['version'] = FVP_VERSION;
-			$options['reged'  ] = false;
 			break;
 		}
 
@@ -119,8 +120,6 @@ function featured_video_plus_upgrade() {
 		if( isset($notice) )
 			add_action('admin_notices', array( &$featured_video_plus_notices, $notice ) );
 	}
-
-	$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options, $options['out']);
 
 	if( $options != $options_org )
 		update_option( 'fvp-settings', $options );

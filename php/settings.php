@@ -285,12 +285,6 @@ VideoJS:&nbsp;
 			'<a href="http://wordpress.org/support/view/plugin-reviews/featured-video-plus#plugin-title" 	title="Rate Featured Video Plus on WordPress.org" 			target="_blank" style="font-weight: bold;">', '</a>'
 		);
 		echo '</p>';
-		echo '<p>';
-		_e('The plugin logs it\'s version, the WordPress version and WordPress language for internal statistics. Those help for future plugin development.', 'featured-video-plus');
-		echo '<br />';
-		_e('No personal user information is being collected. Still, you can easily Opt-Out and have the data deleted:', 'featured-video-plus');
-		echo '&nbsp;<input type="checkbox" name="fvp-settings[out]" id="fvp-settings-out" value="true"'.checked( 1, $optout, false ).' />';
-
 	}
 
 	/**
@@ -357,12 +351,6 @@ VideoJS:&nbsp;
 		$options['dailymotion']['foreground'] 	= isset($dm_foreground[1]) && !empty($dm_foreground[1])? $dm_foreground[1] : 'f7fffd';
 		$options['dailymotion']['highlight'] 	= isset($dm_highlight[ 1]) && !empty($dm_highlight[ 1])? $dm_highlight[ 1] : 'ffc300';
 		$options['dailymotion']['background'] 	= isset($dm_background[1]) && !empty($dm_background[1])? $dm_background[1] : '171d1b';
-
-		// Opt-Out
-		if( isset($input['out']) && $input['out'] == 'true' && !$options['out'] )
-			$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options, 1 );
-		elseif( 	!isset($input['out']) && isset($options['out']) && $options['out'] )
-			$options = $GLOBALS['featured_video_plus_backend']->featured_video_plus_notify($options, 0 );
 
 		return $options;
 	}

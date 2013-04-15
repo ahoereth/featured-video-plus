@@ -28,9 +28,9 @@ class featured_video_plus_backend {
 		if ( !isset($featured_video_plus_instance) )
 			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
-		$this->featured_video_plus 	= $featured_video_plus_instance;
-		$this->default_value 		= __('Video URL', 'featured-video-plus');
-		$this->default_value_sec 	= __('Fallback: same video, different format', 'featured-video-plus');
+		$this->featured_video_plus = $featured_video_plus_instance;
+		$this->default_value 			 = __('Video URL', 'featured-video-plus');
+		$this->default_value_sec 	 = __('Fallback: same video, different format', 'featured-video-plus');
 	}
 
 	/**
@@ -61,8 +61,8 @@ class featured_video_plus_backend {
 		// just required on post.php
 		if( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php' ) {
 			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
 			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
 			$upload_dir = wp_upload_dir();
@@ -76,8 +76,8 @@ class featured_video_plus_backend {
 		}
 
 		if( $hook_suffix == 'options-media.php' || (($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') )
-			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
-			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
+			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
 	/**
@@ -218,7 +218,10 @@ class featured_video_plus_backend {
 		);
 		$meta = $this->save($post);
 
-		$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
+		if( !empty($meta['img']) )
+			$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
+		else
+			$img = '';
 
 		if(isset($meta['id'])) {
 			if( has_post_video($post['id']) )
@@ -591,53 +594,6 @@ class featured_video_plus_backend {
 	}
 
 	/**
-	 * Removes the old featured ima
-	 * Used since 1.0, got it own function in 1.4
-	 *
-	 * @since 1.4
-	 */
-	function delete_featured_video_image($post_id, $meta) {
-		if(!isset($meta['img'])) return false;
-
-		// Unset featured image if it is from this video
-		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
-
-		// Check if other posts use the image, if not we can delete it completely
-		$other = $this->featured_video_plus->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
-		if( empty( $other ) ) {
-			wp_delete_attachment( $meta['img'] );
-			delete_post_meta( $meta['img'], '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
-		}
-	}
-
-/**
- * Plugin Version, WordPress Version and WordPress Language.
- * Less than WordPress.org, but much more informative for future development.
- *
- * @since 1.4
- *
- * @param bool $out set to true when oppting out
- */
-function featured_video_plus_notify($options, $out = null) {
-	if($options['out'] == 1 && $out != 0)
-		return $options;
-
-	if( ($out !== null && $out != $options['out']) || isset($notice) || !isset($options['reged']) || !is_numeric($options['reged']) || ($options['reged']<strtotime("-1 week")) ) {
-		$options['out'] = $out == 1 ? 1 : 0;
-		$attr = array('body'=> array(
-			'fvp_version' 	=> FVP_VERSION,
-			'wp_version' 	=> get_bloginfo('version'),
-			'wp_language' 	=> get_bloginfo('language'),
-			'out' 			=> $options['out']
-		));
-		$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp.php', $attr);
-		if( !is_wp_error( $response ) )
-			$options['reged'] = is_numeric($response['body']) ? $response['body'] : time();
-	}
-	return $options;
-}
-
-	/**
 	 * Initializes the help texts.
 	 *
 	 * @since 1.3
@@ -679,6 +635,7 @@ function featured_video_plus_notify($options, $out = null) {
 	<li>Liveleak:
 	<ul><li><code>(http(s)://)(www.)<strong>liveleak.com/view?i=<em>LIV_ELEAKUNQID</em></strong></code></li></ul></li>
 </ul>'."\n";
+
 	}
 
 	/**
@@ -773,5 +730,5 @@ function featured_video_plus_notify($options, $out = null) {
 			);
 		return $id;
 	}
+
 }
-?>
