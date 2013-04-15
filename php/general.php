@@ -3,7 +3,7 @@
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
  * @author ahoereth
- * @version 2013/03/27
+ * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @see featured_video_plus_backend in backend.php
  * @see featured_video_plus_frontend in frontend.php
@@ -26,11 +26,11 @@ class featured_video_plus {
 			if( $options['local']['videojs']['js'] )
 				if( $options['local']['videojs']['cdn'] )
 					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', 		array(), FVP_VERSION, false );
-				else wp_enqueue_script( 'videojs', FVP_URL . 'js/videojs-min.js', 			array(), FVP_VERSION, false );
+				else wp_enqueue_script( 'videojs', FVP_URL . 'js/videojs.min.js', 			array(), FVP_VERSION, false );
 			if( $options['local']['videojs']['css'] )
 				if( $options['local']['videojs']['cdn'] )
 					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', 	array(), FVP_VERSION, false );
-				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs-min.css', 			array(), FVP_VERSION, false );
+				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs.min.css', 			array(), FVP_VERSION, false );
 
 			if( $options['sizing']['wmode'] == 'auto' )
 				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp-min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
