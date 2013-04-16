@@ -26,7 +26,7 @@ function the_post_video($size = null) {
  */
 function get_the_post_video($post_id = null, $size = null) {
 	global $featured_video_plus;
-	return $featured_video_plus->get_the_post_video($post_id, $size);
+	return apply_filters( 'get_the_post_video_filter', $featured_video_plus->get_the_post_video($post_id, $size) );
 }
 
 /**
