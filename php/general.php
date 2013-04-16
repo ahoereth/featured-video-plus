@@ -69,8 +69,10 @@ class featured_video_plus {
 			switch( $meta['prov'] ) {
 
 				case 'local':
-					$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
-					//$poster = ' poster=""';
+					if (isset($options['local']['videojs']['poster']) && $options['local']['videojs']['poster'])
+						$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
+					else
+						$poster = ' poster=""';
 
 					$a = wp_get_attachment_url($meta['id']);
 					$ext = pathinfo( $a, PATHINFO_EXTENSION );

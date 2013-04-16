@@ -155,14 +155,16 @@ if( !current_theme_supports('post-thumbnails') )
 		$options = get_option( 'fvp-settings' );
 		$videojs['js'] 	= isset($options['local']['videojs']['js'])  ? $options['local']['videojs']['js']  : true;
 		$videojs['css'] = isset($options['local']['videojs']['css']) ? $options['local']['videojs']['css'] : true;
-		$videojs['cdn'] = isset($options['local']['videojs']['cdn']) ? $options['local']['videojs']['cdn'] : false; ?>
+		$videojs['cdn'] = isset($options['local']['videojs']['cdn']) ? $options['local']['videojs']['cdn'] : false;
+		$videojs['poster'] = isset($options['local']['videojs']['poster']) ? $options['local']['videojs']['poster'] : false; ?>
 
 VideoJS:&nbsp;
 <input type="checkbox" name="fvp-settings[local][videojs][cdn]" id="fvp-settings-local-videojs-cdn" value="true" <?php checked( true, $videojs['cdn'], 	1 ) ?>/><label for="fvp-settings-local-videojs-cdn">&nbsp;<?php _e('Use CDN', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[local][videojs][js]" 	id="fvp-settings-local-videojs-js" 	value="true" <?php checked( true, $videojs['js'], 	1 ) ?>/><label for="fvp-settings-local-videojs-js">&nbsp;<?php  _e('Include JS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[local][videojs][css]" id="fvp-settings-local-videojs-css" value="true" <?php checked( true, $videojs['css'], 	1 ) ?>/><label for="fvp-settings-local-videojs-css">&nbsp;<?php _e('Include CSS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
+<input type="checkbox" name="fvp-settings[local][videojs][css]" id="fvp-settings-local-videojs-css" value="true" <?php checked( true, $videojs['css'], 	1 ) ?>/><label for="fvp-settings-local-videojs-css">&nbsp;<?php _e('Include CSS', 	'featured-video-plus'); ?></label><br />
 <p class="description"><?php _e('Disabling JS and/or CSS will break the local video player. Disable only when you want to replace VideoJS with a different script and know what you are doing.', 'featured-video-plus'); ?></p>
+<input type="checkbox" name="fvp-settings[local][videojs][poster]" id="fvp-settings-local-videojs-poster" value="true" <?php checked( true, $videojs['poster'], 	1 ) ?>/><label for="fvp-settings-local-videojs-poster">&nbsp;<?php _e('Use featured image as video thumbnail', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 <?php }
 
 	/**
@@ -324,6 +326,7 @@ VideoJS:&nbsp;
 		$options['local']['videojs']['js']  = isset( $input['local']['videojs']['js']  ) ? true : false;
 		$options['local']['videojs']['css'] = isset( $input['local']['videojs']['css'] ) ? true : false;
 		$options['local']['videojs']['cdn'] = isset( $input['local']['videojs']['cdn'] ) ? true : false;
+		$options['local']['videojs']['poster'] = isset( $input['local']['videojs']['poster'] ) ? true : false;
 
 		// YouTube
 		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme'] == 'light') ? 'light' : 'dark';
@@ -447,4 +450,3 @@ VideoJS:&nbsp;
 	}
 
 }
-?>
