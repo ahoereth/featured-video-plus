@@ -58,7 +58,7 @@
         "iframe[src*='dailymotion.com']",
         "object",
         "embed",
-        "video"
+        ".video-js"
       ];
 
       if (settings.customSelector) {
@@ -79,7 +79,6 @@
         }
         $this.wrap('<div class="fluid-width-video-wrapper"></div>').parent('.fluid-width-video-wrapper').css('padding-top', (aspectRatio * 100)+"%");
         $this.removeAttr('height').removeAttr('width');
-        $this.closest('.video-js').removeAttr('height').removeAttr('width').removeAttr('style');
       });
     });
   };

@@ -18,7 +18,7 @@ class featured_video_plus {
 	 * @since 1.2
 	 */
 	public function enqueue($hook_suffix) {
-		// just required on post.php
+		// just required on frontend, post.php and post-new.php
 		if( !is_admin() || ( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') ) {
 			$options = get_option( 'fvp-settings' );
 
@@ -35,6 +35,8 @@ class featured_video_plus {
 			if( $options['sizing']['wmode'] == 'auto' )
 				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
 				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
+
+			wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION, false );
 		}
 	}
 
@@ -67,7 +69,8 @@ class featured_video_plus {
 			switch( $meta['prov'] ) {
 
 				case 'local':
-					//$featimg = has_post_thumbnail($post_id) ? wp_get_attachment_url( get_post_thumbnail_id($post_id) ) : '';
+					$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
+					//$poster = ' poster=""';
 
 					$a = wp_get_attachment_url($meta['id']);
 					$ext = pathinfo( $a, PATHINFO_EXTENSION );
@@ -75,7 +78,7 @@ class featured_video_plus {
 						break;
 
 					$ext = $ext == 'ogv' ? 'ogg' : $ext;
-					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'" data-setup="{}">'; // poster="'.$featimg.'" data-setup="{}"
+					$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$width.'" height="'.$height.'"'.$poster.' data-setup="{}">';
 					$embed .= "\n\t\t".'<source src="' . $a . '" type="video/'.$ext.'">';
 
 					if( isset($meta['sec_id']) && !empty($meta['sec_id']) && $meta['sec_id'] != $meta['id'] ) {
