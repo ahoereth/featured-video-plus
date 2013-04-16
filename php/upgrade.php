@@ -107,15 +107,17 @@ function featured_video_plus_upgrade() {
 
 			case '1.5':
 			case '1.5.1':
+				$notice = isset($notice) ? $notice : 'upgrade_15';
+
 				$options['youtube']['jsapi'] = 0;
 				$options['local']['videojs']['poster'] = false;
 				unset($options['reged'], $options['out']);
-			default:
 
 
 		// *************************************************************
-			$options['version'] = FVP_VERSION;
-			break;
+			default:
+				$options['version'] = FVP_VERSION;
+				break;
 		}
 
 		$featured_video_plus_notices = new featured_video_plus_notices();
@@ -153,9 +155,20 @@ class featured_video_plus_notices {
 	 *
 	 * @since 1.5
 	 */
+	function upgrade_15() {
+		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s brings new options for YouTube and local videos, fixes a whole bunch of glitches and introduces a new PHP-function.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
+		echo "</p></div>\n";
+	}
+
+	/**
+	 * Upgrade notification 1.4 to current version
+	 *
+	 * @since 1.5
+	 */
 	function upgrade_14() {
 		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s <strong>ajax</strong>ifies the Featured Video box and introduces new options (especially for the local video player).', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
+		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s <strong>ajax</strong>ifies the Featured Video box, introduces new options for YouTube and local videos and a new PHP-function.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
 		echo "</p></div>\n";
 	}
 

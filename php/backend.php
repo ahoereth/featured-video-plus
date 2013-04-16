@@ -210,11 +210,11 @@ class featured_video_plus_backend {
 
 	public function ajax() {
 		$post = array(
-			'id' 				=> $_POST['id'],
-			'fvp_nonce' 		=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
-			'fvp_set_featimg' 	=> isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
-			'fvp_video' 		=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
-			'fvp_sec' 			=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
+			'id' 							=> $_POST['id'],
+			'fvp_nonce' 			=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
+			'fvp_set_featimg' => isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
+			'fvp_video' 			=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
+			'fvp_sec' 				=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
 		);
 		$meta = $this->save($post);
 
@@ -272,11 +272,13 @@ class featured_video_plus_backend {
 
 		$data = $this->get_video_data($url, $sec);
 
-		$valid = true;
-		if( !isset($data['id']) ) {
-			$meta['valid'] = false;
-			$meta['full']  = $url;
-			$meta['sec' ]  = $sec;
+		if (isset($data['api'])&&!$data['api']){
+			$meta = array(
+				'full' 	=> isset($data['url']) && !empty($data['url']) 	? $data['url'] 	 : $url,
+				'id' 		=> isset($data['id']) 	?  $data['id'] : '',
+				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
+				'valid' => false
+			);
 		} else {
 
 			// Do we have a screen capture to pull?
@@ -286,14 +288,14 @@ class featured_video_plus_backend {
 			}
 
 			$meta = array(
-				'full' 	=> isset($data['url']) 		&& !empty($data['url']) 	? $data['url'] : $url,
-				'id' 	=> isset($data['id']) 			? $data['id'] : '',
-				'sec' 	=> isset($data['sec']) 			? $data['sec'] : '',
-				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id']) 		? $data['sec_id'] 	 : '',
+				'full' 	=> isset($data['url']) 			&& !empty($data['url']) 	? $data['url'] 	 : $url,
+				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
+				'sec' 	=> isset($data['sec']) 			?  $data['sec'] : '',
+				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
 				'img' 	=> isset($img) ? $img : '',
-				'prov' 	=> isset($data['provider']) 	? $data['provider'] : '',
-				'time' 	=> isset($data['time']) 		? $data['time'] : '',
-				'valid' => $valid
+				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
+				'time' 	=> isset($data['time']) 		?  $data['time'] : '',
+				'valid' => true
 			);
 
 		}
@@ -357,8 +359,15 @@ class featured_video_plus_backend {
 				if( is_wp_error( $response ) )
 					break;
 				parse_str( $response['body'], $result );
-				if( isset($result['status']) && $result['status'] == 'fail' )
+				if (isset($result['status']) && $result['status'] == 'fail'){
+					$data = array(
+						'id' 			 => $video_id,
+						'provider' => $provider,
+						'url' 		 => $url,
+						'api' 		 => false
+					);
 					break;
+				}
 
 				// extract info of a time-link
 				preg_match('/t=(?:(\d+)m)?(?:(\d+)s)?/', $url, $attr);
@@ -376,11 +385,11 @@ class featured_video_plus_backend {
 
 				// generate video metadata
 				$data = array(
-					'id' 			=> $video_id,
-					'provider' 		=> $provider,
+					'id' 				=> $video_id,
+					'provider' 	=> $provider,
 					'time' 			=> $video_time,
 					'title' 		=> $result['title'],
-					'description' 	=> $result['keywords'],
+					'description' => $result['keywords'],
 					'filename' 		=> sanitize_file_name($result['title']),
 					'timestamp' 	=> $result['timestamp'],
 					'author' 		=> $result['author'],
@@ -506,16 +515,16 @@ class featured_video_plus_backend {
 					$result['title'] = isset($title[1]) ? $title[1] : '';
 
 					$data = array(
-						'id' 			=> $video_id,
+						'id' 					=> $video_id,
 						'provider' 		=> $provider,
-						'title' 		=> $result['title'],
-						'description' 	=> isset($desc[1]) ? $desc[1] : '',
+						'title' 			=> $result['title'],
+						'description' => isset($desc[1]) ? $desc[1] : '',
 						'filename' 		=> sanitize_file_name($result['title']),
 						'timestamp' 	=> time(),
 						//'author' 		=> '', // <strong>By:</strong> <a href="http://www.liveleak.com/c/k-doe">k-doe</a>
 						//'tags' 			=> '', // <strong>Tags:</strong> <a href="browse?q=Drive By">Drive By</a>, <a href="browse?q=Fire Extinguisher">Fire Extinguisher</a><br />
-						'img' 			=> isset($result['image']) ? trim($result['image'],"\"") : '',
-						'url' 			=> 'http://liveleak.com/view?i='.$video_data[1]
+						'img' 				=> isset($result['image']) ? trim($result['image'],"\"") : '',
+						'url' 				=> 'http://liveleak.com/view?i='.$video_data[1]
 					);
 					break;
 				}
@@ -536,6 +545,9 @@ class featured_video_plus_backend {
 						);
 					}
 					break;
+
+				default:
+					break;
 		}
 		return isset($data) ? $data : false;
 	}
@@ -553,7 +565,7 @@ class featured_video_plus_backend {
 
 			// Generate attachment post metadata
 			$img_data = array(
-				'post_content' 	=> $data['description'],
+				'post_content'=> $data['description'],
 				'post_title' 	=> $data['title'],
 				'post_name' 	=> $data['filename']
 			);
@@ -565,16 +577,16 @@ class featured_video_plus_backend {
 			// generate picture metadata
 			$img_meta = wp_get_attachment_metadata( $img );
 			$img_meta['image_meta'] = array(
-				'aperture' 			=> 0,
-				'credit' 			=> $data['id'],
-				'camera' 			=> $data['provider'],
-				'caption' 			=> $data['description'],
+				'aperture' 					=> 0,
+				'credit' 						=> $data['id'],
+				'camera' 						=> $data['provider'],
+				'caption' 					=> $data['description'],
 				'created_timestamp' => $data['timestamp'],
-				'copyright' 		=> $data['author'],
-				'focal_length' 		=> 0,
-				'iso' 				=> 0,
-				'shutter_speed' 	=> 0,
-				'title' 			=> $data['title']
+				'copyright' 				=> $data['author'],
+				'focal_length' 			=> 0,
+				'iso' 							=> 0,
+				'shutter_speed' 		=> 0,
+				'title' 						=> $data['title']
 			);
 
 			// save picture metadata

@@ -201,6 +201,7 @@ VideoJS:&nbsp;
 <span id="youtube_logoinput_wrapper"<?php if($youtube['color'] != 'red') echo ' class="fvp_hidden"'; ?>>
 	<input type="checkbox" name="fvp-settings[youtube][logo]" id="fvp-settings-youtube-logo" 	value="true" 	<?php checked( 1, 		 $youtube['logo'], 1 ) ?>/><label for="fvp-settings-youtube-logo">&nbsp;<?php  _e('Logo', 'featured-video-plus'); ?></label>
 </span>
+
 <?php
 	}
 
