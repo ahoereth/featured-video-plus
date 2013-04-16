@@ -3,7 +3,7 @@
  * Class containing functions required on frontend. Enqueue scripts/styles, replace featured images by featured videos.
  *
  * @author ahoereth
- * @version 2013/03/22
+ * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
@@ -69,7 +69,7 @@ class featured_video_plus_frontend {
 		$h = isset($atts['height']) ? $atts['height'] : '';
 
 		if(has_post_video())
-			echo get_the_post_video(null, array($w, $h));
+			return get_the_post_video(null, array($w, $h));
 	}
 }
 ?>
