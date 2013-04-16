@@ -50,13 +50,15 @@
     return this.each(function(){
       var selectors = [
         "iframe[src*='player.vimeo.com']",
-        "iframe[src*='www.youtube.com']",
-        "iframe[src*='www.youtube-nocookie.com']",
-        "iframe[src*='www.kickstarter.com']",
-        "iframe[src*='www.liveleak.com']",
-        "iframe[src*='www.prochan.com']",
+        "iframe[src*='youtube.com']",
+        "iframe[src*='youtube-nocookie.com']",
+        "iframe[src*='kickstarter.com']",
+        "iframe[src*='liveleak.com']",
+        "iframe[src*='prochan.com']",
+        "iframe[src*='dailymotion.com']",
         "object",
-        "embed"
+        "embed",
+        ".video-js"
       ];
 
       if (settings.customSelector) {

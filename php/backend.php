@@ -3,7 +3,7 @@
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
  * @author ahoereth
- * @version 2013/03/27
+ * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
@@ -28,9 +28,9 @@ class featured_video_plus_backend {
 		if ( !isset($featured_video_plus_instance) )
 			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
-		$this->featured_video_plus 	= $featured_video_plus_instance;
-		$this->default_value 		= __('Video URL', 'featured-video-plus');
-		$this->default_value_sec 	= __('Fallback: same video, different format', 'featured-video-plus');
+		$this->featured_video_plus = $featured_video_plus_instance;
+		$this->default_value 			 = __('Video URL', 'featured-video-plus');
+		$this->default_value_sec 	 = __('Fallback: same video, different format', 'featured-video-plus');
 	}
 
 	/**
@@ -60,8 +60,8 @@ class featured_video_plus_backend {
 
 		// just required on post.php
 		if( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php' ) {
-			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize-min.js', array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend-min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
+			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize.min.js', array( 'jquery' ), FVP_VERSION );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
 			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
 			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
@@ -76,7 +76,7 @@ class featured_video_plus_backend {
 		}
 
 		if( $hook_suffix == 'options-media.php' || (($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') )
-			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend-min.css', array(), FVP_VERSION ); 	// production
+			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.min.css', array(), FVP_VERSION ); 	// production
 			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
 	}
 
@@ -129,7 +129,7 @@ class featured_video_plus_backend {
 		echo '</div>'."\n\n";
 
 		// input box containing the featured video URL
-		$legal= isset($meta['valid']) && !$meta['valid'] ? ' fvp_invalid' : '';
+		$legal= isset($meta['valid']) && !$meta['valid'] && isset($meta['full']) && !empty($meta['full']) ? ' fvp_invalid' : '';
 		$full = isset($meta['prov']) && $meta['prov'] == 'local' ? wp_get_attachment_url($meta['id']) : isset($meta['full']) ? $meta['full'] : $this->default_value;
 		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
 		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
@@ -210,11 +210,11 @@ class featured_video_plus_backend {
 
 	public function ajax() {
 		$post = array(
-			'id' 				=> $_POST['id'],
-			'fvp_nonce' 		=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
-			'fvp_set_featimg' 	=> isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
-			'fvp_video' 		=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
-			'fvp_sec' 			=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
+			'id' 							=> $_POST['id'],
+			'fvp_nonce' 			=> isset($_POST['fvp_nonce']) 		? $_POST['fvp_nonce'] 		: '',
+			'fvp_set_featimg' => isset($_POST['fvp_set_featimg']) ? $_POST['fvp_set_featimg'] : '',
+			'fvp_video' 			=> isset($_POST['fvp_video']) 		? $_POST['fvp_video'] 		: '',
+			'fvp_sec' 				=> isset($_POST['fvp_sec']) 		? $_POST['fvp_sec'] 		: ''
 		);
 		$meta = $this->save($post);
 
@@ -226,7 +226,7 @@ class featured_video_plus_backend {
 
 			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
 		} else
-			echo json_encode(array( 'typ' => 'removed', 'img' => $img ));
+			echo json_encode(array( 'typ' => 'removed', 'valid' => $meta['valid'], 'img' => $img ));
 		die();
 	}
 
@@ -272,11 +272,13 @@ class featured_video_plus_backend {
 
 		$data = $this->get_video_data($url, $sec);
 
-		$valid = true;
-		if( !isset($data['id']) ) {
-			$meta['valid'] = false;
-			$meta['full']  = $url;
-			$meta['sec' ]  = $sec;
+		if (isset($data['api'])&&!$data['api']){
+			$meta = array(
+				'full' 	=> isset($data['url']) && !empty($data['url']) 	? $data['url'] 	 : $url,
+				'id' 		=> isset($data['id']) 	?  $data['id'] : '',
+				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
+				'valid' => false
+			);
 		} else {
 
 			// Do we have a screen capture to pull?
@@ -286,14 +288,14 @@ class featured_video_plus_backend {
 			}
 
 			$meta = array(
-				'full' 	=> isset($data['url']) 		&& !empty($data['url']) 	? $data['url'] : $url,
-				'id' 	=> isset($data['id']) 			? $data['id'] : '',
-				'sec' 	=> isset($data['sec']) 			? $data['sec'] : '',
-				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id']) 		? $data['sec_id'] 	 : '',
+				'full' 	=> isset($data['url']) 			&& !empty($data['url']) 	? $data['url'] 	 : $url,
+				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
+				'sec' 	=> isset($data['sec']) 			?  $data['sec'] : '',
+				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
 				'img' 	=> isset($img) ? $img : '',
-				'prov' 	=> isset($data['provider']) 	? $data['provider'] : '',
-				'time' 	=> isset($data['time']) 		? $data['time'] : '',
-				'valid' => $valid
+				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
+				'time' 	=> isset($data['time']) 		?  $data['time'] : '',
+				'valid' => true
 			);
 
 		}
@@ -357,8 +359,15 @@ class featured_video_plus_backend {
 				if( is_wp_error( $response ) )
 					break;
 				parse_str( $response['body'], $result );
-				if( isset($result['status']) && $result['status'] == 'fail' )
+				if (isset($result['status']) && $result['status'] == 'fail'){
+					$data = array(
+						'id' 			 => $video_id,
+						'provider' => $provider,
+						'url' 		 => $url,
+						'api' 		 => false
+					);
 					break;
+				}
 
 				// extract info of a time-link
 				preg_match('/t=(?:(\d+)m)?(?:(\d+)s)?/', $url, $attr);
@@ -376,11 +385,11 @@ class featured_video_plus_backend {
 
 				// generate video metadata
 				$data = array(
-					'id' 			=> $video_id,
-					'provider' 		=> $provider,
+					'id' 				=> $video_id,
+					'provider' 	=> $provider,
 					'time' 			=> $video_time,
 					'title' 		=> $result['title'],
-					'description' 	=> $result['keywords'],
+					'description' => $result['keywords'],
 					'filename' 		=> sanitize_file_name($result['title']),
 					'timestamp' 	=> $result['timestamp'],
 					'author' 		=> $result['author'],
@@ -506,16 +515,16 @@ class featured_video_plus_backend {
 					$result['title'] = isset($title[1]) ? $title[1] : '';
 
 					$data = array(
-						'id' 			=> $video_id,
+						'id' 					=> $video_id,
 						'provider' 		=> $provider,
-						'title' 		=> $result['title'],
-						'description' 	=> isset($desc[1]) ? $desc[1] : '',
+						'title' 			=> $result['title'],
+						'description' => isset($desc[1]) ? $desc[1] : '',
 						'filename' 		=> sanitize_file_name($result['title']),
 						'timestamp' 	=> time(),
 						//'author' 		=> '', // <strong>By:</strong> <a href="http://www.liveleak.com/c/k-doe">k-doe</a>
 						//'tags' 			=> '', // <strong>Tags:</strong> <a href="browse?q=Drive By">Drive By</a>, <a href="browse?q=Fire Extinguisher">Fire Extinguisher</a><br />
-						'img' 			=> isset($result['image']) ? trim($result['image'],"\"") : '',
-						'url' 			=> 'http://liveleak.com/view?i='.$video_data[1]
+						'img' 				=> isset($result['image']) ? trim($result['image'],"\"") : '',
+						'url' 				=> 'http://liveleak.com/view?i='.$video_data[1]
 					);
 					break;
 				}
@@ -536,6 +545,9 @@ class featured_video_plus_backend {
 						);
 					}
 					break;
+
+				default:
+					break;
 		}
 		return isset($data) ? $data : false;
 	}
@@ -553,7 +565,7 @@ class featured_video_plus_backend {
 
 			// Generate attachment post metadata
 			$img_data = array(
-				'post_content' 	=> $data['description'],
+				'post_content'=> $data['description'],
 				'post_title' 	=> $data['title'],
 				'post_name' 	=> $data['filename']
 			);
@@ -565,16 +577,16 @@ class featured_video_plus_backend {
 			// generate picture metadata
 			$img_meta = wp_get_attachment_metadata( $img );
 			$img_meta['image_meta'] = array(
-				'aperture' 			=> 0,
-				'credit' 			=> $data['id'],
-				'camera' 			=> $data['provider'],
-				'caption' 			=> $data['description'],
+				'aperture' 					=> 0,
+				'credit' 						=> $data['id'],
+				'camera' 						=> $data['provider'],
+				'caption' 					=> $data['description'],
 				'created_timestamp' => $data['timestamp'],
-				'copyright' 		=> $data['author'],
-				'focal_length' 		=> 0,
-				'iso' 				=> 0,
-				'shutter_speed' 	=> 0,
-				'title' 			=> $data['title']
+				'copyright' 				=> $data['author'],
+				'focal_length' 			=> 0,
+				'iso' 							=> 0,
+				'shutter_speed' 		=> 0,
+				'title' 						=> $data['title']
 			);
 
 			// save picture metadata
@@ -591,7 +603,7 @@ class featured_video_plus_backend {
 	}
 
 	/**
-	 * Removes the old featured ima
+	 * Removes the old featured image
 	 * Used since 1.0, got it own function in 1.4
 	 *
 	 * @since 1.4
@@ -610,34 +622,7 @@ class featured_video_plus_backend {
 		}
 	}
 
-/**
- * Plugin Version, WordPress Version and WordPress Language.
- * Less than WordPress.org, but much more informative for future development.
- *
- * @since 1.4
- *
- * @param bool $out set to true when oppting out
- */
-function featured_video_plus_notify($options, $out = null) {
-	if($options['out'] == 1 && $out != 0)
-		return $options;
-
-	if( ($out !== null && $out != $options['out']) || isset($notice) || !isset($options['reged']) || !is_numeric($options['reged']) || ($options['reged']<strtotime("-1 week")) ) {
-		$options['out'] = $out == 1 ? 1 : 0;
-		$attr = array('body'=> array(
-			'fvp_version' 	=> FVP_VERSION,
-			'wp_version' 	=> get_bloginfo('version'),
-			'wp_language' 	=> get_bloginfo('language'),
-			'out' 			=> $options['out']
-		));
-		$response = wp_remote_post( 'http://fvp.ahoereth.yrnxt.com/fvp.php', $attr);
-		if( !is_wp_error( $response ) )
-			$options['reged'] = is_numeric($response['body']) ? $response['body'] : time();
-	}
-	return $options;
-}
-
-	/**
+	/*
 	 * Initializes the help texts.
 	 *
 	 * @since 1.3
@@ -679,6 +664,7 @@ function featured_video_plus_notify($options, $out = null) {
 	<li>Liveleak:
 	<ul><li><code>(http(s)://)(www.)<strong>liveleak.com/view?i=<em>LIV_ELEAKUNQID</em></strong></code></li></ul></li>
 </ul>'."\n";
+
 	}
 
 	/**
@@ -773,5 +759,5 @@ function featured_video_plus_notify($options, $out = null) {
 			);
 		return $id;
 	}
+
 }
-?>
