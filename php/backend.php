@@ -218,10 +218,7 @@ class featured_video_plus_backend {
 		);
 		$meta = $this->save($post);
 
-		if( !empty($meta['img']) )
-			$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
-		else
-			$img = '';
+		$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
 
 		if(isset($meta['id'])) {
 			if( has_post_video($post['id']) )
@@ -594,6 +591,26 @@ class featured_video_plus_backend {
 	}
 
 	/**
+	 * Removes the old featured image
+	 * Used since 1.0, got it own function in 1.4
+	 *
+	 * @since 1.4
+	 */
+	function delete_featured_video_image($post_id, $meta) {
+		if(!isset($meta['img'])) return false;
+
+		// Unset featured image if it is from this video
+		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
+
+		// Check if other posts use the image, if not we can delete it completely
+		$other = $this->featured_video_plus->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
+		if( empty( $other ) ) {
+			wp_delete_attachment( $meta['img'] );
+			delete_post_meta( $meta['img'], '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
+		}
+	}
+
+	/*
 	 * Initializes the help texts.
 	 *
 	 * @since 1.3
