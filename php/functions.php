@@ -1,33 +1,4 @@
 <?php
-/* Requires a featured_video_plus class instance, located in php/general.php
- *
- * @see featured-video-plus.php
- * @see php/general.php
- */
-
-/**
- * Echos the current posts featured video
- *
- * @since 1.0
- *
- * @param size
- */
-function the_post_video($size = null) {
-	echo get_the_post_video(null, $size);
-}
-
-/**
- * Returns the posts featured video
- *
- * @since 1.0
- *
- * @param post_id
- * @param size
- */
-function get_the_post_video($post_id = null, $size = null) {
-	global $featured_video_plus;
-	return apply_filters( 'get_the_post_video_filter', $featured_video_plus->get_the_post_video($post_id, $size) );
-}
 
 /**
  * Checks if post has a featured video
@@ -44,6 +15,30 @@ function has_post_video($post_id = null){
 		return false;
 
 	return true;
+}
+
+/**
+ * Returns the posts featured video
+ *
+ * @since 1.0
+ *
+ * @param post_id
+ * @param size
+ */
+function get_the_post_video($post_id = null, $size = null) {
+	global $featured_video_plus;
+	return apply_filters( 'get_the_post_video_filter', $featured_video_plus->get_the_post_video($post_id, $size) );
+}
+
+/**
+ * Echos the current posts featured video
+ *
+ * @since 1.0
+ *
+ * @param size
+ */
+function the_post_video($size = null) {
+	echo get_the_post_video(null, $size);
 }
 
 /**
@@ -86,4 +81,25 @@ function get_the_post_video_image($post_id = null, $size = null) {
 	return wp_get_attachment_image($id, $size);
 }
 
-?>
+/**
+ * Retruns the post video url.
+ *
+ * @since 1.6
+ *
+ * @param  int $post_id
+ * @return mixed boolean (false) when no url/ string with url
+ */
+function get_the_post_video_url($post_id){
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+
+	$meta = get_post_meta($post_id, '_fvp_video', true );
+	if (!isset($meta) || empty($meta['id']))
+		return false;
+
+	if (isset($meta['prov']) && $meta['prov'] == 'local')
+		return wp_get_attachment_url($meta['id']);
+	else if (isset($meta['full']))
+		return $meta['full'];
+	else
+		return false;
+}

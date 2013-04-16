@@ -3,7 +3,7 @@
  * Class containing everything regarding plugin settings on media-settings.php
  *
  * @author ahoereth
- * @version 2013/02/12
+ * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @since 1.3
  */
@@ -388,6 +388,7 @@ VideoJS:&nbsp;
 	<li><code>the_post_video( $size )</code></li>
 	<li><code>has_post_video( $post_id )</code></li>
 	<li><code>get_the_post_video( $post_id, $size )</code></li>
+	<li><code>get_the_post_video_url( $post_id )</code></li>
 	<li><code>get_the_post_video_image_url( $post_id )</code></li>
 	<li><code>get_the_post_video_image( $post_id )</code></li>
 </ul>
