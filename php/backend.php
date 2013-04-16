@@ -3,7 +3,7 @@
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
  * @author ahoereth
- * @version 2013/03/27
+ * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
@@ -129,7 +129,7 @@ class featured_video_plus_backend {
 		echo '</div>'."\n\n";
 
 		// input box containing the featured video URL
-		$legal= isset($meta['valid']) && !$meta['valid'] ? ' fvp_invalid' : '';
+		$legal= isset($meta['valid']) && !$meta['valid'] && isset($meta['full']) && !empty($meta['full']) ? ' fvp_invalid' : '';
 		$full = isset($meta['prov']) && $meta['prov'] == 'local' ? wp_get_attachment_url($meta['id']) : isset($meta['full']) ? $meta['full'] : $this->default_value;
 		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
 		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
@@ -226,7 +226,7 @@ class featured_video_plus_backend {
 
 			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
 		} else
-			echo json_encode(array( 'typ' => 'removed', 'img' => $img ));
+			echo json_encode(array( 'typ' => 'removed', 'valid' => $meta['valid'], 'img' => $img ));
 		die();
 	}
 
