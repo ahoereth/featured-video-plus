@@ -47,8 +47,11 @@ jQuery(document).ready(function($){
                             $('#fvp_current_video').html(data.video);
                             t.css('backgroundColor','#00FF00').animate({'backgroundColor':'white'}, 500, function() { t.css('backgroundColor',''); });
                             $("#fvp_help_notice").slideUp('fast');
-                        } else
+                        } else{
+                            $('#fvp_current_video').html(data.video);
                             t.addClass('fvp_invalid');
+                            $("#fvp_help_notice").slideUp('fast');
+                        }
                 }, "json"
             );
         }

@@ -27,12 +27,22 @@ The plugin adds customization options to your Media Settings. Beside aesthetic i
 	the_post_video( $size )
 	has_post_video( $post_id )
 	get_the_post_video( $post_id, $size )
+	get_the_post_video_url( $post_id )
 	get_the_post_video_image_url( $post_id )
 	get_the_post_video_image( $post_id )
 
 All parameters are optional. If no `$post_id` is given the current post's ID will be used. `$size` is either a string keyword (`thumbnail`, `medium`, `large` or `full`) or a 2-item array representing width and height in pixels, e.g. array(560,320).
 
 ## Changelog ##
+
+### 1.6: 2013-04-16 ###
+* Added `get_the_post_video_url($post_id)` PHP-Function
+* Added YouTube `enablejsapi` parameter with `playerapiid` (`fvpid + $post_id`) and iframe id ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
+* Added a filter for `get_the_post_video`: `get_the_post_video_filter` ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
+* Added option for using the featured image as video thumbnail for local videos
+* Fixed local videoJS ([*](http://wordpress.org/support/topic/how-to-style-the-player-play-button-pause-button-etc))
+* Fixed auto width and height for the Dailymotion and videoJS players
+* Fixed YouTube videos for which the plugin cannot access the YouTube API ([*](http://wordpress.org/support/topic/link-appearing-red-in-featured-video-section))
 
 ### 1.5.1: 2013-03-27 ###
 * Fixed Featured Video box on new-post.php

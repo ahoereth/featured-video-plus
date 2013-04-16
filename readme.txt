@@ -1,16 +1,16 @@
 === Featured Video Plus ===
 Contributors: a.hoereth
 Plugin Name: Featured Video Plus
-Plugin URI: https://github.com/ahoereth/featured-video-plus
+Plugin URI: http://yrnxt.com/category/wordpress/featured-video-plus/
 Tags: featured, post, video, image, thumbnail, html5, flash, youtube, vimeo, dailymotion, mp4, webm, ogg, embed, ajax
 Author: Alexander Höreth
-Author URI: http://ahoereth.yrnxt.com/
+Author URI: http://yrnxt.com/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ehoereth%40gmail%2ecom
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.5.1
-Stable tag: 1.5.1
+Stable tag: 1.6
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -37,6 +37,7 @@ The plugin adds customization options to your Media Settings. Beside aesthetic i
 	the_post_video( $size )
 	has_post_video( $post_id )
 	get_the_post_video( $post_id, $size )
+	get_the_post_video_url( $post_id )
 	get_the_post_video_image_url( $post_id )
 	get_the_post_video_image( $post_id )
 
@@ -58,6 +59,15 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+= 1.6: 2013-04-16 =
+* Added `get_the_post_video_url($post_id)` PHP-Function
+* Added YouTube `enablejsapi` parameter with `playerapiid` (`fvpid + $post_id`) and iframe id ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
+* Added a filter for `get_the_post_video`: `get_the_post_video_filter` ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
+* Added option for using the featured image as video thumbnail for local videos
+* Fixed local videoJS ([*](http://wordpress.org/support/topic/how-to-style-the-player-play-button-pause-button-etc))
+* Fixed auto width and height for the Dailymotion and videoJS players
+* Fixed YouTube videos for which the plugin cannot access the YouTube API ([*](http://wordpress.org/support/topic/link-appearing-red-in-featured-video-section))
 
 = 1.5.1: 2013-03-27 =
 * Fixed Featured Video box on new-post.php
@@ -101,6 +111,9 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Upgrade Notice ==
 
+= 1.6 =
+Smoothness
+
 = 1.5 =
 AJAX!
 
@@ -128,6 +141,13 @@ Feature Dailymotion Videos on your posts!
 
 = After adding the URL and saving the post I do not get any video? =
 Maybe the plugin does not recognize the URL. Take a look into the contextual help (button on the top right of the post edit screen). There is a list what the URLs should look like. If this does not help leave a note in the support forum.
+
+= The input box has a red background - but the video works just fine. Whats going on? =
+With every video you insert into the meta box the plugin tries to access the API of the
+according video provider to grab information about the video and pull an image. When this API
+access fails the input box gets a red background. When for example the server you are using is
+located in Germany it cannot access the YouTube API for videos blocked in this country - still
+you and your visitors might be able to watch the videos as normal. The plugin cannot test for this.
 
 = How do I use my local videos? =
 Take a look into the contextual help (button on the top right of the post edit screen).
