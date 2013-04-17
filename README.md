@@ -35,6 +35,9 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 ## Changelog ##
 
+### 1.6.1: 2013-04-XX ###
+* Fixed removing featured image when no featured video is specified ([*](http://wordpress.org/support/topic/featured-image-doesnt-save))
+
 ### 1.6: 2013-04-16 ###
 * Added `get_the_post_video_url($post_id)` PHP-Function
 * Added YouTube `enablejsapi` parameter with `playerapiid` (`fvpid + $post_id`) and iframe id ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
