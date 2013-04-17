@@ -609,7 +609,7 @@ class featured_video_plus_backend {
 	 * @since 1.4
 	 */
 	function delete_featured_video_image($post_id, $meta) {
-		if(!isset($meta['img'])) return false;
+		if(!isset($meta['img'])||empty($meta['img'])) return false;
 
 		// Unset featured image if it is from this video
 		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
