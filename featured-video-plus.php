@@ -1,11 +1,11 @@
 <?php
 /**
 Plugin Name: Featured Video Plus
-Plugin URI: https://github.com/ahoereth/featured-video-plus
+Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
 Version: 1.6.1
-Author URI: http://ahoereth.yrnxt.com
+Author URI: http://yrnxt.com
 License: GPL2
 
     Copyright 2009-2012  Alexander Höreth (email: a.hoereth@gmail.com)
@@ -109,5 +109,3 @@ if( !is_admin() ) {
 	// shortcode
 	add_shortcode( 	'featured-video-plus', array( &$featured_video_plus_frontend, 'shortcode' ) );
 }
-
-?>

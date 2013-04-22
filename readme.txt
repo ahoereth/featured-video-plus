@@ -60,7 +60,7 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Changelog ==
 
-= 1.6.1: 2013-04-XX =
+= 1.6.1: 2013-04-18 =
 * Fixed removing featured image when no featured video is specified ([*](http://wordpress.org/support/topic/featured-image-doesnt-save))
 
 = 1.6: 2013-04-16 =
