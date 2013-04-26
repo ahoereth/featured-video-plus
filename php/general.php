@@ -67,6 +67,8 @@ class featured_video_plus {
 
 		if( isset($meta['id']) && !empty($meta['id']) ) {
 			$valid = $meta['valid'];
+
+
 			switch( $meta['prov'] ) {
 
 				case 'local':
@@ -98,9 +100,10 @@ class featured_video_plus {
 				case 'vimeo':
 					if (!$valid) return '';
 
-					$options = get_option( 'fvp-settings' );
-					$src = 'http://player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].$autoplay;
-					$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$width.'" height="'.$height.'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
+					$options = get_option( 'fvp-settings' ); //http://player.vimeo.com/video/
+					$embed = wp_oembed_get('http://vimeo.com/'.$meta['id'], array( 'width' => $width, 'height' => $height ) );
+					$append = '?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].$autoplay;
+					$embed = preg_replace('/(<iframe[^>]+src=")([^"]*)([^>]*>)/', '${1}$2'.$append.'$3', $embed);
 					break;
 
 				case 'youtube':
@@ -113,8 +116,10 @@ class featured_video_plus {
 					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 		: 1;
 					$youtube['wmode'] = isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
 
-					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
-					$embed = "\n\t" . '<iframe width="'.$width.'" height="'.$height.'" src="'.$src.'" type="text/html" frameborder="0" id="fvpyt'.$post_id.'"></iframe>' . "\n";
+					$embed = wp_oembed_get('http://youtu.be/'.$meta['id'], array( 'width' => $width, 'height' => $height ) );
+
+					$append = '?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
+					$embed = preg_replace('/(<iframe[^>]+src=")([^"]*)([^>]*>)/', '${1}$2'.$append.'$3', $embed);
 					break;
 
 				case 'dailymotion':

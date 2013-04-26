@@ -272,10 +272,11 @@ class featured_video_plus_backend {
 
 		$data = $this->get_video_data($url, $sec);
 
+		$url = isset($data['url']) && !empty($data['url']) 	? $data['url'] 	 : $url;
 		if (isset($data['api'])&&!$data['api']){
 			$meta = array(
-				'full' 	=> isset($data['url']) && !empty($data['url']) 	? $data['url'] 	 : $url,
-				'id' 		=> isset($data['id']) 	?  $data['id'] : '',
+				'full' 	=> $url,
+				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
 				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
 				'valid' => false
 			);
@@ -288,7 +289,7 @@ class featured_video_plus_backend {
 			}
 
 			$meta = array(
-				'full' 	=> isset($data['url']) 			&& !empty($data['url']) 	? $data['url'] 	 : $url,
+				'full' 	=> $url,
 				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
 				'sec' 	=> isset($data['sec']) 			?  $data['sec'] : '',
 				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
