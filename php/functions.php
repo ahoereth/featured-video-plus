@@ -11,7 +11,7 @@ function has_post_video($post_id = null){
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['id']) )
+	if( !isset($meta) || empty($meta['url']) )
 		return false;
 
 	return true;
@@ -52,7 +52,7 @@ function get_the_post_video_image_url($post_id = null) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['id']) )
+	if( !isset($meta) || empty($meta['url']) )
 		return false;
 
 	global $featured_video_plus;
@@ -71,7 +71,7 @@ function get_the_post_video_image_url($post_id = null) {
  */
 function get_the_post_video_image($post_id = null, $size = null) {
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['id']) )
+	if( !isset($meta) || empty($meta['url']) )
 		return false;
 
 	global $featured_video_plus;

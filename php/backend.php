@@ -220,7 +220,7 @@ class featured_video_plus_backend {
 
 		$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
 
-		if(isset($meta['id'])) {
+		if(isset($meta['url'])) {
 			if( has_post_video($post['id']) )
 				$video = get_the_post_video( $post['id'], array(256,144) );
 
@@ -290,13 +290,13 @@ class featured_video_plus_backend {
 
 			$meta = array(
 				'full' 	=> $url,
-				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
-				'sec' 	=> isset($data['sec']) 			?  $data['sec'] : '',
+				'id' 		=> isset($data['id']) 			?  $data['id'] 			 : '',
+				'sec' 	=> isset($data['sec']) 			?  $data['sec'] 		 : '',
 				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
 				'img' 	=> isset($img) ? $img : '',
 				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
-				'time' 	=> isset($data['time']) 		?  $data['time'] : '',
-				'valid' => true
+				'time' 	=> isset($data['time']) 		?  $data['time'] 		 : '',
+				'valid' => isset($data['valid']) 		?  $data['valid'] 	 : true
 			);
 
 		}
@@ -316,7 +316,7 @@ class featured_video_plus_backend {
 	 */
 	function get_video_data($url, $sec = '') {
 		$local = wp_upload_dir();
-		preg_match('/(vimeo|youtu|dailymotion|liveleak|'.preg_quote($local['baseurl'], '/').')/i', $url, $prov_data);
+		preg_match('/(vimeo|youtu|dailymotion|liveleak|blip|hulu|'.preg_quote($local['baseurl'], '/').')/i', $url, $prov_data);
 		if( isset($prov_data[1]) )
 			$provider = $prov_data[1];
 		else return false;
@@ -484,6 +484,18 @@ class featured_video_plus_backend {
 					'url' 			=> 'http://dailymotion.com/video/'.$video_id. ( $video_time>0 ? '#t='.floor($video_time/60).'m'.($video_time%60).'s' : '')
 				);
 
+				break;
+
+			case 'blip':
+			case 'hulu':
+				$valid = true;
+				if (!wp_oembed_get( $url ))
+					$valid = false;
+
+				$data = array(
+					'url' 	=> $url,
+					'valid' => $valid
+				);
 				break;
 
 			// liveleak.com
