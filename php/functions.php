@@ -89,7 +89,7 @@ function get_the_post_video_image($post_id = null, $size = null) {
  * @param  int $post_id
  * @return mixed boolean (false) when no url/ string with url
  */
-function get_the_post_video_url($post_id){
+function get_the_post_video_url($post_id, $fallback = false){
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta($post_id, '_fvp_video', true );
@@ -97,7 +97,10 @@ function get_the_post_video_url($post_id){
 		return false;
 
 	if (isset($meta['prov']) && $meta['prov'] == 'local')
-		return wp_get_attachment_url($meta['id']);
+		if ($fallback)
+			return wp_get_attachment_url($meta['sec_id']);
+		else
+			return wp_get_attachment_url($meta['id']);
 	else if (isset($meta['full']))
 		return $meta['full'];
 	else
