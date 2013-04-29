@@ -63,7 +63,7 @@ jQuery(document).ready(function($){
 	}
 
 	// fitvids
-	if (fvpdata.fitvids=="1" && !fvpdata.dynamic && !fvpdata.overlay)
+	if (fvpdata.fitvids=="1" && fvpdata.dynamic=="0" && fvpdata.overlay=="0")
 	  $(".featured_video_plus").fitVids({customSelector:["iframe", "object", "embed", ".video-js"]});
 
 });

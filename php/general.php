@@ -88,7 +88,6 @@ class featured_video_plus {
 			}
 
 			$embed .= "\n\t</video>\n";
-			break;
 		}else{
 			switch ($meta['prov']){
 				case 'vimeo':
