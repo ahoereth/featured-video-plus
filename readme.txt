@@ -25,6 +25,8 @@ This plugin enables you to define Featured Videos, which, if set, take the place
 
 Instead of option 1 the plugin can also request the videos using an AJAX request when the featured image is clicked. This reduces load times and gives you the flexibility to display videos in a lightbox to ensure your theme does not break.
 
+See the theme in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). Also take a look at the [Garvan](http://www.web2feel.com/garvan/) video blogging theme.
+
 Beside your __Local Videos__ (`mp4`, `webM` & `ogg/ogv`) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
 
 The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic integration, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
@@ -40,10 +42,10 @@ The plugin adds customization options to your Media Settings. Beside aesthetic i
 	has_post_video( $post_id )
 	get_the_post_video( $post_id, $size )
 	get_the_post_video_url( $post_id )
-	get_the_post_video_image_url( $post_id )
+	get_the_post_video_image_url( $post_id, $fallback )
 	get_the_post_video_image( $post_id )
 
-All parameters are optional. If no `$post_id` is given the current post's ID will be used. `$size` is either a string keyword (`thumbnail`, `medium`, `large` or `full`) or a 2-item array representing width and height in pixels, e.g. array(560,320).
+All parameters are optional. If no `$post_id` is given the current post's ID will be used. `$size` is either a string keyword (`thumbnail`, `medium`, `large` or `full`) or a 2-item array representing width and height in pixels, e.g. array(560,320). $fallback by default is false, when set to true this will return the fallback URL for local videos.
 
 
 
