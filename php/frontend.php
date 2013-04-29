@@ -33,6 +33,37 @@ class featured_video_plus_frontend {
 	 * @since 1.0
 	 */
 	public function enqueue() {
+		$options = get_option('fvp-settings');
+
+		wp_enqueue_script('jquery');
+
+		if ($options['sizing']['wmode'] == 'auto' && $options['usage']!='overlay')
+			wp_enqueue_script('jquery.fitvids', FVP_URL . 'js/jquery.fitvids.min.js', array( 'jquery' ), FVP_VERSION, false ); 	// production
+			//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids.js', array( 'jquery' ), FVP_VERSION, false ); 		// development
+
+		if ($options['usage']=='overlay')
+			wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
+			//wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.js', array( 'jquery' ), FVP_VERSION ); 		// development
+			//add_thickbox();
+
+		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
+		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
+
+		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'nonce' 	=> wp_create_nonce( 'featured-video-plus-nonce' ),
+			'fitvids' => isset($options['sizing']['wmode']) 			&&
+												 $options['sizing']['wmode']=='auto' ? 1 : 0,
+			'dynamic' => isset($options['usage']) 				 				&&
+												 $options['usage']=='dynamic' 			 ? 1 : 0,
+			'overlay' => isset($options['usage']) 				 				&&
+												 $options['usage']=='overlay' 			 ? 1 : 0,
+			'opacity' => '75',
+			'loadingw'=> FVP_URL . 'css/loading_w.gif',
+			'loadingb'=> FVP_URL . 'css/loading_b.gif'
+		) );
+
+		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION, false );
 	}
 
 	/**
@@ -50,11 +81,22 @@ class featured_video_plus_frontend {
 	public function filter_post_thumbnail($html, $post_id, $post_thumbnail_id, $size, $attr) {
 		global $_wp_additional_image_sizes;
 
+		$size = $this->featured_video_plus->get_size();
+
 		$options = get_option( 'fvp-settings' );
-		if( !$options['overwrite'] || !has_post_video( $post_id ) )
+
+		if ((!$options['usage']=='manual') || !has_post_video($post_id))
 			return $html;
 
-		return get_the_post_video( $post_id, $size );
+		elseif ($options['usage']=='replace')
+			return get_the_post_video($post_id, $size);
+
+		elseif ($options['usage']=='overlay') //?width='.$size['0'].'&height='.$size['1'].'&inlineId=fvp_'.$post_id.'
+			return '<a href="#fvp_'.$post_id.'" class="fvp_overlay" onclick="return false;">'.$html.'</a><div id="fvp_'.$post_id.'" style="display: none;"></div>';
+
+		else//if ($options['usage']=='dynamic')
+			return '<a href="#featuredvideo'.$post_id.'" class="fvp_dynamic fvp_'.$post_id.'" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
+
 	}
 
 	/**
@@ -72,4 +114,3 @@ class featured_video_plus_frontend {
 			return get_the_post_video(null, array($w, $h));
 	}
 }
-?>

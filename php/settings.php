@@ -20,7 +20,7 @@ class featured_video_plus_settings {
 	function settings_init() {
 		add_settings_section('fvp-settings-section', 	__('Featured Videos', 'featured-video-plus'), 			 array( &$this, 'settings_content' ), 	 'media');
 
-		add_settings_field('fvp-settings-overwrite', 	__('Replace Featured Images', 'featured-video-plus'),array( &$this, 'settings_overwrite' ),  'media', 'fvp-settings-section');
+		add_settings_field('fvp-settings-usage', 			__('Usage', 'featured-video-plus'), 								 array( &$this, 'settings_usage' 		),   'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-autoplay', 	__('Autoplay', 'featured-video-plus'), 							 array( &$this, 'settings_autoplay' ), 	 'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-sizing', 		__('Video Sizing', 'featured-video-plus'), 					 array( &$this, 'settings_sizing' ), 		 'media', 'fvp-settings-section');
 		add_settings_field('fvp-settings-align', 			__('Video Align', 'featured-video-plus'), 					 array( &$this, 'settings_align' ), 		 'media', 'fvp-settings-section');
@@ -49,25 +49,26 @@ class featured_video_plus_settings {
 <?php }
 
 	/**
-	 * Displays the setting if the plugin should display the featured video in place of featured images.
+	 * Displays the different usage options of the plugin
 	 *
-	 * @since 1.0
+	 * @since 1.7
 	 */
-	function settings_overwrite() {
+	function settings_usage() {
 		$options = get_option( 'fvp-settings' );
-		$overwrite = isset($options['overwrite']) ? $options['overwrite'] : false;
+		$usage = isset($options['usage']) ? $options['usage'] : false;
 ?>
 
-<span class="fvp_radio_bumper">
-	<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-1" value="true" 	<?php checked( true, 	$overwrite, true ) ?>/><label for="fvp-settings-overwrite-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
-</span>
-<input type="radio" name="fvp-settings[overwrite]" id="fvp-settings-overwrite-2" value="false" 	<?php checked( false, 	$overwrite, true ) ?>/><label for="fvp-settings-overwrite-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?></label>
-<p class="description"><?php _e('If a Featured Video is available it can be displayed in place of the Featured Image. Still, a Featured Image is required.', 'featured-video-plus'); ?></p>
+
+<input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-1" value="replace" <?php checked( 'replace', $usage ) ?>/><label for="fvp-settings-usage-1">&nbsp;<?php _e('Replace featured image automatically if possible', 					 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label><br />
+<input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-2" value="overlay" <?php checked( 'overlay', $usage ) ?>/><label for="fvp-settings-usage-2">&nbsp;<?php _e('Open video overlay when featured image is clicked. Define width below!', 'featured-video-plus'); ?></label><br />
+<input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-3" value="dynamic" <?php checked( 'dynamic', $usage ) ?>/><label for="fvp-settings-usage-3">&nbsp;<?php _e('Replace featured image with video on click and auto play if possible','featured-video-plus'); ?></label><br />
+<input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-4" value="manual"	 <?php checked( 'manual',  $usage ) ?>/><label for="fvp-settings-usage-4">&nbsp;<?php _e('None of the above: Manually use PHP-functions or shortcodes','featured-video-plus'); ?></label>
+<p class="description"><?php printf(__('The first three options require your theme to make use of WordPress\' %sfeatured image%s capabilities.', 'featured-video-plus'),'<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">','</a>'); ?></p>
 
 <?php
 $class = $overwrite ? 'fvp_warning ' : 'fvp_notice ';
 if( !current_theme_supports('post-thumbnails') )
-	echo '<p class="'.$class.'description"><span style="font-weight: bold;">'.__('The current theme does not support Featured Images', 'featured-video-plus').':</span>&nbsp;'.__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus').'</p>'."\n";
+	echo '<p class="'.$class.'description"><span style="font-weight: bold;">'.__('The current theme does not support featured images', 'featured-video-plus').':</span>&nbsp;'.__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus').'</p>'."\n";
 
 }
 
@@ -302,8 +303,8 @@ VideoJS:&nbsp;
 		$numbers = '#[0-9]{1,4}#';
 		$options  = get_option( 'fvp-settings' );
 
-		// Overwrite
-		$options['overwrite'] 	= isset($input['overwrite']) && $input['overwrite'] == 'true' ? true : false;
+		// Usage
+		$options['usage'] = isset($input['usage']) ? $input['usage'] : 'replace';
 
 		// Sizing
 		if(isset($input['sizing']['width' ]['fixed'])) {

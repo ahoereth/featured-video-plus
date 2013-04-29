@@ -11,7 +11,7 @@ function has_post_video($post_id = null){
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['url']) )
+	if( !isset($meta) || empty($meta['full']) )
 		return false;
 
 	return true;
@@ -52,7 +52,7 @@ function get_the_post_video_image_url($post_id = null) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['url']) )
+	if( !isset($meta) || empty($meta['full']) )
 		return false;
 
 	global $featured_video_plus;
@@ -71,7 +71,7 @@ function get_the_post_video_image_url($post_id = null) {
  */
 function get_the_post_video_image($post_id = null, $size = null) {
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( !isset($meta) || empty($meta['url']) )
+	if( !isset($meta) || empty($meta['full']) )
 		return false;
 
 	global $featured_video_plus;
@@ -93,14 +93,14 @@ function get_the_post_video_url($post_id, $fallback = false){
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta($post_id, '_fvp_video', true );
-	if (!isset($meta) || empty($meta['id']))
+	if (!isset($meta) || empty($meta['full']))
 		return false;
 
 	if (isset($meta['prov']) && $meta['prov'] == 'local')
-		if ($fallback)
-			return wp_get_attachment_url($meta['sec_id']);
-		else
+		if (!$fallback)
 			return wp_get_attachment_url($meta['id']);
+		else
+			return wp_get_attachment_url($meta['sec_id']);
 	else if (isset($meta['full']))
 		return $meta['full'];
 	else

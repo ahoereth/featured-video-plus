@@ -55,7 +55,7 @@ class featured_video_plus_backend {
 				wp_enqueue_script( 'farbtastic' );
 				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . 'js/backend_pre35.js', array( 'jquery' ), FVP_VERSION );
 			}
-			wp_enqueue_script( 'fvp_backend_settings', FVP_URL . 'js/backend_settings.js', array( 'jquery' ), FVP_VERSION );
+			wp_enqueue_script( 'fvp_settings', FVP_URL . 'js/settings.js', array( 'jquery' ), FVP_VERSION );
 		}
 
 		// just required on post.php
@@ -165,7 +165,7 @@ class featured_video_plus_backend {
 		echo "\n\t</p>\n</div>\n";
 
 		// no featured image warning
-		$class = $has_featimg || !$has_post_video || (isset($options['overwrite']) && !$options['overwrite']) ? ' fvp_hidden' : '';
+		$class = $has_featimg || !$has_post_video || (isset($options['usage']) && $options['usage'] == 'manual') ? ' fvp_hidden' : '';
 		echo '<div id="fvp_featimg_warning" class="fvp_notice'.$class.'">'."\n\t".'<p class="description">';
 		echo '<span style="font-weight: bold;">'.__('Featured Image').':</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
 		echo "</p>\n</div>\n";
@@ -175,7 +175,7 @@ class featured_video_plus_backend {
 		printf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a class="fvp_hidden" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
 
 		// current theme does not support Featured Images
-		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] )
+		if( !current_theme_supports('post-thumbnails') && $options['overwrite'] != 'manual' )
 			echo '<p class="fvp_warning description"><span style="font-weight: bold;">'.__('The current theme does not support Featured Images', 'featured-video-plus').':</span>&nbsp;'.sprintf(__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.', 'featured-video-plus'), '<a href="'.get_admin_url(null, '/options-media.php').'">', '</a>' )."</p>\n\n";
 
 		echo "<!-- Featured Video Plus Metabox End-->\n\n\n";
@@ -220,10 +220,8 @@ class featured_video_plus_backend {
 
 		$img = _wp_post_thumbnail_html( get_post_thumbnail_id($post['id']), $post['id'] );
 
-		if(isset($meta['url'])) {
-			if( has_post_video($post['id']) )
-				$video = get_the_post_video( $post['id'], array(256,144) );
-
+		if (has_post_video($post['id'])){
+			$video = get_the_post_video( $post['id'], array(256,144) );
 			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
 		} else
 			echo json_encode(array( 'typ' => 'removed', 'valid' => $meta['valid'], 'img' => $img ));
@@ -238,7 +236,6 @@ class featured_video_plus_backend {
 	 * @see http://codex.wordpress.org/Function_Reference/update_post_meta
 	 */
 	function save($post) {
-
 		if( ( isset($post['fvp_nonce']) && 							// WP Form submitted..
 			  !wp_verify_nonce( $post['fvp_nonce'], FVP_NAME ) ) )
 			return false;
@@ -273,36 +270,24 @@ class featured_video_plus_backend {
 		$data = $this->get_video_data($url, $sec);
 
 		$url = isset($data['url']) && !empty($data['url']) 	? $data['url'] 	 : $url;
-		if (isset($data['api'])&&!$data['api']){
-			$meta = array(
-				'full' 	=> $url,
-				'id' 		=> isset($data['id']) 			?  $data['id'] : '',
-				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
-				'valid' => false
-			);
-		} else {
-
-			// Do we have a screen capture to pull?
-			if( isset($data['img']) && !empty($data['img']) ) {
-						$this->delete_featured_video_image( $post['id'], $meta );
-				$img = 	$this->set_featured_video_image(	$post['id'], $data );
-			}
-
-			$meta = array(
-				'full' 	=> $url,
-				'id' 		=> isset($data['id']) 			?  $data['id'] 			 : '',
-				'sec' 	=> isset($data['sec']) 			?  $data['sec'] 		 : '',
-				'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
-				'img' 	=> isset($img) ? $img : '',
-				'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
-				'time' 	=> isset($data['time']) 		?  $data['time'] 		 : '',
-				'valid' => isset($data['valid']) 		?  $data['valid'] 	 : true
-			);
-
+		// Do we have a screen capture to pull?
+		if( isset($data['img']) && !empty($data['img']) ) {
+			$this->delete_featured_video_image( $post['id'], $meta );
+			$img = 	$this->set_featured_video_image(	$post['id'], $data );
 		}
 
-		update_post_meta( $post['id'], '_fvp_video', $meta );
+		$meta = array(
+			'full' 	=> $url,
+			'id' 		=> isset($data['id']) 			?  $data['id'] 			 : '',
+			'sec' 	=> isset($data['sec']) 			?  $data['sec'] 		 : '',
+			'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
+			'img' 	=> isset($img) ? $img : '',
+			'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
+			'time' 	=> isset($data['time']) 		?  $data['time'] 		 : '',
+			'valid' => isset($data['valid']) 		?  $data['valid'] 	 : true
+		);
 
+		update_post_meta( $post['id'], '_fvp_video', $meta );
 		return $meta;
 	}
 
@@ -486,7 +471,7 @@ class featured_video_plus_backend {
 
 				break;
 
-			case 'blip':
+/*			case 'blip':
 			case 'hulu':
 				$valid = true;
 				if (!wp_oembed_get( $url ))
@@ -496,7 +481,7 @@ class featured_video_plus_backend {
 					'url' 	=> $url,
 					'valid' => $valid
 				);
-				break;
+				break;*/
 
 			// liveleak.com
 			// no API provided, the plugin pulls the website and gets the video
@@ -633,6 +618,29 @@ class featured_video_plus_backend {
 			wp_delete_attachment( $meta['img'] );
 			delete_post_meta( $meta['img'], '_fvp_image', $meta['prov'] . '?' . $meta['id'] );
 		}
+	}
+
+	/**
+	 *
+	 * @since 1.7
+	 */
+	public function ajax_get_embed(){
+		header( "Content-Type: application/json" );
+
+		if (!isset( $_POST['nonce'] ) ||
+				!wp_verify_nonce( $_POST['nonce'], 'featured-video-plus-nonce' )){
+			json_encode(array('success' => false, 'html' => 'invalid nonce'));
+			exit();
+		}
+
+		if (has_post_video($_POST['id'])){
+			$video = get_the_post_video( $_POST['id'] );
+			echo json_encode(array('success' => 'true', 'html' => $video));
+		} else{
+			$image = get_the_post_thumbnail($_POST['id']);
+			echo json_encode(array('success' => 'false','html' => $image));
+		}
+		exit;
 	}
 
 	/*

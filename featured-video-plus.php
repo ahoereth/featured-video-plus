@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
-Version: 1.6.1
+Version: 1.7
 Author URI: http://yrnxt.com
 License: GPL2
 
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.6.1');
+	define('FVP_VERSION', '1.7');
 
 // symlink proof
 $pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
@@ -60,9 +60,8 @@ if( is_admin() ) {
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
 	// admin meta box
-	add_action('admin_menu', 		array( &$featured_video_plus_backend, 'metabox_register' ) );
-	add_action('save_post', 		array( &$featured_video_plus_backend, 'metabox_save' 	 ) );
-	add_action('wp_ajax_fvp_ajax', 	array( &$featured_video_plus_backend, 'ajax' 			 ) );
+	add_action('admin_menu', 				array( &$featured_video_plus_backend, 'metabox_register' ) );
+	add_action('save_post', 				array( &$featured_video_plus_backend, 'metabox_save' 	 ) );
 
 	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
@@ -90,6 +89,12 @@ if( is_admin() ) {
 	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
 		add_filter( 'contextual_help', 	array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
+
+ 	if (defined('DOING_AJAX')&&DOING_AJAX){
+		add_action( 'wp_ajax_fvp_ajax', 						array( &$featured_video_plus_backend, 'ajax' 			 ) );
+		add_action( 'wp_ajax_fvp_get_embed', 			 	array( &$featured_video_plus_backend, 'ajax_get_embed' ));
+		add_action( 'wp_ajax_nopriv_fvp_get_embed', array( &$featured_video_plus_backend, 'ajax_get_embed' ));
+	}
 }
 
 
@@ -100,8 +105,8 @@ if( !is_admin() ) {
 	$featured_video_plus_frontend = new featured_video_plus_frontend($featured_video_plus);
 
 	// enqueue scripts and styles
+	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 		 		 'enqueue' ) );
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
-	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 		 'enqueue' ) );
 
 	// filter get_post_thumbnail output
 	add_filter(		'post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);

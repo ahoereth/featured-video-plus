@@ -31,12 +31,6 @@ class featured_video_plus {
 				if( $options['local']['videojs']['cdn'] )
 					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', 	array(), FVP_VERSION, false );
 				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs.min.css', 			array(), FVP_VERSION, false );
-
-			if( $options['sizing']['wmode'] == 'auto' )
-				wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.min.js', array( 'jquery' ), FVP_VERSION, true ); 	// production
-				//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids_fvp.js', array( 'jquery' ), FVP_VERSION, true ); 		// development
-
-			wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION, false );
 		}
 	}
 
@@ -62,7 +56,11 @@ class featured_video_plus {
 		$size 	= $this->get_size($size);
 		$size 	= array( 'width' => $size[0], 'height' => $size[1] );
 
-		$autoplay = is_single() ? '&autoplay='.$options['autoplay'] : '';
+		$autoplay = '&autoplay=';
+		if ($options['usage']=='dynamic' && defined('DOING_AJAX') && DOING_AJAX && isset($_POST['action']) && $_POST['action']=='fvp_get_embed')
+			$autoplay.= '1';
+		elseif (is_single())
+			$autoplay.= isset($options['autoplay']) ? $options['autoplay'] : '0';
 
 		$valid = $meta['valid'];
 
@@ -94,73 +92,59 @@ class featured_video_plus {
 		}else{
 			switch ($meta['prov']){
 				case 'vimeo':
-				if (!$valid) return '';
-				$embed = wp_oembed_get('http://vimeo.com/'.$meta['id'], $size);
-				break;
+					if (!$valid) return '';
+
+					$options = get_option( 'fvp-settings' );
+					$src = 'http://player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].$autoplay;
+					$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$size['width'].'" height="'.$size['height'].'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
+					break;
+
 				case 'youtube':
-				$embed = wp_oembed_get('http://youtu.be/'.$meta['id'], $size);
-				break;
+					$youtube['theme'] = isset($options['youtube']['theme']) ? $options['youtube']['theme'] 	: 'dark';
+					$youtube['color'] = isset($options['youtube']['color']) ? $options['youtube']['color'] 	: 'red';
+					$youtube['jsapi'] = isset($options['youtube']['jsapi'])	? $options['youtube']['jsapi'] 	: '0&playerapiid=fvpyt'.$post_id;
+					$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
+					$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
+					$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 		: 1;
+					$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 		: 1;
+					$youtube['wmode'] = isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
+
+					//$embed = wp_oembed_get('http://youtu.be/'.$meta['id'], $size);
+					$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
+					$embed = "\n\t" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" type="text/html" frameborder="0" id="fvpyt'.$post_id.'"></iframe>' . "\n";
+					break;
 				case 'dailymotion':
-				$embed = wp_oembed_get('http://www.dailymotion.com/video/'.$meta['id'], $size);
-				break;
+					$dm['foreground'] = isset($options['dailymotion']['foreground']) 	? 	$options['dailymotion']['foreground'] : 'F7FFFD';
+					$dm['highlight'] 	= isset($options['dailymotion']['highlight']) 	? 	$options['dailymotion']['highlight'] 	: 'FFC300';
+					$dm['background'] = isset($options['dailymotion']['background']) 	? 	$options['dailymotion']['background'] : '171D1B';
+					$dm['logo'] 		  = isset($options['dailymotion']['logo']) 				? 	$options['dailymotion']['logo'] 			: 1;
+					$dm['hideinfo'] 	= isset($options['dailymotion']['info']) 				? 1-$options['dailymotion']['info'] 			: 0;
+					$dm['syndication']= isset($options['dailymotion']['syndication']) ? 	$options['dailymotion']['syndication']: '';
+					$dm['synd']			  = !empty($dm['syndication']) 										? 	'&syndication='.$dm['syndication']		: '';
+
+					$dm['src'] = 'http://www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$dm['logo'].'&hideInfos='.$dm['hideinfo'].'&foreground=%23'.$dm['foreground'].'&highlight=%23'.$dm['highlight'].'&background=%23'.$dm['background'].$dm['synd'].'&start='.$meta['time'].$autoplay;
+					$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$dm['src'].'" frameborder="0"></iframe>' . "\n";
+					break;
+
 				case 'liveleak':
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
-				break;
+					$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+					break;
 
 				case 'prochan':
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
-				break;
-				default:
-				$embed = wp_oembed_get($meta['url'], $size);
-				if (!$embed)
-					return false;
-				break;
+					$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+					break;
+
+				/*default:
+					$embed = wp_oembed_get($meta['url'], $size);
+					if (!$embed)
+						return false;
+					break;*/
 			}
-
-			switch ($meta['prov']){
-				case 'vimeo':
-				$portrait = isset($options['vimeo']['portrait'])? $options['vimeo']['portrait'] : 0;
-				$title 		= isset($options['vimeo']['title']) 	? $options['vimeo']['title'] 		: 0;
-				$byline 	= isset($options['vimeo']['byline']) 	? $options['vimeo']['byline'] 	: 0;
-				$color 		= isset($options['vimeo']['color']) 	? $options['vimeo']['color'] 		: '00adef';
-
-				$append = '?badge=0&amp;portrait='.$portrait.'&amp;title='.$title.'&amp;byline='.$byline.'&amp;color='.$color.$autoplay;
-				$embed 	= preg_replace('/(<iframe[^>]+src=")([^"]*)([^>]*>)/', '${1}$2'.$append.'$3', $embed);
-				break;
-
-				case 'youtube':
-				$youtube['theme'] = isset($options['youtube']['theme']) ? $options['youtube']['theme'] 	: 'dark';
-				$youtube['color'] = isset($options['youtube']['color']) ? $options['youtube']['color'] 	: 'red';
-				$youtube['jsapi'] = isset($options['youtube']['jsapi'])	? $options['youtube']['jsapi'] 	: '0&playerapiid=fvpyt'.$post_id;
-				$youtube['info'] 	= isset($options['youtube']['info']) 	? $options['youtube']['info'] 	: 1;
-				$youtube['logo'] 	= isset($options['youtube']['logo']) 	? $options['youtube']['logo'] 	: 1;
-				$youtube['rel'] 	= isset($options['youtube']['rel']) 	? $options['youtube']['rel'] 		: 1;
-				$youtube['fs'] 		= isset($options['youtube']['fs']) 		? $options['youtube']['fs'] 		: 1;
-				$youtube['wmode'] = isset($options['youtube']['wmode']) && $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
-
-				$append = '?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
-				$embed 	= preg_replace('/(<iframe[^>]+src=")([^"]*)([^>]*>)/', '${1}$2'.$append.'$3', $embed);
-				break;
-
-				case 'dailymotion':
-				$dm['foreground'] = isset($options['dailymotion']['foreground']) 	? 	$options['dailymotion']['foreground'] : 'F7FFFD';
-				$dm['highlight'] 	= isset($options['dailymotion']['highlight']) 	? 	$options['dailymotion']['highlight'] 	: 'FFC300';
-				$dm['background'] = isset($options['dailymotion']['background']) 	? 	$options['dailymotion']['background'] : '171D1B';
-				$dm['logo'] 		  = isset($options['dailymotion']['logo']) 				? 	$options['dailymotion']['logo'] 			: 1;
-				$dm['hideinfo'] 	= isset($options['dailymotion']['info']) 				? 1-$options['dailymotion']['info'] 			: 0;
-				$dm['syndication']= isset($options['dailymotion']['syndication']) ? 	$options['dailymotion']['syndication']: '';
-				$dm['synd']			  = !empty($dm['syndication']) 										? 	'&syndication='.$dm['syndication']		: '';
-
-				$append = '?theme='.$youtube['theme'].$youtube['wmode'].'&color='.$youtube['color'].'&showinfo='.$youtube['info'].'&modestbranding='.$youtube['logo'].'&enablejsapi='.$youtube['jsapi'].'&origin='.esc_attr(home_url()).'&rel='.$youtube['rel'].'&fs='.$youtube['fs'].'&start='.$meta['time'].$autoplay;
-				$embed 	= preg_replace('/(<iframe[^>]+src=")([^"]*)([^>]*>)/', '${1}$2'.$append.'$3', $embed);
-				break;
-			}
-
 		}
 
 		$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
 		$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
-		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
+		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."--".$size['width'].$size['height']."-->\n" . $embed;
 
 		return $embed;
 	}
@@ -187,6 +171,8 @@ class featured_video_plus {
 
 		} elseif( !empty( $size[0] ) && is_numeric( $size[0] ) )
 			$width  = $size[0];
+		elseif( isset($options['sizing']['wmode']) && $options['sizing']['wmode'] == 'fixed' )
+			$width = $options['sizing']['width']; // auto width is applied by fitvids JS
 		else
 			$width = 560;
 
@@ -226,7 +212,7 @@ class featured_video_plus {
 	}
 
 	/**
-	 * Initializes localization i18n
+	 * Initializes i18n
 	 *
 	 * @since 1.3
 	 */

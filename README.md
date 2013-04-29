@@ -35,6 +35,12 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 ## Changelog ##
 
+### 1.7: 2013-04-30 ###
+* Added functionality to display featured video in an lightbox using AJAX on featured image click ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click), [*](http://www.web2feel.com/garvan/))
+* Added functionality to replace featured image with featured video on demand when image is clicked using AJAX
+* `get_the_post_video_url` has a new second parameter (boolean) to get the fallback video's URL ([*](http://wordpress.org/support/topic/fallback-video-url))
+* Tested with WordPress 3.6
+
 ### 1.6.1: 2013-04-18 ###
 * Fixed removing featured image when no featured video is specified ([*](http://wordpress.org/support/topic/featured-image-doesnt-save))
 

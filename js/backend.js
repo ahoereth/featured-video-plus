@@ -24,7 +24,7 @@ jQuery(document).ready(function($){
         if( t.val() != t.siblings('.fvp_mirror').val() ) {
             bg = t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage');
             t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', "url('"+fvp_backend_data.loading_gif+"')");
-            $('#fvp_current_video').css({'backgroundImage':"url('"+fvp_backend_data.loading_gif+"')",'width':'256px','height':'144px'});
+            $('#fvp_current_video').css({'backgroundImage':"url('"+fvp_backend_data.loading_gif+"')",'width':'256px'}).animate({'height':'144px'});
             $.post( ajaxurl,
                 {
                     'action'    : 'fvp_ajax',
@@ -37,17 +37,17 @@ jQuery(document).ready(function($){
                     t.siblings('.fvp_mirror').val( t.val() );
                     t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', bg);
                     if(data.typ == 'removed'){
-                        $('#fvp_current_video').html('').css({'backgroundImage':'','width':'','height':''});
+                        $('#fvp_current_video').html('').css({'backgroundImage':''}).animate({'height':'0px'});
                         if( data.img != '' )
                             $('#postimagediv .inside').html(data.img);
-                    } else
+                    }else
                         if(data.valid) {
                             $('#postimagediv .inside').html(data.img);
                             $("#fvp_set_featimg_link, #fvp_featimg_warning").slideUp().addClass("fvp_hidden");
                             $('#fvp_current_video').html(data.video);
                             t.css('backgroundColor','#00FF00').animate({'backgroundColor':'white'}, 500, function() { t.css('backgroundColor',''); });
                             $("#fvp_help_notice").slideUp('fast');
-                        } else{
+                        }else{
                             $('#fvp_current_video').html(data.video);
                             t.addClass('fvp_invalid');
                             $("#fvp_help_notice").slideUp('fast');
@@ -101,14 +101,6 @@ jQuery(document).ready(function($){
     }
 
     /**
-     * recognize change on the primary video input
-     * @since 1.2
-     */
-    $("#fvp_video").bind("change paste keyup", function() {
-        setTimeout(handleVideoInput($(this)), 200);
-    });
-
-    /**
      * Called when a change on the primary video input occurred
      * @since 1.2
      */
@@ -146,11 +138,11 @@ jQuery(document).ready(function($){
     }
 
     /**
-     * recognize change on the secondary video input
+     * recognize change on the primary video input
      * @since 1.2
      */
-    $("#fvp_sec").bind("change paste keyup", function() {
-        setTimeout(handleSecInput($(this)), 200);
+    $("#fvp_video").bind("change paste keyup", function() {
+        setTimeout(handleVideoInput($(this)), 200);
     });
 
     /**
@@ -183,6 +175,14 @@ jQuery(document).ready(function($){
         }
 
     }
+
+    /**
+     * recognize change on the secondary video input
+     * @since 1.2
+     */
+    $("#fvp_sec").bind("change paste keyup", function() {
+        setTimeout(handleSecInput($(this)), 200);
+    });
 
     /**
      * Compares the two input boxes if they contain the same URL

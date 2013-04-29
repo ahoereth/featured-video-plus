@@ -9,8 +9,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2eh
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
-Tested up to: 3.5.1
-Stable tag: 1.6.1
+Tested up to: 3.6
+Stable tag: 1.7
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -60,13 +60,19 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Changelog ==
 
+= 1.7: 2013-04-30 =
+* Added functionality to display featured video in an lightbox using AJAX on featured image click ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click), [*](http://www.web2feel.com/garvan/))
+* Added functionality to replace featured image with featured video on demand when image is clicked using AJAX
+* `get_the_post_video_url` has a new second parameter (boolean) to get the fallback video's URL ([*](http://wordpress.org/support/topic/fallback-video-url))
+* Tested with WordPress 3.6
+
 = 1.6.1: 2013-04-18 =
 * Fixed removing featured image when no featured video is specified ([*](http://wordpress.org/support/topic/featured-image-doesnt-save))
 
 = 1.6: 2013-04-16 =
 * Added `get_the_post_video_url($post_id)` PHP-Function
-* Added YouTube `enablejsapi` parameter with `playerapiid` (`fvpid + $post_id`) and iframe id ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
-* Added a filter for `get_the_post_video`: `get_the_post_video_filter` ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation)
+* Added YouTube `enablejsapi` parameter with `playerapiid` (`fvpid + $post_id`) and iframe id ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation))
+* Added a filter for `get_the_post_video`: `get_the_post_video_filter` ([*](http://wordpress.org/support/topic/need-filter-for-iframe-and-embed-code-manipulation))
 * Added option for using the featured image as video thumbnail for local videos
 * Fixed local videoJS ([*](http://wordpress.org/support/topic/how-to-style-the-player-play-button-pause-button-etc))
 * Fixed auto width and height for the Dailymotion and videoJS players

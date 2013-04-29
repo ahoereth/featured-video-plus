@@ -21,10 +21,4 @@ jQuery(document).ready(function($){
     if( $('#fvp-settings-width-auto:checked').length == 1 )
         $('#fvp-settings-align-1').closest('tr').hide();
 
-    $('#fvp-settings-width-auto').click(function() {
-        if( $('#fvp-settings-width-auto:checked').length == 1 )
-            $('#fvp-settings-align-1').closest('tr').fadeOut('slow');
-        else
-            $('#fvp-settings-align-1').closest('tr').fadeIn( 'slow');
-    });
 });

@@ -19,29 +19,35 @@
       customSelector: null
     };
 
-    var div = document.createElement('div'),
-        ref = document.getElementsByTagName('base')[0] || document.getElementsByTagName('script')[0];
+    if(!document.getElementById('fit-vids-style')) {
 
-    div.className = 'fit-vids-style';
-    div.innerHTML = '&shy;<style>         \
-      .fluid-width-video-wrapper {        \
-         width: 100%;                     \
-         position: relative;              \
-         padding: 0;                      \
-      }                                   \
-                                          \
-      .fluid-width-video-wrapper iframe,  \
-      .fluid-width-video-wrapper object,  \
-      .fluid-width-video-wrapper embed {  \
-         position: absolute;              \
-         top: 0;                          \
-         left: 0;                         \
-         width: 100%;                     \
-         height: 100%;                    \
-      }                                   \
-    </style>';
+      var div = document.createElement('div'),
+          ref = document.getElementsByTagName('base')[0] || document.getElementsByTagName('script')[0];
 
-    ref.parentNode.insertBefore(div,ref);
+      div.className = 'fit-vids-style';
+      div.id = 'fit-vids-style';
+      div.style.display = 'none';
+      div.innerHTML = '&shy;<style>         \
+        .fluid-width-video-wrapper {        \
+           width: 100%;                     \
+           position: relative;              \
+           padding: 0;                      \
+        }                                   \
+                                            \
+        .fluid-width-video-wrapper iframe,  \
+        .fluid-width-video-wrapper object,  \
+        .fluid-width-video-wrapper embed {  \
+           position: absolute;              \
+           top: 0;                          \
+           left: 0;                         \
+           width: 100%;                     \
+           height: 100%;                    \
+        }                                   \
+      </style>';
+
+      ref.parentNode.insertBefore(div,ref);
+
+    }
 
     if ( options ) {
       $.extend( settings, options );
@@ -52,13 +58,9 @@
         "iframe[src*='player.vimeo.com']",
         "iframe[src*='youtube.com']",
         "iframe[src*='youtube-nocookie.com']",
-        "iframe[src*='kickstarter.com']",
-        "iframe[src*='liveleak.com']",
-        "iframe[src*='prochan.com']",
-        "iframe[src*='dailymotion.com']",
+        "iframe[src*='kickstarter.com'][src*='video.html']",
         "object",
-        "embed",
-        ".video-js"
+        "embed"
       ];
 
       if (settings.customSelector) {
@@ -66,6 +68,7 @@
       }
 
       var $allVideos = $(this).find(selectors.join(','));
+      $allVideos = $allVideos.not("object object"); // SwfObj conflict patch
 
       $allVideos.each(function(){
         var $this = $(this);
@@ -83,7 +86,3 @@
     });
   };
 })( jQuery );
-
-jQuery(document).ready(function($){
-    $(".featured_video_plus").fitVids();
-});

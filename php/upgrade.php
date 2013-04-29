@@ -7,7 +7,7 @@
 function featured_video_plus_upgrade() {
 	$options = $options_org = get_option( 'fvp-settings' );
 
-	if( !isset($options['overwrite']) )
+	if (!isset($options['overwrite'])&&!isset($options['usage']))
 		$version = '0';
 	elseif( !isset($options['version']) )
 		$version = '1.1';
@@ -113,9 +113,13 @@ function featured_video_plus_upgrade() {
 				$options['local']['videojs']['poster'] = false;
 				unset($options['reged'], $options['out']);
 
+			case '1.6':
+			case '1.6.1':
+				$options['usage'] = $options['overwrite'] ? 'replace' : 'manual'; // replace;manual;overlay
+				unset($options['overwrite']);
 
 		// *************************************************************
-			default:
+		//default:
 				$options['version'] = FVP_VERSION;
 				break;
 		}
