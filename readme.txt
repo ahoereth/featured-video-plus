@@ -23,6 +23,8 @@ This plugin enables you to define Featured Videos, which, if set, take the place
 2. insert the `[featured-video-plus]`-__Shortcode__ in your posts or
 3. manually make use of the __PHP functions__ in your theme's source files.
 
+Instead of option 1 the plugin can also request the videos using an AJAX request when the featured image is clicked. This reduces load times and gives you the flexibility to display videos in a lightbox to ensure your theme does not break.
+
 Beside your __Local Videos__ (`mp4`, `webM` & `ogg/ogv`) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
 
 The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic integration, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
