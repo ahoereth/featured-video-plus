@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.6
-Stable tag: 1.7
+Stable tag: 1.7.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -64,9 +64,13 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Changelog ==
 
+= 1.7.1: 2013-04-30 =
+* Fixed manual usage option ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click))
+* Added featured image mouse over effect for featured video AJAX usage
+
 = 1.7: 2013-04-30 =
-* Added functionality to display featured video in an lightbox using AJAX on featured image click ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click), [*](http://www.web2feel.com/garvan/))
-* Added functionality to replace featured image with featured video on demand when image is clicked using AJAX
+* Added functionality to display featured video in an lightbox using AJAX on featured image click ([*](http://www.web2feel.com/garvan/))
+* Added functionality to replace featured image with featured video on demand when image is clicked using AJAX ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click))
 * `get_the_post_video_url` has a new second parameter (boolean) to get the fallback video's URL ([*](http://wordpress.org/support/topic/fallback-video-url))
 * Tested with WordPress 3.6
 
