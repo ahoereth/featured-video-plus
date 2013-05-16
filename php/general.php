@@ -133,11 +133,9 @@ class featured_video_plus {
 					$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
 					break;
 
-				/*default:
+				default:
 					$embed = wp_oembed_get($meta['url'], $size);
-					if (!$embed)
-						return false;
-					break;*/
+					break;
 			}
 		}
 
