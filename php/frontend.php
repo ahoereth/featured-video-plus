@@ -44,7 +44,6 @@ class featured_video_plus_frontend {
 		if ($options['usage']=='overlay')
 			wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
 			//wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.js', array( 'jquery' ), FVP_VERSION ); 		// development
-			//add_thickbox();
 
 		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
 		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
@@ -85,17 +84,17 @@ class featured_video_plus_frontend {
 
 		$options = get_option( 'fvp-settings' );
 
-		if ((!$options['usage']=='manual') || !has_post_video($post_id))
+		if (($options['usage']=='manual') || !has_post_video($post_id))
 			return $html;
 
 		elseif ($options['usage']=='replace')
 			return get_the_post_video($post_id, $size);
 
-		elseif ($options['usage']=='overlay') //?width='.$size['0'].'&height='.$size['1'].'&inlineId=fvp_'.$post_id.'
+		elseif ($options['usage']=='overlay')
 			return '<a href="#fvp_'.$post_id.'" class="fvp_overlay" onclick="return false;">'.$html.'</a><div id="fvp_'.$post_id.'" style="display: none;"></div>';
 
 		else//if ($options['usage']=='dynamic')
-			return '<a href="#featuredvideo'.$post_id.'" class="fvp_dynamic fvp_'.$post_id.'" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
+			return '<a href="#fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
 
 	}
 

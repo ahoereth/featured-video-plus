@@ -8,7 +8,6 @@ function fvp_dynamic(id){
 						'position: absolute; margin: '+t.children('img').css('margin')+';'+
 						'height:'+t.children('img').css('height')+';width:'+t.children('img').css('width')+'; z-index:1000;'
 	}));
-	jQuery('.fvp_'+id+' img').animate({opacity:0.65});
 	jQuery.post( fvpdata.ajaxurl,
 		{
 			'action': 'fvp_get_embed',
@@ -25,6 +24,13 @@ function fvp_dynamic(id){
 }
 
 jQuery(document).ready(function($){
+
+	if(fvpdata.overlay||fvpdata.dynamic){
+		$('.fvp_overlay,.fvp_dynamic').hover(
+			function(){ $(this).children('img').animate({opacity:0.65});	},
+			function(){ $(this).children('img').animate({opacity:1}); 		}
+		);
+	}
 
 	// overlay
 	if(fvpdata.overlay){
