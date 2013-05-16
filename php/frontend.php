@@ -53,8 +53,8 @@ class featured_video_plus_frontend {
 
 		$deps[] = 'videojs';
 
-		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', $deps, FVP_VERSION ); 	// production
-		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
+		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', $deps, FVP_VERSION ); 	// production
+		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
 
 		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),

@@ -128,6 +128,9 @@ function featured_video_plus_upgrade() {
 				$options['local']['foreground'] = "cccccc";
 				$options['local']['highlight']  = "66a8cc";
 				$options['local']['background'] = "000000";
+				$options['local']['controls']  	= true;
+				$options['local']['loop'] 			= false;
+				$options['local']['autoplay'] 	= false;
 
 
 		// *************************************************************
