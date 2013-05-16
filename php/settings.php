@@ -55,7 +55,7 @@ class featured_video_plus_settings {
 	 */
 	function settings_usage() {
 		$options = get_option( 'fvp-settings' );
-		$usage = isset($options['usage']) ? $options['usage'] : false;
+		$usage = isset($options['usage']) ? $options['usage'] : 'replace';
 ?>
 
 
@@ -66,9 +66,8 @@ class featured_video_plus_settings {
 <p class="description"><?php printf(__('The first three options require your theme to make use of WordPress\' %sfeatured image%s capabilities.', 'featured-video-plus'),'<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">','</a>'); ?></p>
 
 <?php
-$class = $overwrite ? 'fvp_warning ' : 'fvp_notice ';
 if( !current_theme_supports('post-thumbnails') )
-	echo '<p class="'.$class.'description"><span style="font-weight: bold;">'.__('The current theme does not support featured images', 'featured-video-plus').':</span>&nbsp;'.__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus').'</p>'."\n";
+	echo '<p class="fvp_warning description"><span style="font-weight: bold;">'.__('The current theme does not support featured images', 'featured-video-plus').':</span>&nbsp;'.__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus').'</p>'."\n";
 
 }
 
