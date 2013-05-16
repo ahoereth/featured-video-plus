@@ -25,11 +25,17 @@ class featured_video_plus {
 			// http://videojs.com/
 			if( $options['local']['videojs']['js'] )
 				if( $options['local']['videojs']['cdn'] )
-					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/c/video.js', 		array(), FVP_VERSION, false );
-				else wp_enqueue_script( 'videojs', FVP_URL . 'js/videojs.min.js', 			array(), FVP_VERSION, false );
+					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.0/video.js', 		array(), FVP_VERSION, false );
+				else {
+					wp_enqueue_script( 'videojs', 	FVP_URL . 'js/videojs.min.js', 					array(), FVP_VERSION, false );
+					wp_localize_script( 'videojs', 'videojsdata', array(
+						'swf' => FVP_URL . 'js/video-js.swf'
+					));
+				}
+
 			if( $options['local']['videojs']['css'] )
 				if( $options['local']['videojs']['cdn'] )
-					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/c/video-js.css', 	array(), FVP_VERSION, false );
+					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.0/video-js.css', 	array(), FVP_VERSION, false );
 				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs.min.css', 			array(), FVP_VERSION, false );
 		}
 	}
@@ -65,18 +71,17 @@ class featured_video_plus {
 		$valid = $meta['valid'];
 
 		if ($meta['prov'] == 'local'){
-			if (isset($options['local']['videojs']['poster']) && $options['local']['videojs']['poster'])
-				$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
-			else
-				$poster = ' poster=""';
-
 			$a = wp_get_attachment_url($meta['id']);
 			$ext = pathinfo( $a, PATHINFO_EXTENSION );
 			if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' )
 				break;
 
+			$poster = '';
+			if (isset($options['local']['videojs']['poster']) && $options['local']['videojs']['poster'])
+				$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
+
 			$ext = $ext == 'ogv' ? 'ogg' : $ext;
-			$embed = "\n\t".'<video class="video-js vjs-default-skin" controls preload="auto" width="'.$size['width'].'" height="'.$size['height'].'"'.$poster.' data-setup="{}">';
+			$embed = "\n\t".'<video id="videojs'.esc_attr($meta['id']).'" class="video-js vjs-default-skin"width="'.$size['width'].'" height="'.$size['height'].'" controls preload="metadata"'.$poster.'>';
 			$embed .= "\n\t\t".'<source src="' . $a . '" type="video/'.$ext.'">';
 
 			if( isset($meta['sec_id']) && !empty($meta['sec_id']) && $meta['sec_id'] != $meta['id'] ) {
@@ -88,7 +93,7 @@ class featured_video_plus {
 			}
 
 			$embed .= "\n\t</video>\n";
-		}else{
+	}else{
 			switch ($meta['prov']){
 				case 'vimeo':
 					if (!$valid) return '';
@@ -141,7 +146,7 @@ class featured_video_plus {
 
 		$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
 		$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
-		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."--".$size['width'].$size['height']."-->\n" . $embed;
+		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
 
 		return $embed;
 	}

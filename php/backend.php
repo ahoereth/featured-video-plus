@@ -634,8 +634,10 @@ class featured_video_plus_backend {
 		}
 
 		if (has_post_video($_POST['id'])){
+			$meta = get_post_meta($_POST['id'], '_fvp_video', true);
+
 			$video = get_the_post_video( $_POST['id'] );
-			echo json_encode(array('success' => 'true', 'html' => $video));
+			echo json_encode(array('success' => 'true', 'html' => $video, 'id' => $meta['id']));
 		} else{
 			$image = get_the_post_thumbnail($_POST['id']);
 			echo json_encode(array('success' => 'false','html' => $image));
