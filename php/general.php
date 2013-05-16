@@ -11,6 +11,11 @@
  */
 class featured_video_plus {
 
+	public function __construct() {
+		add_action('wp_head', array( &$this, 'videojs_css') );
+		add_action('admin_print_styles-post-edit', array( &$this, 'videojs_css') );
+	}
+
 	/**
 	 * Enqueue all scripts and styles needed when viewing the frontend and backend.
 	 *
@@ -23,22 +28,37 @@ class featured_video_plus {
 			$options = get_option( 'fvp-settings' );
 
 			// http://videojs.com/
-			if( $options['local']['videojs']['js'] )
-				if( $options['local']['videojs']['cdn'] )
-					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.0/video.js', 		array(), FVP_VERSION, false );
-				else {
-					wp_enqueue_script( 'videojs', 	FVP_URL . 'js/videojs.min.js', 					array(), FVP_VERSION, false );
-					wp_localize_script( 'videojs', 'videojsdata', array(
-						'swf' => FVP_URL . 'js/video-js.swf'
-					));
+			if( $options['local']['enabled'] ) {
+				if( $options['local']['cdn'] ) {
+					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.0/video.js',array(), FVP_VERSION, false );
+					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.0/video-js.css',array(), FVP_VERSION, false );
+				} else {
+					wp_enqueue_script(  'videojs', FVP_URL . 'js/videojs.min.js', 	array(), FVP_VERSION, false );
+					wp_enqueue_style(  	'videojs', FVP_URL . 'css/videojs.min.css', array(), FVP_VERSION, false );
+					wp_localize_script( 'videojs', 'videojsdata', array( 'swf' => FVP_URL . 'js/video-js.swf' ));
 				}
-
-			if( $options['local']['videojs']['css'] )
-				if( $options['local']['videojs']['cdn'] )
-					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.0/video-js.css', 	array(), FVP_VERSION, false );
-				else wp_enqueue_style(  'videojs', FVP_URL . 'css/videojs.min.css', 			array(), FVP_VERSION, false );
+			}
 		}
 	}
+
+	public function videojs_css() {
+		$options = get_option( 'fvp-settings' );
+		extract($options['local']);
+		if( ! $enabled )
+			return;
+
+		$r = hexdec(substr($background, 0, 2));
+		$g = hexdec(substr($background, 2, 2));
+		$b = hexdec(substr($background, 4, 2));
+
+		$style = "<style type='text/css'>"
+						.".vjs-default-skin{color:#$foreground}"
+						.".vjs-play-progress,.vjs-volume-level{background-color:#$highlight!important}"
+						.".vjs-control-bar,.vjs-big-play-button{background:rgba($r,$g,$b,0.7)!important}"
+						.".vjs-slider{background:rgba($r,$g,$b,0.2333)!important}"
+						."</style>\n";
+		echo $style;
+ }
 
 	/**
 	 * Returns the featured video html, ready to echo.
@@ -81,7 +101,7 @@ class featured_video_plus {
 				$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
 
 			$ext = $ext == 'ogv' ? 'ogg' : $ext;
-			$embed = "\n\t".'<video id="videojs'.esc_attr($meta['id']).'" class="video-js vjs-default-skin"width="'.$size['width'].'" height="'.$size['height'].'" controls preload="metadata"'.$poster.'>';
+			$embed = "\n\t".'<video id="videojs'.esc_attr($meta['id']).'" class="video-js vjs-default-skin"width="'.$size['width'].'" height="'.$size['height'].'" controls preload="metadata" data-setup="{}"'.$poster.'>';
 			$embed .= "\n\t\t".'<source src="' . $a . '" type="video/'.$ext.'">';
 
 			if( isset($meta['sec_id']) && !empty($meta['sec_id']) && $meta['sec_id'] != $meta['id'] ) {

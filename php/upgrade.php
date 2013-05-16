@@ -118,6 +118,18 @@ function featured_video_plus_upgrade() {
 				$options['usage'] = $options['overwrite'] ? 'replace' : 'manual'; // replace;manual;overlay
 				unset($options['overwrite']);
 
+			case '1.7':
+			case '1.7.1':
+				$options['local']['cdn'] 		 = $options['local']['videojs']['cdn'];
+				$options['local']['enabled'] = $options['local']['videojs']['js'];
+				$options['local']['poster']  = $options['local']['videojs']['poster'];
+				unset($options['local']['videojs']);
+
+				$options['local']['foreground'] = "cccccc";
+				$options['local']['highlight']  = "66a8cc";
+				$options['local']['background'] = "000000";
+
+
 		// *************************************************************
 		//default:
 				$options['version'] = FVP_VERSION;
@@ -222,4 +234,3 @@ class featured_video_plus_notices {
 	}
 
 }
-?>

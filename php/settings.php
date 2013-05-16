@@ -153,17 +153,34 @@ if( !current_theme_supports('post-thumbnails') )
 	 */
 	function settings_local() {
 		$options = get_option( 'fvp-settings' );
-		$videojs['js'] 		= isset($options['local']['videojs']['js'])  	 ? $options['local']['videojs']['js']  		: true;
-		$videojs['css'] 	= isset($options['local']['videojs']['css']) 	 ? $options['local']['videojs']['css'] 		: true;
-		$videojs['cdn'] 	= isset($options['local']['videojs']['cdn']) 	 ? $options['local']['videojs']['cdn'] 		: false;
-		$videojs['poster']= isset($options['local']['videojs']['poster'])? $options['local']['videojs']['poster'] : false; ?>
+		$local['enabled']= isset($options['local']['enabled'])? $options['local']['enabled']: true;
+		$local['cdn']    = isset($options['local']['cdn']) 	  ? $options['local']['cdn'] 		: false;
+		$local['poster'] = isset($options['local']['poster'])	? $options['local']['poster'] : false;
+		$local['foreground']= isset($options['local']['foreground'])? $options['local']['foreground'] : 'cccccc';
+		$local['highlight' ]= isset($options['local']['highlight' ])? $options['local']['highlight' ] : '66a8cc';
+		$local['background']= isset($options['local']['background'])? $options['local']['background'] : '000000'; ?>
 
 VideoJS:&nbsp;
-<input type="checkbox" name="fvp-settings[local][videojs][cdn]" id="fvp-settings-local-videojs-cdn" value="true" <?php checked( true, $videojs['cdn'], 	1 ) ?>/><label for="fvp-settings-local-videojs-cdn">&nbsp;<?php _e('Use CDN', 		'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[local][videojs][js]" 	id="fvp-settings-local-videojs-js" 	value="true" <?php checked( true, $videojs['js'], 	1 ) ?>/><label for="fvp-settings-local-videojs-js">&nbsp;<?php  _e('Include JS', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[local][videojs][css]" id="fvp-settings-local-videojs-css" value="true" <?php checked( true, $videojs['css'], 	1 ) ?>/><label for="fvp-settings-local-videojs-css">&nbsp;<?php _e('Include CSS', 	'featured-video-plus'); ?></label><br />
-<p class="description"><?php _e('Disabling JS and/or CSS will break the local video player. Disable only when you want to replace VideoJS with a different script and know what you are doing.', 'featured-video-plus'); ?></p>
-<input type="checkbox" name="fvp-settings[local][videojs][poster]" id="fvp-settings-local-videojs-poster" value="true" <?php checked( true, $videojs['poster'], 	1 ) ?>/><label for="fvp-settings-local-videojs-poster">&nbsp;<?php _e('Use featured image as video thumbnail', 	'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[local][enabled]"  id="fvp-settings-local-js" 			value="true" <?php checked( true, $local['enabled'],1 ) ?>/><label for="fvp-settings-local-enabled">&nbsp;<?php _e('Enable videoJS', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[local][cdn]" 			id="fvp-settings-local-cdn" 		value="true" <?php checked( true, $local['cdn'], 		1 ) ?>/><label for="fvp-settings-local-cdn">&nbsp;<?php _e('Use CDN', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="checkbox" name="fvp-settings[local][poster]" 	id="fvp-settings-local-poster" 	value="true" <?php checked( true, $local['poster'], 1 ) ?>/><label for="fvp-settings-local-poster">&nbsp;<?php _e('Use featured image as video thumbnail', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br />
+<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
+	<input type="text" name="fvp-settings[local][foreground]" id="fvp-settings-local-foreground" class="fvp_colorpicker_input" value="#<?php echo $local['foreground'] ?>" data-default-color="#cccccc" />
+	<label for="fvp-settings-local-foreground" style="display: none;">&nbsp;<?php _e('Foreground', 'featured-video-plus'); ?></label>
+	<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-local-foreground-colorpicker"></div><?php } ?>
+</span>
+<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
+	<input type="text" name="fvp-settings[local][highlight]" id="fvp-settings-local-highlight" class="fvp_colorpicker_input" value="#<?php echo $local['highlight'] ?>" data-default-color="#66a8cc" />
+	<label for="fvp-settings-local-highlight" style="display: none;">&nbsp;<?php _e('Highlight', 'featured-video-plus'); ?></label>
+	<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-local-highlight-colorpicker"></div><?php } ?>
+</span>
+<span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
+	<input type="text" name="fvp-settings[local][background]" id="fvp-settings-local-background" class="fvp_colorpicker_input" value="#<?php echo $local['background'] ?>" data-default-color="#000000" />
+	<label for="fvp-settings-local-background" style="display: none;">&nbsp;<?php _e('Background', 'featured-video-plus'); ?></label>
+	<?php if( !wp_style_is('wp-color-picker', 'registered' ) ) { ?><div class="fvp_colorpicker" id="fvp-settings-local-background-colorpicker"></div><?php } ?>
+</span>
+<br />
 
 <?php }
 
@@ -324,10 +341,16 @@ VideoJS:&nbsp;
 		$options['autoplay'] = isset($input['autoplay'])  && $input['autoplay'] == 'true' ? 1 : 0;
 
 		// Local
-		$options['local']['videojs']['js']  	= isset( $input['local']['videojs']['js']  ) 		? true : false;
-		$options['local']['videojs']['css'] 	= isset( $input['local']['videojs']['css'] ) 		? true : false;
-		$options['local']['videojs']['cdn'] 	= isset( $input['local']['videojs']['cdn'] ) 		? true : false;
-		$options['local']['videojs']['poster']= isset( $input['local']['videojs']['poster'] ) ? true : false;
+		$options['local']['enabled'] 	= isset( $input['local']['enabled'] ) 		? true : false;
+		$options['local']['cdn'] 			= isset( $input['local']['cdn'] ) 		? true : false;
+		$options['local']['poster']		= isset( $input['local']['poster'] ) ? true : false;
+
+		if( isset($options['local']['foreground']) ) preg_match($hexcolor, $input['local']['foreground'], $local_foreground);
+		if( isset($options['local']['highlight'])  ) preg_match($hexcolor, $input['local']['highlight'],  $local_highlight);
+		if( isset($options['local']['background']) ) preg_match($hexcolor, $input['local']['background'], $local_background);
+		$options['local']['foreground'] = isset($local_foreground[1]) && !empty($local_foreground[1])? $local_foreground[1] : 'cccccc';
+		$options['local']['highlight'] 	= isset($local_highlight[ 1]) && !empty($local_highlight[ 1])? $local_highlight[ 1] : '66a8cc';
+		$options['local']['background'] = isset($local_background[1]) && !empty($local_background[1])? $local_background[1] : '000000';
 
 		// YouTube
 		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme'] == 'light') ? 'light' : 'dark';
