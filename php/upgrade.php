@@ -130,7 +130,7 @@ function featured_video_plus_upgrade() {
 				$options['local']['background'] = "000000";
 				$options['local']['controls']  	= true;
 				$options['local']['loop'] 			= false;
-				$options['local']['autoplay'] 	= false;
+				$options['autoplay'] = $options['autoplay'] ? 'yes' : 'no'; //yes/auto/no
 
 
 		// *************************************************************

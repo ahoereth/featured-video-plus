@@ -79,14 +79,19 @@ if( !current_theme_supports('post-thumbnails') )
 	 */
 	function settings_autoplay() {
 		$options 	= get_option( 'fvp-settings' );
-		$autoplay 	= isset($options['autoplay']) ? $options['autoplay'] : 0;
+		$autoplay = isset($options['autoplay']) ? $options['autoplay'] : 'no';
 ?>
 
-<span class="fvp_radio_bumper">
-	<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="true" 	<?php checked( 1, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?></label>
-</span>
-<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="false" 	<?php checked( 0, 	$autoplay ) ?>/><label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
-<p class="description"><?php _e('Autoplay videos on individual pages where just a single video is being displayed.', 'featured-video-plus'); ?></p>
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="yes" <?php checked( 'yes', 	$autoplay ) ?>/>
+<label for="fvp-settings-autoplay-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="auto" <?php checked( 'auto', 	$autoplay ) ?>/>
+<label for="fvp-settings-autoplay-2">&nbsp;<?php _e('auto', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-3" value="no" <?php checked( 'no', 	$autoplay ) ?>/>
+<label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
+
+<p class="description"><?php printf(__('%1$syes%2$s is only relevant with manual usage or usage set to default. %1$sauto%2$s behaves differently depending on the usage case (set-able above):', 'featured-video-plus'),'<code>','</code>'); ?><br />
+<?php _e( 'Autoplay when only a single post is being displayed, the video overlay is opened or the featured image is dynamically replaced with the featured video.', 'featured-video-plus' ); ?></li>
+</p>
 
 <?php }
 
@@ -158,7 +163,6 @@ if( !current_theme_supports('post-thumbnails') )
 		$local['poster'] 	 = isset($options['local']['poster'])	 ? $options['local']['poster']  : false;
 		$local['loop']   	 = isset($options['local']['loop'])	   ? $options['local']['loop']    : false;
 		$local['controls'] = isset($options['local']['controls'])? $options['local']['controls']: true;
-		$local['autoplay'] = isset($options['local']['autoplay'])? $options['local']['autoplay']: false;
 		$local['foreground']= isset($options['local']['foreground'])? $options['local']['foreground'] : 'cccccc';
 		$local['highlight' ]= isset($options['local']['highlight' ])? $options['local']['highlight' ] : '66a8cc';
 		$local['background']= isset($options['local']['background'])? $options['local']['background'] : '000000'; ?>
@@ -168,7 +172,6 @@ if( !current_theme_supports('post-thumbnails') )
 <input type="checkbox" name="fvp-settings[local][cdn]" 			id="fvp-settings-local-cdn" 		 value="true" <?php checked( true, $local['cdn'], 		1 ) ?>/><label for="fvp-settings-local-cdn">&nbsp;<?php _e('Use CDN', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[local][poster]" 	id="fvp-settings-local-poster" 	 value="true" <?php checked( true, $local['poster'],  1 ) ?>/><label for="fvp-settings-local-poster">&nbsp;<?php _e('Use featured image as video thumbnail', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[local][loop]" 		id="fvp-settings-local-loop" 		 value="true" <?php checked( true, $local['loop'], 		1 ) ?>/><label for="fvp-settings-local-loop">&nbsp;<?php _e('Loop videos', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="checkbox" name="fvp-settings[local][autoplay]" id="fvp-settings-local-autoplay" value="true" <?php checked( true, $local['autoplay'],1 ) ?>/><label for="fvp-settings-local-autoplay">&nbsp;<?php _e('Autoplay', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" name="fvp-settings[local][controls]" id="fvp-settings-local-controls" value="true" <?php checked( true, $local['controls'],1 ) ?>/><label for="fvp-settings-local-controls">&nbsp;<?php _e('Show controls', 'featured-video-plus'); ?></label>
 <div id="fvp-settings-local-box2"<?php if( !$local['controls'] ) echo ' style="display: none;"'; ?>>
 <span class="color-picker" style="position: relative;<?php if( wp_style_is( 'wp-color-picker', 'done' ) ) echo ' top: .6em;'; ?>" >
@@ -345,14 +348,13 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['align' ] = isset($input['align']) ? $input['align'] : 'center';
 
 		// Autoplay
-		$options['autoplay'] = isset($input['autoplay'])  && $input['autoplay'] == 'true' ? 1 : 0;
+		$options['autoplay'] = isset( $input['autoplay'] ) 	? $input['autoplay'] : 'no'; //yes/auto/no
 
 		// Local
 		$options['local']['enabled'] 	= isset( $input['local']['enabled'] ) 	? true : false;
 		$options['local']['cdn'] 			= isset( $input['local']['cdn'] ) 			? true : false;
 		$options['local']['poster']		= isset( $input['local']['poster'] ) 		? true : false;
 		$options['local']['controls'] = isset( $input['local']['controls'] ) 	? true : false;
-		$options['local']['autoplay'] = isset( $input['local']['autoplay'] ) 	? true : false;
 		$options['local']['loop']		  = isset( $input['local']['loop'] ) 			? true : false;
 
 		if( isset($options['local']['foreground']) ) preg_match($hexcolor, $input['local']['foreground'], $local_foreground);
