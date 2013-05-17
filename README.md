@@ -39,6 +39,13 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 ## Changelog ##
 
+### 1.8: 2013-05-16 ###
+* Video.js [4.0](http://blog.videojs.com/post/50021214078/video-js-4-0-now-available)
+* Customize the local video player
+* Better autoplay handling
+* Remove anchors wrapping videos
+* General bug fixes
+
 ### 1.7.1: 2013-04-30 ###
 * Fixed manual usage option ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click))
 * Added featured image mouse over effect for featured video AJAX usage

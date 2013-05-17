@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.1
 Tested up to: 3.6
-Stable tag: 1.7.1
+Stable tag: 1.8
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -63,6 +63,13 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+= 1.8: 2013-05-16 =
+* Video.js [4.0](http://blog.videojs.com/post/50021214078/video-js-4-0-now-available)
+* Customize the local video player
+* Better autoplay handling
+* Remove anchors wrapping videos
+* General bug fixes
 
 = 1.7.1: 2013-04-30 =
 * Fixed manual usage option ([*](http://wordpress.org/support/topic/lightbox-video-on-featured-image-click))

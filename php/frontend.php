@@ -59,13 +59,10 @@ class featured_video_plus_frontend {
 		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'nonce' 	=> wp_create_nonce( 'featured-video-plus-nonce' ),
-			'fitvids' => isset($options['sizing']['wmode']) 			&&
-												 $options['sizing']['wmode']=='auto' ? 1 : 0,
-			'dynamic' => isset($options['usage']) 				 				&&
-												 $options['usage']=='dynamic' 			 ? 1 : 0,
-			'overlay' => isset($options['usage']) 				 				&&
-												 $options['usage']=='overlay' 			 ? 1 : 0,
-			'videojs' => 1,
+			'fitvids' => isset($options['sizing']['wmode']) && $options['sizing']['wmode']=='auto',
+			'dynamic' => isset($options['usage']) && $options['usage']=='dynamic',
+			'overlay' => isset($options['usage']) && $options['usage']=='overlay',
+			'videojs' => isset($options['local']['enabled']) && $options['local']['enabled'],
 			'opacity' => '75',
 			'loadingw'=> FVP_URL . 'css/loading_w.gif',
 			'loadingb'=> FVP_URL . 'css/loading_b.gif'

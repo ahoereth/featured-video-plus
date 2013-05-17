@@ -17,8 +17,6 @@ function featured_video_plus_upgrade() {
 	if( $version != FVP_VERSION ) {
 		switch( $version ) {
 			case '0':
-				$notice = 'initial_activation';
-
 				$options = array(
 					'overwrite' => true,
 					'width' 	=> 'auto',
@@ -34,8 +32,6 @@ function featured_video_plus_upgrade() {
 
 			case '1.0':
 			case '1.1':
-				$notice = isset($notice) ? $notice : 'upgrade_11';
-
 				if( $version == '1.0' || $version == '1.1' ) {
 					// removed this user meta in 1.2
 					$users = array_merge( 	get_users( array( 'role' => 'Administrator' ) ),
@@ -46,8 +42,6 @@ function featured_video_plus_upgrade() {
 
 
 			case '1.2':
-				$notice = isset($notice) ? $notice : 'upgrade_12';
-
 				$options['videojs'] = array(
 						'skin' => 'videojs' //videojs,moonfy,tubejs
 					);
@@ -74,9 +68,8 @@ function featured_video_plus_upgrade() {
 					);
 				unset( $options['width'], $options['height'] );
 
-			case '1.3':
-				$notice = isset($notice) ? $notice : 'upgrade_13';
 
+			case '1.3':
 				$options['out'] 						= 0;
 				$options['autoplay'] 				= 0;
 				$options['youtube']['logo'] = 1;
@@ -85,9 +78,8 @@ function featured_video_plus_upgrade() {
 				$options['align'] = $options['sizing']['wmode'] == 'auto' ? 'center' : $options['sizing']['align'];
 				unset( $options['sizing']['align'] );
 
-			case '1.4':
-				$notice = isset($notice) ? $notice : 'upgrade_14';
 
+			case '1.4':
 				$options['youtube']['wmode'] 				= 'auto';
 				$options['local']['videojs']['js'] 	= true;
 				$options['local']['videojs']['css'] = true;
@@ -105,18 +97,19 @@ function featured_video_plus_upgrade() {
 					}
 				}
 
+
 			case '1.5':
 			case '1.5.1':
-				$notice = isset($notice) ? $notice : 'upgrade_15';
-
 				$options['youtube']['jsapi'] = 0;
 				$options['local']['videojs']['poster'] = false;
 				unset($options['reged'], $options['out']);
+
 
 			case '1.6':
 			case '1.6.1':
 				$options['usage'] = $options['overwrite'] ? 'replace' : 'manual'; // replace;manual;overlay
 				unset($options['overwrite']);
+
 
 			case '1.7':
 			case '1.7.1':
@@ -134,106 +127,13 @@ function featured_video_plus_upgrade() {
 
 
 		// *************************************************************
-		//default:
+			default:
 				$options['version'] = FVP_VERSION;
 				break;
 		}
-
-		$featured_video_plus_notices = new featured_video_plus_notices();
-		if( isset($notice) )
-			add_action('admin_notices', array( &$featured_video_plus_notices, $notice ) );
 	}
 
 	if( $options != $options_org )
 		update_option( 'fvp-settings', $options );
-
-}
-
-/**
- * Class containing notices for upgrading the plugin
- *
- * @author ahoereth
- * @version 2013/01/08
- * @see http://wptheming.com/2011/08/admin-notices-in-wordpress/
- * @since 1.2
- */
-class featured_video_plus_notices {
-	private $pluginpage;
-
-	/**
-	 * Initialize class variables.
-	 *
-	 * @since 1.4
-	 */
-	function __construct(){
-		$this->pluginpage = 'http://wordpress.org/extend/plugins/featured-video-plus#plugin-title';
-	}
-
-	/**
-	 * Upgrade notification 1.4 to current version
-	 *
-	 * @since 1.5
-	 */
-	function upgrade_15() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s brings new options for YouTube and local videos, fixes a whole bunch of glitches and introduces a new PHP-function.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
-		echo "</p></div>\n";
-	}
-
-	/**
-	 * Upgrade notification 1.4 to current version
-	 *
-	 * @since 1.5
-	 */
-	function upgrade_14() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s <strong>ajax</strong>ifies the Featured Video box, introduces new options for YouTube and local videos and a new PHP-function.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
-		echo "</p></div>\n";
-	}
-
-	/**
-	 * Upgrade notification 1.3 to current version
-	 *
-	 * @since 1.4
-	 */
-	function upgrade_13() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features a seamless <strong>WP3.5 Media Manager</strong> integration, an all new <strong>ajax</strong>ified metabox, time-links (#t=4m2s) for YouTube and Dailymotion, new PHP functions for developers and more.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
-		echo "</p></div>\n";
-	}
-
-	/**
-	 * Upgrade notification 1.2 to current version
-	 *
-	 * @since 1.3
-	 */
-	function upgrade_12() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp'.__('%s features a seamless WP3.5 Media Manager integration, an ajaxified metabox, time-links (#t=4m2s) for YouTube and Dailymotion, more customization settings and internationalization.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" target="_blank">', '</a>');
-		echo "</p></div>\n";
-	}
-
-	/**
-	 * Upgrade notification 1.1 to current version
-	 *
-	 * @since 1.2
-	 */
-	function upgrade_11() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus was <strong>upgraded</strong>.', 'featured-video-plus').'&nbsp;'.__('%s features support for <strong>Local Videos</strong>, a seamless WP3.5 Media Manager integration, an ajaxified metabox, time-links (#t=4m2s) for YouTube and Dailymotion and many more customization settings.', 'featured-video-plus').'&nbsp;'.__('If you like the plugin, please %srate it%s.', 'featured-video-plus'), '<strong>Version&nbsp;'.FVP_VERSION.'</strong>', '<a href="'.$this->pluginpage.'" traget="_blank">','</a>');
-		echo "</p></div>\n";
-	}
-
-	/**
-	 * Notification shown when plugin is newly activated.
-	 * Upgrade from 0 to current version
-	 *
-	 * @since 1.0
-	 */
-	function initial_activation() {
-		echo "\n" . '<div class="updated" id="fvp_activation_notification"><p>';
-		printf(__('Featured Video Plus is <strong>ready to use</strong>. There is a new box on post & page edit screens for you to add videos. <strong>Take a look at your new %sMedia Settings%s</strong>.', 'featured-video-plus'), '<a href="'.get_admin_url(null, '/options-media.php').'" title="Media Settings">', '</a>');
-		echo "</p></div>\n";
-	}
 
 }
