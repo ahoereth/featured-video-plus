@@ -35,28 +35,34 @@ class featured_video_plus_frontend {
 	public function enqueue() {
 		$options = get_option('fvp-settings');
 
+		$deps = array('jquery');
+
 		wp_enqueue_script('jquery');
 
-		if ($options['sizing']['wmode'] == 'auto' && $options['usage']!='overlay')
+		if ($options['sizing']['wmode'] == 'auto' && $options['usage']!='overlay') {
 			wp_enqueue_script('jquery.fitvids', FVP_URL . 'js/jquery.fitvids.min.js', array( 'jquery' ), FVP_VERSION, false ); 	// production
 			//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids.js', array( 'jquery' ), FVP_VERSION, false ); 		// development
+			$deps[] = 'jquery.fitvids';
+		}
 
-		if ($options['usage']=='overlay')
+		if ($options['usage']=='overlay') {
 			wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
 			//wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.js', array( 'jquery' ), FVP_VERSION ); 		// development
+			$deps[] = 'jquery.domwindow';
+		}
 
-		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
+		$deps[] = 'videojs';
+
+		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', $deps, FVP_VERSION ); 	// production
 		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
 
 		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
 			'nonce' 	=> wp_create_nonce( 'featured-video-plus-nonce' ),
-			'fitvids' => isset($options['sizing']['wmode']) 			&&
-												 $options['sizing']['wmode']=='auto' ? 1 : 0,
-			'dynamic' => isset($options['usage']) 				 				&&
-												 $options['usage']=='dynamic' 			 ? 1 : 0,
-			'overlay' => isset($options['usage']) 				 				&&
-												 $options['usage']=='overlay' 			 ? 1 : 0,
+			'fitvids' => isset($options['sizing']['wmode']) && $options['sizing']['wmode']=='auto',
+			'dynamic' => isset($options['usage']) && $options['usage']=='dynamic',
+			'overlay' => isset($options['usage']) && $options['usage']=='overlay',
+			'videojs' => isset($options['local']['enabled']) && $options['local']['enabled'],
 			'opacity' => '75',
 			'loadingw'=> FVP_URL . 'css/loading_w.gif',
 			'loadingb'=> FVP_URL . 'css/loading_b.gif'
@@ -94,7 +100,7 @@ class featured_video_plus_frontend {
 			return '<a href="#fvp_'.$post_id.'" class="fvp_overlay" onclick="return false;">'.$html.'</a><div id="fvp_'.$post_id.'" style="display: none;"></div>';
 
 		else//if ($options['usage']=='dynamic')
-			return '<a href="#fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
+			return '<a href="#fvp_'.$post_id.'" id="fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
 
 	}
 

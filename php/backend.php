@@ -3,7 +3,6 @@
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
  * @author ahoereth
- * @version 2013/04/16
  * @see ../featured_video_plus.php
  * @see featured_video_plus in general.php
  * @since 1.0
@@ -64,14 +63,15 @@ class featured_video_plus_backend {
 			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
 			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
 
-			$wp_35 = get_bloginfo('version') >= 3.5 ? true : false;
+			$options = get_option('fvp-settings');
 			$upload_dir = wp_upload_dir();
 			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
-				'wp_upload_dir' 	=> $upload_dir['baseurl'],
-				'loading_gif' 		=> get_admin_url(null,'images/loading.gif'),
-				'default_value' 	=> $this->default_value,
+				'wp_upload_dir' 		=> $upload_dir['baseurl'],
+				'loading_gif' 			=> get_admin_url(null,'images/loading.gif'),
+				'default_value' 		=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec,
-				'wp_35' 			=> $wp_35
+				'wp_35' 						=> get_bloginfo('version') >= 3.5,
+				'videojs' 					=> isset($options['local']['enabled']) && $options['local']['enabled']
 			) );
 		}
 
@@ -123,7 +123,8 @@ class featured_video_plus_backend {
 			printf ('<div class="fvp_warning"><p class="description"><strong>'.__('Outdated WordPress Version', 'featured-video-plus').':</strong>&nbsp'.__('There is WordPress 3.5 out there! The plugin supports older versions way back to 3.1 - but %s is defenitly to old!', 'featured-video-plus').'</p></div>', get_bloginfo('version') );
 
 		// current featured video
-		echo '<div id="fvp_current_video" style="background: no-repeat center center;">'; //url(\''.get_admin_url(null,'images/loading.gif').'\')
+		$hide = $has_post_video ? '' : ' height:0px;';
+		echo '<div id="fvp_current_video" style="background: no-repeat center center;'.$hide.'">'; //url(\''.get_admin_url(null,'images/loading.gif').'\')
 		if( $has_post_video )
 			echo get_the_post_video( $post_id, array(256,144) );
 		echo '</div>'."\n\n";
@@ -134,8 +135,9 @@ class featured_video_plus_backend {
 		echo '<div class="fvp_input_wrapper" data-title="'.__('Set Featured Video', 'featured-video-plus').'" data-button="'.__('Set featured video', 'featured-video-plus').'" data-target="#fvp_video">'."\n\t";
 		echo '<textarea class="fvp_input'.$legal.'" id="fvp_video" name="fvp_video" type="text">' . $full . '</textarea>' . "\n\t";
 		echo '<input type="hidden" class="fvp_mirror" value="'.$full."\" />\n\t";
-		if( !(get_bloginfo('version') < 3.5) )
-			echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
+
+		$style = get_bloginfo('version') >= 3.5 ? 'style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"': '';
+		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon"'.$style.'></span></a>'."\n";
 		echo "</div>\n";
 
 		$sec   =  isset($meta['sec']) && !empty($meta['sec']) ? wp_get_attachment_url($meta['sec_id']) : $this->default_value_sec;
@@ -222,7 +224,7 @@ class featured_video_plus_backend {
 
 		if (has_post_video($post['id'])){
 			$video = get_the_post_video( $post['id'], array(256,144) );
-			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img ));
+			echo json_encode(array( 'typ' => 'updated', 'valid' => $meta['valid'], 'video' => $video, 'img' => $img, 'prov' => $meta['prov'], 'id' => $meta['id'] ));
 		} else
 			echo json_encode(array( 'typ' => 'removed', 'valid' => $meta['valid'], 'img' => $img ));
 		die();
@@ -634,8 +636,10 @@ class featured_video_plus_backend {
 		}
 
 		if (has_post_video($_POST['id'])){
+			$meta = get_post_meta($_POST['id'], '_fvp_video', true);
+
 			$video = get_the_post_video( $_POST['id'] );
-			echo json_encode(array('success' => 'true', 'html' => $video));
+			echo json_encode(array('success' => 'true', 'html' => $video, 'id' => $meta['id']));
 		} else{
 			$image = get_the_post_thumbnail($_POST['id']);
 			echo json_encode(array('success' => 'false','html' => $image));

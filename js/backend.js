@@ -5,7 +5,7 @@ jQuery(document).ready(function($){
      * @since 1.0
      */
     $('#fvp_video,#fvp_sec').blur(function() {
-        var t = $(this); // required to make use of it in ajax callback
+        t = $(this); // required to make use of it in ajax callback
 
         t.val( $.trim( t.val()) );
 
@@ -24,7 +24,8 @@ jQuery(document).ready(function($){
         if( t.val() != t.siblings('.fvp_mirror').val() ) {
             bg = t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage');
             t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', "url('"+fvp_backend_data.loading_gif+"')");
-            $('#fvp_current_video').css({'backgroundImage':"url('"+fvp_backend_data.loading_gif+"')",'width':'256px'}).animate({'height':'144px'});
+            $('#fvp_current_video').css({'backgroundImage':"url('"+fvp_backend_data.loading_gif+"')",'width':'256px'}).animate({'height':'144px'})
+                .children().animate({'opacity':0});
             $.post( ajaxurl,
                 {
                     'action'    : 'fvp_ajax',
@@ -37,21 +38,21 @@ jQuery(document).ready(function($){
                     t.siblings('.fvp_mirror').val( t.val() );
                     t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', bg);
                     if(data.typ == 'removed'){
-                        $('#fvp_current_video').html('').css({'backgroundImage':''}).animate({'height':'0px'});
+                        $('#fvp_current_video').css({'backgroundImage':''}).animate({'height':'0px'});
                         if( data.img != '' )
                             $('#postimagediv .inside').html(data.img);
-                    }else
-                        if(data.valid) {
+                    } else {
+                        $('#fvp_current_video').html(data.video).animate({'height':'144px'});
+                        $("#fvp_help_notice").slideUp('fast');
+                        if (data.valid) {
                             $('#postimagediv .inside').html(data.img);
                             $("#fvp_set_featimg_link, #fvp_featimg_warning").slideUp().addClass("fvp_hidden");
-                            $('#fvp_current_video').html(data.video);
                             t.css('backgroundColor','#00FF00').animate({'backgroundColor':'white'}, 500, function() { t.css('backgroundColor',''); });
-                            $("#fvp_help_notice").slideUp('fast');
-                        }else{
-                            $('#fvp_current_video').html(data.video);
+                            if (data.prov == 'local' && fvp_backend_data.videojs)
+                                vjs = videojs('videojs'+data.id,{},function(){});
+                        } else
                             t.addClass('fvp_invalid');
-                            $("#fvp_help_notice").slideUp('fast');
-                        }
+                    }
                 }, "json"
             );
         }
@@ -117,7 +118,7 @@ jQuery(document).ready(function($){
         }
 
         if ( value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
-            var file_extension = /^.*\/(.*)\.(.*)$/g;
+            var file_extension = /^.*\/(.*)\.(.*)/g;
             var match = file_extension.exec(value);
             if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
                 $("#fvp_sec_wrapper").slideDown('fast');
@@ -276,6 +277,7 @@ jQuery(document).ready(function($){
                 returnProperty = 'url';
 
             $( $control.data('target') ).val( selection.pluck( returnProperty ) ).trigger('autosize').change().removeClass("defaultTextActive");
+            $('#fvp_video').blur();
         },
 
         updateFrame: function() {
