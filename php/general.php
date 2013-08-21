@@ -30,11 +30,11 @@ class featured_video_plus {
 			// http://videojs.com/
 			if( $options['local']['enabled'] ) {
 				if( $options['local']['cdn'] ) {
-					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.0/video.js',array(), FVP_VERSION, false );
-					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.0/video-js.css',array(), FVP_VERSION, false );
+					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.1/video.js',array(), FVP_VERSION, false );
+					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.1/video-js.css',array(), FVP_VERSION, false );
 				} else {
-					wp_enqueue_script(  'videojs', FVP_URL . 'js/videojs.min.js', 	array(), FVP_VERSION, false );
-					wp_enqueue_style(  	'videojs', FVP_URL . 'css/videojs.min.css', array(), FVP_VERSION, false );
+					wp_enqueue_script(  'videojs', FVP_URL . 'js/videojs.min.js', 	array(), '4.1', false );
+					wp_enqueue_style(  	'videojs', FVP_URL . 'css/videojs.min.css', array(), '4.1', false );
 					wp_localize_script( 'videojs', 'videojsdata', array( 'swf' => FVP_URL . 'js/video-js.swf' ));
 				}
 			}
