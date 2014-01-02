@@ -323,13 +323,6 @@ if( !current_theme_supports('post-thumbnails') )
 		$options['local']['poster']		= isset( $input['local']['poster'] ) 		? true : false;
 		$options['local']['loop']		  = isset( $input['local']['loop'] ) 			? true : false;
 
-		if( isset($options['local']['foreground']) ) preg_match($hexcolor, $input['local']['foreground'], $local_foreground);
-		if( isset($options['local']['highlight'])  ) preg_match($hexcolor, $input['local']['highlight'],  $local_highlight);
-		if( isset($options['local']['background']) ) preg_match($hexcolor, $input['local']['background'], $local_background);
-		$options['local']['foreground'] = isset($local_foreground[1]) && !empty($local_foreground[1])? $local_foreground[1] : 'cccccc';
-		$options['local']['highlight'] 	= isset($local_highlight[ 1]) && !empty($local_highlight[ 1])? $local_highlight[ 1] : '66a8cc';
-		$options['local']['background'] = isset($local_background[1]) && !empty($local_background[1])? $local_background[1] : '000000';
-
 		// YouTube
 		$options['youtube']['theme'] 	= isset($input['youtube']['theme']) && ( $input['youtube']['theme'] == 'light') ? 'light' : 'dark';
 		$options['youtube']['color'] 	= isset($input['youtube']['color']) && ( $input['youtube']['color'] == 'white') ? 'white' : 'red';

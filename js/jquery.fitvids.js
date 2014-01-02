@@ -72,3 +72,9 @@
   };
 // Works with either jQuery or Zepto
 })( window.jQuery || window.Zepto );
+
+jQuery(document).ready(function($){
+  $(".featured_video_plus").fitVids( {
+    customSelector: "iframe[src*='dailymotion.com']"
+  });
+});

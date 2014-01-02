@@ -57,25 +57,23 @@ class featured_video_plus {
 				// mediaelement.js is only available in WordPress 3.6 and higher.
 				if( get_bloginfo('version') < 3.6 ) break;
 
-				$a = wp_get_attachment_url($meta['id']);
-				$ext = pathinfo( $a, PATHINFO_EXTENSION );
+				$videourl = wp_get_attachment_url( $meta['id'] );
+
+				$ext = pathinfo( $videourl, PATHINFO_EXTENSION );
 				if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' )
 					break;
 
-				global $content_width;
+				$videometa = wp_get_attachment_metadata( $meta['id'] );
 
 				$atts = array(
-					'src'      => $a,
-					'poster'   => 'argh',
+					'src'      => $videourl,
+					'poster'   => ! empty( $options['local']['poster'] ) && $options['local']['poster'] && has_post_thumbnail( $post_id ) ? wp_get_attachment_url( get_post_thumbnail_id( $post_id ) ) : '',
 					'loop'     => ! empty( $options['local']['loop'] ) && $options['local']['loop'] ? 'on' : 'off',
 					'autoplay' => $autoplay == '1' ? 'on' : null,
-					'preload'  => null,
-					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? 2048 : $size['height'],
-					'width'    => $options['sizing']['wmode' ] == 'auto' && ! is_admin() ? 2048 : $size['width'],
+					'preload'  => null, // $size['height'], //$size['width'], //
+					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? $videometa['height'] * 8 : $size['height'],
+					'width'    => $options['sizing']['wmode' ] == 'auto' && ! is_admin() ? $videometa['width'] * 8 : $size['width'],
 				);
-
-				if ( ! empty( $options['local']['poster'] ) && $options['local']['poster'] )
-					$atts['poster'] = has_post_thumbnail( $post_id ) ? wp_get_attachment_url( get_post_thumbnail_id( $post_id ) ) : '';
 
 				$embed = wp_video_shortcode( $atts );
 				break;
@@ -125,8 +123,11 @@ class featured_video_plus {
 				break;
 		}
 
+		if ( ! $embed ) return '';
+
+		$class = $options['sizing']['wmode' ] == 'auto' ? ' responsive' : '';
 		$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
-		$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
+		$embed = "<div class=\"featured_video_plus{$class}\"{$containerstyle}>{$embed}</div>\n\n";
 		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
 
 		return $embed;
