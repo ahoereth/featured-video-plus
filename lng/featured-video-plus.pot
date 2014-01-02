@@ -1,108 +1,91 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: featured-video-plus 1.3\n"
-"POT-Creation-Date: 2013-04-30 00:01+0100\n"
-"PO-Revision-Date: 2013-04-30 00:01+0100\n"
-"Last-Translator: Alexander Höreth <a.hoereth@gmail.com>\n"
+"POT-Creation-Date: 2014-01-02 20:31+0100\n"
+"PO-Revision-Date: 2014-01-02 20:31+0100\n"
+"Last-Translator: Alexander Höreth <hello@yrnxt.com>\n"
 "Language-Team: a.hoereth <a.hoereth@gmail.com>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.6.3\n"
 "X-Poedit-KeywordsList: __;_e\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: php\n"
 
-#: php/backend.php:32
+#: php/backend.php:31
 msgid "Video URL"
 msgstr ""
 
-#: php/backend.php:33
+#: php/backend.php:32
 msgid "Fallback: same video, different format"
 msgstr ""
 
-#: php/backend.php:92 php/backend.php:707 php/backend.php:714
-#: php/backend.php:731 php/backend.php:733
+#: php/backend.php:93 php/backend.php:683 php/backend.php:690
+#: php/backend.php:707 php/backend.php:709
 msgid "Featured Video"
 msgstr ""
 
-#: php/backend.php:123
+#: php/backend.php:124
 msgid "Outdated WordPress Version"
 msgstr ""
 
-#: php/backend.php:123
+#: php/backend.php:124
 #, php-format
 msgid ""
 "There is WordPress 3.5 out there! The plugin supports older versions way "
 "back to 3.1 - but %s is defenitly to old!"
 msgstr ""
 
-#: php/backend.php:134
+#: php/backend.php:136
 msgid "Set Featured Video"
 msgstr ""
 
-#: php/backend.php:134
+#: php/backend.php:136
 msgid "Set featured video"
 msgstr ""
 
-#: php/backend.php:143
-msgid "Set Featured Video Fallback"
-msgstr ""
-
-#: php/backend.php:143
-msgid "Set featured video fallback"
-msgstr ""
-
-#: php/backend.php:152 php/backend.php:659
+#: php/backend.php:146 php/backend.php:640
 msgid "Supported Video Formats"
 msgstr ""
 
-#: php/backend.php:152
+#: php/backend.php:146
 msgid "or"
 msgstr ""
 
-#: php/backend.php:152 php/backend.php:658
+#: php/backend.php:146
 msgid "More information"
 msgstr ""
 
-#: php/backend.php:157
-msgid "Fallback Video"
-msgstr ""
-
-#: php/backend.php:157
-msgid ""
-"The two input fields should contain the same video but in distinct formats."
-msgstr ""
-
-#: php/backend.php:164
+#: php/backend.php:153
 msgid "Hint"
 msgstr ""
 
-#: php/backend.php:164
+#: php/backend.php:153
 #, php-format
 msgid "Take a look into the %sContextual Help%s."
 msgstr ""
 
-#: php/backend.php:170 php/settings.php:401
+#: php/backend.php:159 php/settings.php:390
 msgid "Featured Image"
 msgstr ""
 
-#: php/backend.php:170
+#: php/backend.php:159
 msgid ""
 "For automatically displaying the Featured Video a Featured Image is required."
 msgstr ""
 
-#: php/backend.php:175
+#: php/backend.php:164
 msgid "Set as Featured Image"
 msgstr ""
 
-#: php/backend.php:179
+#: php/backend.php:168
 msgid "The current theme does not support Featured Images"
 msgstr ""
 
-#: php/backend.php:179
+#: php/backend.php:168
 #, php-format
 msgid ""
 "To display Featured Videos you need to use the <code>Shortcode</code> or "
@@ -110,79 +93,51 @@ msgid ""
 "Featured Images</em>&quot; in the %sMedia Settings%s."
 msgstr ""
 
-#: php/backend.php:653
+#: php/backend.php:634
 #, php-format
 msgid ""
 "To use local videos, copy the <code>Link To Media File</code> from your "
 "%sMedia Library%s and paste it into the text field."
 msgstr ""
 
-#: php/backend.php:654
-#, php-format
+#: php/backend.php:635
 msgid ""
-"To use local videos, copy the <code>File URL</code> from your %sMedia Library"
-"%s and paste it into the text field."
+"To use local videos as Featured Videos WordPress 3.6 or higher is required."
 msgstr ""
 
-#: php/backend.php:658
-msgid ""
-"The second text field is intended to hold the URL to the same video in a "
-"different format. It will be used as fallback if the primary file can not be "
-"played."
-msgstr ""
-
-#: php/backend.php:661
+#: php/backend.php:642
 msgid "Converting your videos"
 msgstr ""
 
-#: php/backend.php:662
+#: php/backend.php:643
 #, php-format
 msgid ""
 "Take a look at the %sMiro Video Converter%s. It is open source, lightweight "
 "and compatible with Windows, Mac and Linux."
 msgstr ""
 
-#: php/backend.php:663
+#: php/backend.php:644
 msgid "Fixing upload errors"
 msgstr ""
 
-#: php/backend.php:665
+#: php/backend.php:646
 #, php-format
 msgid ""
 "Read %sthis%s on how to increase the <strong>maximum file upload size</"
 "strong>."
 msgstr ""
 
-#: php/backend.php:666
-#, php-format
-msgid ""
-"WordPress by default does not support <code>webM</code>. The plugin "
-"activates it, but under some conditions this might not be enough. %sHere%s "
-"you can get more information on this."
-msgstr ""
-
-#: php/backend.php:668
-msgid "Flash Fallback"
-msgstr ""
-
-#: php/backend.php:669
-#, php-format
-msgid ""
-"The video player, %sVIDEOJS%s, features an Adobe Flash fallback. All you "
-"need to do is provide an <code>mp4</code>-video."
-msgstr ""
-
-#: php/backend.php:673
+#: php/backend.php:651
 msgid ""
 "These are some of the tested URL formats. Everything in bold is required, "
 "everything in brackets is optional."
 msgstr ""
 
-#: php/backend.php:707 php/backend.php:731
+#: php/backend.php:683 php/backend.php:707
 msgid "Local Media"
 msgstr ""
 
-#: php/backend.php:714 php/backend.php:733
+#: php/backend.php:690 php/backend.php:709
 msgid "Valid URLs"
 msgstr ""
 
@@ -245,7 +200,7 @@ msgstr ""
 msgid "Replace featured image automatically if possible"
 msgstr ""
 
-#: php/settings.php:62 php/settings.php:89 php/settings.php:112
+#: php/settings.php:62 php/settings.php:90 php/settings.php:112
 #: php/settings.php:122 php/settings.php:143
 msgid "default"
 msgstr ""
@@ -269,28 +224,26 @@ msgid ""
 "%sfeatured image%s capabilities."
 msgstr ""
 
-#: php/settings.php:71
+#: php/settings.php:70
 msgid "The current theme does not support featured images"
 msgstr ""
 
-#: php/settings.php:71
+#: php/settings.php:70
 msgid ""
 "To display Featured Videos you need to use the <code>Shortcode</code> or "
 "<code>PHP functions</code>."
 msgstr ""
 
-#: php/settings.php:87
+#: php/settings.php:86
 msgid "yes"
 msgstr ""
 
-#: php/settings.php:89
-msgid "no"
+#: php/settings.php:88
+msgid "auto"
 msgstr ""
 
 #: php/settings.php:90
-msgid ""
-"YouTube, Vimeo and Dailymotion videos can autoplay when a single post/page "
-"is being viewed."
+msgid "no"
 msgstr ""
 
 #: php/settings.php:109
@@ -320,98 +273,83 @@ msgstr ""
 msgid "right"
 msgstr ""
 
-#: php/settings.php:163
-msgid "Use CDN"
-msgstr ""
-
-#: php/settings.php:164
-msgid "Include JS"
-msgstr ""
-
-#: php/settings.php:165
-msgid "Include CSS"
-msgstr ""
-
-#: php/settings.php:166
-msgid ""
-"Disabling JS and/or CSS will break the local video player. Disable only when "
-"you want to replace VideoJS with a different script and know what you are "
-"doing."
-msgstr ""
-
-#: php/settings.php:167
+#: php/settings.php:157
 msgid "Use featured image as video thumbnail"
 msgstr ""
 
-#: php/settings.php:188
+#: php/settings.php:158
+msgid "Loop videos"
+msgstr ""
+
+#: php/settings.php:179
 msgid "Light Theme"
 msgstr ""
 
-#: php/settings.php:189
+#: php/settings.php:180
 msgid "Fullscreen Button"
 msgstr ""
 
-#: php/settings.php:197
+#: php/settings.php:188
 msgid "Info"
 msgstr ""
 
-#: php/settings.php:199
+#: php/settings.php:190
 msgid "Related Videos"
 msgstr ""
 
-#: php/settings.php:200
+#: php/settings.php:191
 msgid "Javascript API"
 msgstr ""
 
-#: php/settings.php:201
+#: php/settings.php:192
 msgid "White Progressbar"
 msgstr ""
 
-#: php/settings.php:203 php/settings.php:256
+#: php/settings.php:194 php/settings.php:247
 msgid "Logo"
 msgstr ""
 
-#: php/settings.php:225
+#: php/settings.php:216
 msgid "Portrait"
 msgstr ""
 
-#: php/settings.php:226
+#: php/settings.php:217
 msgid "Title"
 msgstr ""
 
-#: php/settings.php:227
+#: php/settings.php:218
 msgid "Byline"
 msgstr ""
 
-#: php/settings.php:230
+#: php/settings.php:221
 msgid "Color"
 msgstr ""
 
-#: php/settings.php:234
+#: php/settings.php:225
 msgid "Vimeo Plus Videos might ignore these settings."
 msgstr ""
 
-#: php/settings.php:257
+#: php/settings.php:248
 msgid "Videoinfo"
 msgstr ""
 
-#: php/settings.php:258
+#: php/settings.php:249
 msgid "Syndication Key"
 msgstr ""
 
-#: php/settings.php:262
+#: php/settings.php:253
 msgid "Foreground"
 msgstr ""
 
-#: php/settings.php:267
+#: php/settings.php:258
 msgid "Highlight"
 msgstr ""
 
-#: php/settings.php:272
+#: php/settings.php:263
 msgid "Background"
 msgstr ""
 
-#: php/settings.php:289
+#: php/settings.php:280
 #, php-format
 msgid ""
 "If you have found a bug or are missing a specific video service, please "
@@ -419,21 +357,21 @@ msgid ""
 "Please %srate it!%s"
 msgstr ""
 
-#: php/settings.php:376
+#: php/settings.php:365
 msgid "Displays the video in its default size."
 msgstr ""
 
-#: php/settings.php:380
+#: php/settings.php:369
 msgid ""
 "Displays the video with an width of 300 pixel. Height will be fitted to the "
 "aspect ratio."
 msgstr ""
 
-#: php/settings.php:384
+#: php/settings.php:373
 msgid "Displays the video with an fixed width and height."
 msgstr ""
 
-#: php/settings.php:398
+#: php/settings.php:387
 #, php-format
 msgid ""
 "All parameters are optional. If %s the current post's id will be used. %s is "
@@ -441,7 +379,7 @@ msgid ""
 "representing width and height in pixels, e.g. array(32,32)."
 msgstr ""
 
-#: php/settings.php:401
+#: php/settings.php:390
 #, php-format
 msgid ""
 "The functions are implemented corresponding to the original %sfunctions%s: "
@@ -449,63 +387,6 @@ msgid ""
 "WordPress Codex for further guidance:"
 msgstr ""
 
-#: php/settings.php:424 php/settings.php:447
+#: php/settings.php:413 php/settings.php:436
 msgid "PHP-Functions"
-msgstr ""
-
-#: php/upgrade.php:164 php/upgrade.php:175 php/upgrade.php:186
-#: php/upgrade.php:197 php/upgrade.php:208
-msgid "Featured Video Plus was <strong>upgraded</strong>."
-msgstr ""
-
-#: php/upgrade.php:164
-#, php-format
-msgid ""
-"%s brings new options for YouTube and local videos, fixes a whole bunch of "
-"glitches and introduces a new PHP-function."
-msgstr ""
-
-#: php/upgrade.php:164 php/upgrade.php:175 php/upgrade.php:186
-#: php/upgrade.php:197 php/upgrade.php:208
-#, php-format
-msgid "If you like the plugin, please %srate it%s."
-msgstr ""
-
-#: php/upgrade.php:175
-#, php-format
-msgid ""
-"%s <strong>ajax</strong>ifies the Featured Video box, introduces new options "
-"for YouTube and local videos and a new PHP-function."
-msgstr ""
-
-#: php/upgrade.php:186
-#, php-format
-msgid ""
-"%s features a seamless <strong>WP3.5 Media Manager</strong> integration, an "
-"all new <strong>ajax</strong>ified metabox, time-links (#t=4m2s) for YouTube "
-"and Dailymotion, new PHP functions for developers and more."
-msgstr ""
-
-#: php/upgrade.php:197
-#, php-format
-msgid ""
-"%s features a seamless WP3.5 Media Manager integration, an ajaxified "
-"metabox, time-links (#t=4m2s) for YouTube and Dailymotion, more "
-"customization settings and internationalization."
-msgstr ""
-
-#: php/upgrade.php:208
-#, php-format
-msgid ""
-"%s features support for <strong>Local Videos</strong>, a seamless WP3.5 "
-"Media Manager integration, an ajaxified metabox, time-links (#t=4m2s) for "
-"YouTube and Dailymotion and many more customization settings."
-msgstr ""
-
-#: php/upgrade.php:220
-#, php-format
-msgid ""
-"Featured Video Plus is <strong>ready to use</strong>. There is a new box on "
-"post & page edit screens for you to add videos. <strong>Take a look at your "
-"new %sMedia Settings%s</strong>."
 msgstr ""
