@@ -42,6 +42,7 @@ class featured_video_plus_backend {
 	 * @since 1.0
 	 */
 	public function enqueue($hook_suffix) {
+		$min = SCRIPT_DEBUG ? '' : '.min';
 		// just required on options-media.php and would produce errors pre WordPress 3.1
 		if( ($hook_suffix == 'options-media.php') && (get_bloginfo('version') >= 3.1) ) {
 			if( wp_style_is( 'wp-color-picker', 'registered' ) ) {
@@ -57,11 +58,13 @@ class featured_video_plus_backend {
 			wp_enqueue_script( 'fvp_settings', FVP_URL . 'js/settings.js', array( 'jquery' ), FVP_VERSION );
 		}
 
-		// just required on post.php
+		// just required on post.php and post-new.php
 		if( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php' ) {
-			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize.min.js', array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			wp_enqueue_script( 'jquery.autosize', FVP_URL . "js/jquery.autosize$min.js", array( 'jquery' ), FVP_VERSION );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . "js/backend$min.js", array( 'jquery','jquery.autosize' ), FVP_VERSION );
+
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
 
 			$options = get_option('fvp-settings');
 			$upload_dir = wp_upload_dir();
@@ -70,14 +73,12 @@ class featured_video_plus_backend {
 				'loading_gif' 			=> get_admin_url(null,'images/loading.gif'),
 				'default_value' 		=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec,
-				'wp_35' 						=> get_bloginfo('version') >= 3.5,
-				'videojs' 					=> isset($options['local']['enabled']) && $options['local']['enabled']
+				'wp_35' 						=> get_bloginfo('version') >= 3.5
 			) );
 		}
 
 		if( $hook_suffix == 'options-media.php' || (($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') )
-			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.min.css', array(), FVP_VERSION ); 	// production
-			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+			wp_enqueue_style( 'fvp_backend', FVP_URL . "css/backend$min.css", array(), FVP_VERSION );
 	}
 
 	/**
@@ -140,23 +141,9 @@ class featured_video_plus_backend {
 		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon"'.$style.'></span></a>'."\n";
 		echo "</div>\n";
 
-		$sec   =  isset($meta['sec']) && !empty($meta['sec']) ? wp_get_attachment_url($meta['sec_id']) : $this->default_value_sec;
-		$class = !isset($meta['sec']) ||  empty($meta['sec']) ? ' defaultTextActive' : '';
-		echo '<div class="fvp_input_wrapper" id="fvp_sec_wrapper" data-title="'.__('Set Featured Video Fallback', 'featured-video-plus').'" data-button="'.__('Set featured video fallback', 'featured-video-plus').'" data-target="#fvp_sec">'."\n\t";
-		echo '<textarea class="fvp_input'.$class.'" id="fvp_sec" name="fvp_sec" type="text">' . $sec . '</textarea>' . "\n\t";
-		echo '<input type="hidden" class="fvp_mirror" value="'.$sec."\" />\n\t";
-		if( !(get_bloginfo('version') < 3.5) )
-			echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
-		echo "</div>\n";
-
 		// local video format warning
 		echo '<div id="fvp_localvideo_format_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Supported Video Formats', 'featured-video-plus').':</span> <code>mp4</code>, <code>webM</code> '.__('or', 'featured-video-plus').' <code>ogg/ogv</code>. <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">'.__('More information', 'featured-video-plus').'</a>.';
-		echo "\n\t</p>\n</div>\n";
-
-		// local videos not distinct warning
-		echo '<div id="fvp_localvideo_notdistinct_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Fallback Video', 'featured-video-plus').':</span>&nbsp;'.__('The two input fields should contain the same video but in distinct formats.', 'featured-video-plus');
+		echo '<span style="font-weight: bold;">'.__('Supported Video Formats', 'featured-video-plus').':</span> <code>mp4</code>, <code>webM</code>, <code>m4v</code>, <code>wmv</code>, <code>flv</code> '.__('or', 'featured-video-plus').' <code>ogv</code>. <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">'.__('More information', 'featured-video-plus').'</a>.';
 		echo "\n\t</p>\n</div>\n";
 
 		// how to use a local videos notice
@@ -282,7 +269,6 @@ class featured_video_plus_backend {
 			'full' 	=> $url,
 			'id' 		=> isset($data['id']) 			?  $data['id'] 			 : '',
 			'sec' 	=> isset($data['sec']) 			?  $data['sec'] 		 : '',
-			'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
 			'img' 	=> isset($img) ? $img : '',
 			'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
 			'time' 	=> isset($data['time']) 		?  $data['time'] 		 : '',
@@ -312,22 +298,13 @@ class featured_video_plus_backend {
 
 			// local video
 			case $local['baseurl']:
+				$ext_legal = array( 'mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv' );
+
 				$ext = pathinfo( $url, PATHINFO_EXTENSION );
-				if( !isset($ext) || ($ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg') ) return; // wrong extension
+				if( empty( $ext ) || ! in_array( $ext, $ext_legal ) ) return; // wrong extension
 
-				$data['id'] 		= $this->get_post_by_url($url);
-				$data['provider'] 	= 'local';
-
-				if( !empty($sec) ) {
-					preg_match('/(' . preg_quote($local['baseurl'], '/') . ')/i', $sec, $sec_prov_data);
-					$ext2 = pathinfo( $sec, PATHINFO_EXTENSION );
-					if ( isset($sec_prov_data[1]) && isset($ext2) && $sec_prov_data[1] == $provider && $ext != $ext2 &&
-					   ($ext2 == 'mp4' || $ext2 == 'ogv' || $ext2 == 'webm' || $ext2 == 'ogg')) {
-						$data['sec_id'] = $this->get_post_by_url($sec);
-						$data['sec'] 	= $sec;
-					}
-				}
-
+				$data['id']       = $this->get_post_by_url($url);
+				$data['provider'] = 'local';
 				break;
 
 			// youtube.com
@@ -654,23 +631,20 @@ class featured_video_plus_backend {
 	 */
 	public function help() {
 		$mediahref 	= (get_bloginfo('version') >= 3.5) ? '<a href="#" class="insert-media" title="Add Media">' : '<a href="media-upload.php?post_id=4&amp;type=video&amp;TB_iframe=1&amp;width=640&amp;height=207" id="add_video" class="thickbox" title="Add Video">';
-		$general 	= (get_bloginfo('version') >= 3.5) ? sprintf( __('To use local videos, copy the <code>Link To Media File</code> from your %sMedia Library%s and paste it into the text field.', 'featured-video-plus'), $mediahref, '</a>' ) :
-														 sprintf( __('To use local videos, copy the <code>File URL</code> from your %sMedia Library%s and paste it into the text field.', 			 'featured-video-plus'), $mediahref, '</a>' );
+		$general 	= (get_bloginfo('version') >= 3.6) ? sprintf( __('To use local videos, copy the <code>Link To Media File</code> from your %sMedia Library%s and paste it into the text field.', 'featured-video-plus'), $mediahref, '</a>' ) :
+														 sprintf( __('To use local videos as Featured Videos WordPress 3.6 or higher is required.', 'featured-video-plus'), $mediahref, '</a>' );
 
 		$this->help_localmedia = '
 <h4 style="margin-bottom: 0;"></h4>
-<p>'.$general.'&nbsp;'.__('The second text field is intended to hold the URL to the same video in a different format. It will be used as fallback if the primary file can not be played.','featured-video-plus').'&nbsp;<a href="http://videojs.com/#section4" target="_blank">'.__('More information','featured-video-plus').'</a>.</p>
+<p>'.$general.'</p>
 <h4 style="margin-bottom: 0;">'.__('Supported Video Formats','featured-video-plus').':</h4>
-<p style="margin-top: 0;"><code>webM</code>, <code>mp4</code>, <code>ogg/ogv</code></p>
+<p style="margin-top: 0;"><code>webM</code>, <code>mp4</code>, <code>ogv</code>, <code>m4v</code>, <code>wmv</code>, <code>flv</code></p>
 <h4 style="margin-bottom: 0;">'.__('Converting your videos','featured-video-plus').':</h4>
 <p style="margin-top: 0;">'.sprintf(__('Take a look at the %sMiro Video Converter%s. It is open source, lightweight and compatible with Windows, Mac and Linux.','featured-video-plus'),'<a href="http://www.mirovideoconverter.com/" target="_blank">','</a>').'</p>
 <h4 style="margin-bottom: 0;">'.__('Fixing upload errors','featured-video-plus').':</h4>
 <ul style="margin-top: 0;">
 <li>'.sprintf(__('Read %sthis%s on how to increase the <strong>maximum file upload size</strong>.','featured-video-plus'),'<a href="http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/" target="_blank">','</a>').'</li>
-<li>'.sprintf(__('WordPress by default does not support <code>webM</code>. The plugin activates it, but under some conditions this might not be enough. %sHere%s you can get more information on this.','featured-video-plus'),'<a href="http://ottopress.com/2011/howto-html5-video-that-works-almost-everywhere/" target="_blank">','</a>').'</li>
-</ul>
-<h4 style="margin-bottom: 0;">'.__('Flash Fallback','featured-video-plus').':</h4>
-<p style="margin-top: 0;">'.sprintf(__('The video player, %sVIDEOJS%s, features an Adobe Flash fallback. All you need to do is provide an <code>mp4</code>-video.', 'featured-video-plus'),'<a href="http://videojs.com/" target="_blank">','</a>')."</p>\n";
+</ul>'."\n";
 
 		$dir = wp_upload_dir();
 		$this->help_urls = '
@@ -686,8 +660,6 @@ class featured_video_plus_backend {
 	<ul><li><code>(http(s)://)(www.)<strong>vimeo.com/<em>UNIQUEID</em></strong>(#stuff)</code></li></ul></li>
 	<li>Dailymotion:
 	<ul><li><code>(http(s)://)(www.)<strong>dailymotion.com/video/<em>UNIQUEID</em></strong>(_video_title)(#stuff)</code></li></ul></li>
-	<li>Liveleak:
-	<ul><li><code>(http(s)://)(www.)<strong>liveleak.com/view?i=<em>LIV_ELEAKUNQID</em></strong></code></li></ul></li>
 </ul>'."\n";
 
 	}

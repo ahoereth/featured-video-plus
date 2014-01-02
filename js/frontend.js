@@ -35,12 +35,9 @@ function fvp_dynamic(id){
 			t.replaceWith(data.html);
 			fvp_unwrap();
 			if ( fvpdata.fitvids && fvpdata.overlay )
-				jQuery(".featured_video_plus").fitVids({customSelector:["iframe", "object", "embed", ".video-js"]});
-
-			if ( fvpdata.videojs )
-				videojs('videojs'+data.id,{'autoplay':true},function(){});
+				jQuery(".featured_video_plus").fitVids({customSelector: "iframe[src*='dailymotion.com']"});
 		}
-	});//.fail(function() { alert("failed here"); });;
+	});
 }
 
 jQuery(document).ready(function($){

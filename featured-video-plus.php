@@ -4,11 +4,11 @@ Plugin Name: Featured Video Plus
 Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
-Version: 1.8
+Version: 1.9
 Author URI: http://yrnxt.com
 License: GPL2
 
-    Copyright 2009-2012  Alexander Höreth (email: a.hoereth@gmail.com)
+    Copyright 2009-2014  Alexander Höreth (email: a.hoereth@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.8');
+	define('FVP_VERSION', '1.9');
 
 // symlink proof
 $pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
@@ -65,7 +65,6 @@ if( is_admin() ) {
 
 	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
-	add_action('admin_enqueue_scripts', array( &$featured_video_plus, 			'enqueue' ) );
 
 	// link to media settings on plugins overview
 	add_filter('plugin_action_links', 	array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
@@ -105,7 +104,6 @@ if( !is_admin() ) {
 	$featured_video_plus_frontend = new featured_video_plus_frontend($featured_video_plus);
 
 	// enqueue scripts and styles
-	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus, 		 		 'enqueue' ) );
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
 
 	// filter get_post_thumbnail output

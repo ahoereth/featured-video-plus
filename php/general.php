@@ -10,56 +10,6 @@
  */
 class featured_video_plus {
 
-	public function __construct() {
-		add_action('wp_head', array( &$this, 'videojs_css') );
-		add_action('admin_head-post.php', array( &$this, 'videojs_css') );
-		add_action('admin_head-post-new.php', array( &$this, 'videojs_css') );
-	}
-
-	/**
-	 * Enqueue all scripts and styles needed when viewing the frontend and backend.
-	 *
-	 * @see http://videojs.com/
-	 * @since 1.2
-	 */
-	public function enqueue($hook_suffix) {
-		// just required on frontend, post.php and post-new.php
-		if( !is_admin() || ( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') ) {
-			$options = get_option( 'fvp-settings' );
-
-			// http://videojs.com/
-			if( $options['local']['enabled'] ) {
-				if( $options['local']['cdn'] ) {
-					 wp_enqueue_script( 'videojs', 'http://vjs.zencdn.net/4.0/video.js',array(), FVP_VERSION, false );
-					 wp_enqueue_style(  'videojs', 'http://vjs.zencdn.net/4.0/video-js.css',array(), FVP_VERSION, false );
-				} else {
-					wp_enqueue_script(  'videojs', FVP_URL . 'js/videojs.min.js', 	array(), FVP_VERSION, false );
-					wp_enqueue_style(  	'videojs', FVP_URL . 'css/videojs.min.css', array(), FVP_VERSION, false );
-					wp_localize_script( 'videojs', 'videojsdata', array( 'swf' => FVP_URL . 'js/video-js.swf' ));
-				}
-			}
-		}
-	}
-
-	public function videojs_css() {
-		$options = get_option( 'fvp-settings' );
-		extract($options['local']);
-		if( ! $enabled )
-			return;
-
-		$r = hexdec(substr($background, 0, 2));
-		$g = hexdec(substr($background, 2, 2));
-		$b = hexdec(substr($background, 4, 2));
-
-		$style = "<style type='text/css'>"
-						.".vjs-default-skin{color:#$foreground}"
-						.".vjs-play-progress,.vjs-volume-level{background-color:#$highlight!important}"
-						.".vjs-control-bar,.vjs-big-play-button{background:rgba($r,$g,$b,0.7)!important}"
-						.".vjs-slider{background:rgba($r,$g,$b,0.2333)!important}"
-						."</style>\n";
-		echo $style;
- }
-
 	/**
 	 * Returns the featured video html, ready to echo.
 	 *
@@ -104,32 +54,28 @@ class featured_video_plus {
 
 		switch ( $meta['prov'] ) {
 			case 'local':
-				$a = wp_get_attachment_url($meta['id']);
-				$ext = pathinfo( $a, PATHINFO_EXTENSION );
+				// mediaelement.js is only available in WordPress 3.6 and higher.
+				if( get_bloginfo('version') < 3.6 ) break;
+
+				$videourl = wp_get_attachment_url( $meta['id'] );
+
+				$ext = pathinfo( $videourl, PATHINFO_EXTENSION );
 				if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' )
 					break;
 
-				$poster = '';
-				if (isset($options['local']['videojs']['poster']) && $options['local']['videojs']['poster'])
-					$poster = has_post_thumbnail($post_id) ? ' poster="'.wp_get_attachment_url( get_post_thumbnail_id($post_id) ).'"' : '';
-				$autoplay = $autoplay == '1' ? ' autoplay' : '';
+				$videometa = wp_get_attachment_metadata( $meta['id'] );
 
-				$controls = $options['local']['controls'] ? ' controls' : '';
-				$loop = $options['local']['loop'] ? ' loop' : '';
+				$atts = array(
+					'src'      => $videourl,
+					'poster'   => ! empty( $options['local']['poster'] ) && $options['local']['poster'] && has_post_thumbnail( $post_id ) ? wp_get_attachment_url( get_post_thumbnail_id( $post_id ) ) : '',
+					'loop'     => ! empty( $options['local']['loop'] ) && $options['local']['loop'] ? 'on' : 'off',
+					'autoplay' => $autoplay == '1' ? 'on' : null,
+					'preload'  => null, // $size['height'], //$size['width'], //
+					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? ( $options['sizing']['wmode' ] == 'auto' ? $videometa['height'] * 8 : $videometa['height'] / $videometa['width'] * $videometa['height'] ) : $size['height'],
+					'width'    => $options['sizing']['wmode' ] == 'auto' && ! is_admin() ? $videometa['width'] * 8 : $size['width'],
+				);
 
-				$ext = $ext == 'ogv' ? 'ogg' : $ext;
-				$embed = "\n\t".'<video id="videojs'.esc_attr($meta['id']).'" class="video-js vjs-default-skin"width="'.$size['width'].'" height="'.$size['height'].'" preload="metadata" data-setup="{}"'.$controls.$loop.$autoplay.$poster.'>';
-				$embed .= "\n\t\t".'<source src="' . $a . '" type="video/'.$ext.'">';
-
-				if( isset($meta['sec_id']) && !empty($meta['sec_id']) && $meta['sec_id'] != $meta['id'] ) {
-					$b = wp_get_attachment_url($meta['sec_id']);
-					$ext2 = pathinfo( $b, PATHINFO_EXTENSION );
-					$ext2 = $ext2 == 'ogv' ? 'ogg' : $ext2;
-					if( $ext2 == 'mp4' || $ext2 == 'ogv' || $ext2 == 'webm' || $ext2 == 'ogg' )
-						$embed .= "\n\t\t".'<source src="' . $b . '" type="video/'.$ext2.'">';
-				}
-
-				$embed .= "\n\t</video>\n";
+				$embed = wp_video_shortcode( $atts );
 				break;
 
 			case 'vimeo':
@@ -165,7 +111,7 @@ class featured_video_plus {
 				break;
 
 			case 'liveleak':
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+			$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
 				break;
 
 			case 'prochan':
@@ -177,8 +123,11 @@ class featured_video_plus {
 				break;
 		}
 
+		if ( ! $embed ) return '';
+
+		$class = $options['sizing']['wmode' ] == 'auto' ? ' responsive' : '';
 		$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
-		$embed = "<div class=\"featured_video_plus\"{$containerstyle}>{$embed}</div>\n\n";
+		$embed = "<div class=\"featured_video_plus{$class}\"{$containerstyle}>{$embed}</div>\n\n";
 		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
 
 		return $embed;

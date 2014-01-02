@@ -2,11 +2,11 @@
 	position: absolute; bottom: 2.5em; left: -1em;
 	z-index: 1;
 	-webkit-box-shadow: 3px 3px 5px #ddd;
-	   -moz-box-shadow: 3px 3px 5px #ddd;
-			box-shadow: 3px 3px 5px #ddd;
-    -webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-			box-sizing: border-box;
+		 -moz-box-shadow: 3px 3px 5px #ddd;
+		      box-shadow: 3px 3px 5px #ddd;
+		-webkit-box-sizing: border-box;
+		   -moz-box-sizing: border-box;
+		        box-sizing: border-box;
 }
 
 .fvp_colorpicker {
@@ -31,7 +31,7 @@
 }
 .fvp_notice {
 	-webkit-border-radius: 3px;
-	border-radius: 3px;
+	        border-radius: 3px;
 	border-width: 1px;
 	border-style: solid;
 	background-color: white;
@@ -42,7 +42,7 @@
 
 .fvp_warning {
 	-webkit-border-radius: 3px;
-	border-radius: 3px;
+	        border-radius: 3px;
 	border-width: 1px;
 	border-style: solid;
 	background-color: lightYellow;

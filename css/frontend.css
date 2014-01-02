@@ -1,7 +1,8 @@
-.fluid-width-video-wrapper .video-js {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
+.featured_video_plus.responsive .wp-video,
+.featured_video_plus.responsive .wp-video video {
+  width: 100% !important; 
+  height: auto !important;
+}
+.featured_video_plus.responsive .wp-video .mejs-poster {
+  background-size: cover !important;
 }

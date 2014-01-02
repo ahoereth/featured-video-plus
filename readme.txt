@@ -8,28 +8,28 @@ Author URI: http://yrnxt.com/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ehoereth%40gmail%2ecom
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 3.1
-Tested up to: 3.6
-Stable tag: 1.8
+Requires at least: 3.2
+Tested up to: 3.9
+Stable tag: 1.9
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
 == Description ==
 *A picture is worth a thousand words. How many words is a video worth?*
 
-This plugin enables you to define Featured Videos, which, if set, take the place of Featured Images. There are three ways to get the videos onto your page:
+This plugin enables you to define Featured Videos, which can automatically be displayed instead of Featured Images. There are three ways to get the videos onto your page:
 
 1. If your theme already makes use of  [Featured Images](http://codex.wordpress.org/Post_Thumbnails), these will in most themes __automatically__ be replaced by your Featured Videos if available. Alternatively you can
 2. insert the `[featured-video-plus]`-__Shortcode__ in your posts or
 3. manually make use of the __PHP functions__ in your theme's source files.
 
-Instead of option 1 the plugin can also request the videos using an AJAX request when the featured image is clicked. This reduces load times and gives you the flexibility to display videos in a lightbox to ensure your theme does not break.
+Instead of option 1 the plugin can also request the videos using an AJAX request when the Featured Image is clicked. This reduces load times and gives you the flexibility to display videos in a lightbox to ensure your theme does not break.
 
-See the theme in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). Also take a look at the [Garvan](http://www.web2feel.com/garvan/) video blogging theme.
+See the theme in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). Also take a look at the [Garvan](http://www.web2feel.com/garvan/) video blogging theme which makes optimal use of this plugin.
 
-Beside your __Local Videos__ (`mp4`, `webM` & `ogg/ogv`) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
+Beside your __Local Videos__ (WordPress 3.6+ required) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
 
-The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic integration, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
+The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic featured image replacement, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
 
 = Shortcode =
 
@@ -50,7 +50,7 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 
 
-*This plugin was created with the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin in mind. __Featured Video Plus__ was freshly coded from ground up to bring you more features and to integrate more seamless into WordPress.*
+*This plugin was created with the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin in mind. __Featured Video Plus__ was freshly coded from ground up to bring you more features and to integrate more seamlessly into WordPress.*
 
 
 == Installation ==
@@ -63,6 +63,12 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+
+= 1.9: 2014-01-02 =
+* Replaced Video.js with MediaElement.js (ships with WordPress since 3.6 - __breaks local videos partially if you use an older WordPress version!__)
+* Added Spanish translations! Translation by [WebHostingHub.com](http://webhostinghub.com)
+* Updated FitVids.js to 1.0.3
 
 = 1.8: 2013-05-16 =
 * Video.js [4.0](http://blog.videojs.com/post/50021214078/video-js-4-0-now-available)

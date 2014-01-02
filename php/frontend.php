@@ -33,6 +33,7 @@ class featured_video_plus_frontend {
 	 * @since 1.0
 	 */
 	public function enqueue() {
+		$min = SCRIPT_DEBUG ? '' : '.min';
 		$options = get_option('fvp-settings');
 
 		$deps = array('jquery');
@@ -40,21 +41,16 @@ class featured_video_plus_frontend {
 		wp_enqueue_script('jquery');
 
 		if ($options['sizing']['wmode'] == 'auto' && $options['usage']!='overlay') {
-			wp_enqueue_script('jquery.fitvids', FVP_URL . 'js/jquery.fitvids.min.js', array( 'jquery' ), FVP_VERSION, false ); 	// production
-			//wp_enqueue_script('fvp_fitvids', FVP_URL . 'js/jquery.fitvids.js', array( 'jquery' ), FVP_VERSION, false ); 		// development
+			wp_enqueue_script('jquery.fitvids', FVP_URL . "js/jquery.fitvids$min.js", array( 'jquery' ), FVP_VERSION, false );
 			$deps[] = 'jquery.fitvids';
 		}
 
 		if ($options['usage']=='overlay') {
-			wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.min.js', array( 'jquery' ), FVP_VERSION ); 	// production
-			//wp_enqueue_script( 'jquery.domwindow', FVP_URL . 'js/jquery.domwindow.js', array( 'jquery' ), FVP_VERSION ); 		// development
+			wp_enqueue_script( 'jquery.domwindow', FVP_URL . "js/jquery.domwindow$min.js", array( 'jquery' ), FVP_VERSION );
 			$deps[] = 'jquery.domwindow';
 		}
 
-		$deps[] = 'videojs';
-
-		wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.min.js', $deps, FVP_VERSION ); 	// production
-		//wp_enqueue_script( 'fvp_frontend', FVP_URL . 'js/frontend.js', array( 'jquery' ), FVP_VERSION ); 		// development
+		wp_enqueue_script( 'fvp_frontend', FVP_URL . "js/frontend$min.js", $deps, FVP_VERSION );
 
 		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' ),
@@ -62,13 +58,12 @@ class featured_video_plus_frontend {
 			'fitvids' => isset($options['sizing']['wmode']) && $options['sizing']['wmode']=='auto',
 			'dynamic' => isset($options['usage']) && $options['usage']=='dynamic',
 			'overlay' => isset($options['usage']) && $options['usage']=='overlay',
-			'videojs' => isset($options['local']['enabled']) && $options['local']['enabled'],
 			'opacity' => '75',
 			'loadingw'=> FVP_URL . 'css/loading_w.gif',
 			'loadingb'=> FVP_URL . 'css/loading_b.gif'
 		) );
 
-		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION, false );
+		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION );
 	}
 
 	/**
