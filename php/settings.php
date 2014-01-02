@@ -89,10 +89,6 @@ if( !current_theme_supports('post-thumbnails') )
 <input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-3" value="no" <?php checked( 'no', 	$autoplay ) ?>/>
 <label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
 
-<p class="description"><?php printf(__('%1$syes%2$s is only relevant with manual usage or usage set to default. %1$sauto%2$s behaves differently depending on the usage case (set-able above):', 'featured-video-plus'),'<code>','</code>'); ?><br />
-<?php _e( 'Autoplay when only a single post is being displayed, the video overlay is opened or the featured image is dynamically replaced with the featured video.', 'featured-video-plus' ); ?></li>
-</p>
-
 <?php }
 
 	/**
