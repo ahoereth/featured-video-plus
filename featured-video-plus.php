@@ -8,7 +8,7 @@ Version: 1.9
 Author URI: http://yrnxt.com
 License: GPL2
 
-    Copyright 2009-2012  Alexander Höreth (email: a.hoereth@gmail.com)
+    Copyright 2009-2014  Alexander Höreth (email: a.hoereth@gmail.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License version 2,
