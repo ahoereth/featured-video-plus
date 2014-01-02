@@ -5,3 +5,7 @@
     width: 100% !important;
     height: 100% !important;
 }
+
+.featured_video_plus .wp-video {
+	width: 100% !important;
+}

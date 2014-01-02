@@ -86,17 +86,6 @@ function featured_video_plus_upgrade() {
 				$options['local']['videojs']['cdn'] = false;
 				unset($options['videojs']);
 
-				// update video data ('attr' to 'time') and fix serialization
-				$ids = $GLOBALS['featured_video_plus']->get_post_by_custom_meta('_fvp_video');
-				foreach( $ids as $id ) {
-					$meta = maybe_unserialize(get_post_meta( $id, '_fvp_video', true ));
-					if( isset( $meta['attr'] ) ) {
-						$meta['time'] = $meta['attr'];
-						unset($meta['attr']);
-						update_post_meta($id, '_fvp_video', $meta);
-					}
-				}
-
 
 			case '1.5':
 			case '1.5.1':
@@ -124,6 +113,33 @@ function featured_video_plus_upgrade() {
 				$options['local']['controls']  	= true;
 				$options['local']['loop'] 			= false;
 				$options['autoplay'] = $options['autoplay'] ? 'yes' : 'no'; //yes/auto/no
+
+
+			case '1.8':
+				unset( 
+					$options['local']['cdn'], 
+					$options['local']['enabled'], 
+					$options['local']['foreground'], 
+					$options['local']['background'], 
+					$options['local']['controls']
+				);
+
+				// check all featured video post metas
+				$ids = $GLOBALS['featured_video_plus']->get_post_by_custom_meta('_fvp_video');
+				foreach( $ids as $id ) {
+					$meta = $meta_old = maybe_unserialize(get_post_meta( $id, '_fvp_video', true ));
+					// update video data ('attr' to 'time') and fix serialization, was in case '1.4'
+					if( isset( $meta['attr'] ) ) {
+						$meta['time'] = $meta['attr'];
+						unset($meta['attr']);
+					}
+
+					// remove 'sec_id', only one local video file is used now.
+					if( isset( $meta['sec_id'] ) )
+						unset($meta['sec_id']);
+					if ( $meta != $meta_old )
+					update_post_meta($id, '_fvp_video', $meta);
+				}
 
 
 		// *************************************************************

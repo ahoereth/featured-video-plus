@@ -42,6 +42,7 @@ class featured_video_plus_backend {
 	 * @since 1.0
 	 */
 	public function enqueue($hook_suffix) {
+		$min = SCRIPT_DEBUG ? '' : '.min';
 		// just required on options-media.php and would produce errors pre WordPress 3.1
 		if( ($hook_suffix == 'options-media.php') && (get_bloginfo('version') >= 3.1) ) {
 			if( wp_style_is( 'wp-color-picker', 'registered' ) ) {
@@ -57,11 +58,13 @@ class featured_video_plus_backend {
 			wp_enqueue_script( 'fvp_settings', FVP_URL . 'js/settings.js', array( 'jquery' ), FVP_VERSION );
 		}
 
-		// just required on post.php
+		// just required on post.php and post-new.php
 		if( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php' ) {
-			wp_enqueue_script( 'jquery.autosize', FVP_URL . 'js/jquery.autosize.min.js', array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.min.js', array( 'jquery','jquery.autosize' ), FVP_VERSION ); 	// production
-			//wp_enqueue_script( 'fvp_backend', FVP_URL . 'js/backend.js', array( 'jquery','jquery.autosize'), FVP_VERSION ); 		// development
+			wp_enqueue_script( 'jquery.autosize', FVP_URL . "js/jquery.autosize$min.js", array( 'jquery' ), FVP_VERSION );
+			wp_enqueue_script( 'fvp_backend', FVP_URL . "js/backend$min.js", array( 'jquery','jquery.autosize' ), FVP_VERSION );
+
+			wp_enqueue_style( 'wp-mediaelement' );
+			wp_enqueue_script( 'wp-mediaelement' );
 
 			$options = get_option('fvp-settings');
 			$upload_dir = wp_upload_dir();
@@ -70,14 +73,12 @@ class featured_video_plus_backend {
 				'loading_gif' 			=> get_admin_url(null,'images/loading.gif'),
 				'default_value' 		=> $this->default_value,
 				'default_value_sec' => $this->default_value_sec,
-				'wp_35' 						=> get_bloginfo('version') >= 3.5,
-				'videojs' 					=> isset($options['local']['enabled']) && $options['local']['enabled']
+				'wp_35' 						=> get_bloginfo('version') >= 3.5
 			) );
 		}
 
 		if( $hook_suffix == 'options-media.php' || (($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') )
-			wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.min.css', array(), FVP_VERSION ); 	// production
-			//wp_enqueue_style( 'fvp_backend', FVP_URL . 'css/backend.css', array(), FVP_VERSION ); 		// development
+			wp_enqueue_style( 'fvp_backend', FVP_URL . "css/backend$min.css", array(), FVP_VERSION );
 	}
 
 	/**
@@ -140,23 +141,9 @@ class featured_video_plus_backend {
 		echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon"'.$style.'></span></a>'."\n";
 		echo "</div>\n";
 
-		$sec   =  isset($meta['sec']) && !empty($meta['sec']) ? wp_get_attachment_url($meta['sec_id']) : $this->default_value_sec;
-		$class = !isset($meta['sec']) ||  empty($meta['sec']) ? ' defaultTextActive' : '';
-		echo '<div class="fvp_input_wrapper" id="fvp_sec_wrapper" data-title="'.__('Set Featured Video Fallback', 'featured-video-plus').'" data-button="'.__('Set featured video fallback', 'featured-video-plus').'" data-target="#fvp_sec">'."\n\t";
-		echo '<textarea class="fvp_input'.$class.'" id="fvp_sec" name="fvp_sec" type="text">' . $sec . '</textarea>' . "\n\t";
-		echo '<input type="hidden" class="fvp_mirror" value="'.$sec."\" />\n\t";
-		if( !(get_bloginfo('version') < 3.5) )
-			echo '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo('wpurl').'/wp-admin/images/media-button.png\');"></span></a>'."\n";
-		echo "</div>\n";
-
 		// local video format warning
 		echo '<div id="fvp_localvideo_format_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Supported Video Formats', 'featured-video-plus').':</span> <code>mp4</code>, <code>webM</code> '.__('or', 'featured-video-plus').' <code>ogg/ogv</code>. <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">'.__('More information', 'featured-video-plus').'</a>.';
-		echo "\n\t</p>\n</div>\n";
-
-		// local videos not distinct warning
-		echo '<div id="fvp_localvideo_notdistinct_warning" class="fvp_warning fvp_hidden">'."\n\t".'<p class="description">'."\n\t\t";
-		echo '<span style="font-weight: bold;">'.__('Fallback Video', 'featured-video-plus').':</span>&nbsp;'.__('The two input fields should contain the same video but in distinct formats.', 'featured-video-plus');
+		echo '<span style="font-weight: bold;">'.__('Supported Video Formats', 'featured-video-plus').':</span> <code>mp4</code>, <code>webM</code>, <code>m4v</code>, <code>wmv</code>, <code>flv</code> '.__('or', 'featured-video-plus').' <code>ogv</code>. <a href="http://wordpress.org/extend/plugins/featured-video-plus/faq/">'.__('More information', 'featured-video-plus').'</a>.';
 		echo "\n\t</p>\n</div>\n";
 
 		// how to use a local videos notice
@@ -282,7 +269,6 @@ class featured_video_plus_backend {
 			'full' 	=> $url,
 			'id' 		=> isset($data['id']) 			?  $data['id'] 			 : '',
 			'sec' 	=> isset($data['sec']) 			?  $data['sec'] 		 : '',
-			'sec_id'=> isset($data['sec_id']) 	&& !empty($data['sec_id'])? $data['sec_id']: '',
 			'img' 	=> isset($img) ? $img : '',
 			'prov' 	=> isset($data['provider']) ?  $data['provider'] : '',
 			'time' 	=> isset($data['time']) 		?  $data['time'] 		 : '',
@@ -312,22 +298,13 @@ class featured_video_plus_backend {
 
 			// local video
 			case $local['baseurl']:
+				$ext_legal = array( 'mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv' );
+
 				$ext = pathinfo( $url, PATHINFO_EXTENSION );
-				if( !isset($ext) || ($ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg') ) return; // wrong extension
+				if( empty( $ext ) || ! in_array( $ext, $ext_legal ) ) return; // wrong extension
 
-				$data['id'] 		= $this->get_post_by_url($url);
-				$data['provider'] 	= 'local';
-
-				if( !empty($sec) ) {
-					preg_match('/(' . preg_quote($local['baseurl'], '/') . ')/i', $sec, $sec_prov_data);
-					$ext2 = pathinfo( $sec, PATHINFO_EXTENSION );
-					if ( isset($sec_prov_data[1]) && isset($ext2) && $sec_prov_data[1] == $provider && $ext != $ext2 &&
-					   ($ext2 == 'mp4' || $ext2 == 'ogv' || $ext2 == 'webm' || $ext2 == 'ogg')) {
-						$data['sec_id'] = $this->get_post_by_url($sec);
-						$data['sec'] 	= $sec;
-					}
-				}
-
+				$data['id']       = $this->get_post_by_url($url);
+				$data['provider'] = 'local';
 				break;
 
 			// youtube.com

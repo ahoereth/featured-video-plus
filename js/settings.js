@@ -7,22 +7,6 @@ jQuery(document).ready(function($){
             input.removeAttr('readonly').removeClass('fvp_readonly');
     });
 
-    $('#fvp-settings-local-enabled').bind('click change', function() {
-        var box = $('#fvp-settings-local-box');
-        if ($(this).attr('checked'))
-            box.slideDown();
-        else
-            box.slideUp();
-    });
-
-    $('#fvp-settings-local-controls').bind('click change', function() {
-        var box = $('#fvp-settings-local-box2');
-        if ($(this).attr('checked'))
-            box.slideDown();
-        else
-            box.slideUp();
-    });
-
     $('#fvp-settings-youtube-color').click(function() {
         if($('#fvp-settings-youtube-color:checked').length == 1)
             $('#youtube_logoinput_wrapper').fadeOut('slow', function() { $(this).addClass(   'fvp_hidden'); } );
