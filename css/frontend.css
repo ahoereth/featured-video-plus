@@ -1,4 +1,5 @@
-.featured_video_plus.responsive .wp-video {
+.featured_video_plus.responsive .wp-video,
+.featured_video_plus.responsive .wp-video video {
   width: 100% !important; 
   height: auto !important;
 }

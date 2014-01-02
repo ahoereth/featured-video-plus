@@ -50,8 +50,6 @@ class featured_video_plus_frontend {
 			$deps[] = 'jquery.domwindow';
 		}
 
-		$deps[] = 'videojs';
-
 		wp_enqueue_script( 'fvp_frontend', FVP_URL . "js/frontend$min.js", $deps, FVP_VERSION );
 
 		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
