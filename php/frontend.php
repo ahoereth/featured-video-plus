@@ -65,7 +65,7 @@ class featured_video_plus_frontend {
 			'loadingb'=> FVP_URL . 'css/loading_b.gif'
 		) );
 
-		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION, false );
+		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION );
 	}
 
 	/**
