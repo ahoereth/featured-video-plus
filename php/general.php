@@ -71,7 +71,7 @@ class featured_video_plus {
 					'loop'     => ! empty( $options['local']['loop'] ) && $options['local']['loop'] ? 'on' : 'off',
 					'autoplay' => $autoplay == '1' ? 'on' : null,
 					'preload'  => null, // $size['height'], //$size['width'], //
-					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? $videometa['height'] * 8 : $size['height'],
+					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? ( $options['sizing']['wmode' ] == 'auto' ? $videometa['height'] * 8 : $videometa['height'] / $videometa['width'] * $videometa['height'] ) : $size['height'],
 					'width'    => $options['sizing']['wmode' ] == 'auto' && ! is_admin() ? $videometa['width'] * 8 : $size['width'],
 				);
 
