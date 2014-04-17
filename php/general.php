@@ -85,16 +85,23 @@ class featured_video_plus {
 				break;
 
 			case 'youtube':
-				$theme = isset($options['youtube']['theme']) ? $options['youtube']['theme'] : 'dark';
-				$color = isset($options['youtube']['color']) ? $options['youtube']['color'] : 'red';
-				$jsapi = isset($options['youtube']['jsapi']) ? $options['youtube']['jsapi'] : '0&playerapiid=fvpyt'.$post_id;
-				$info  = isset($options['youtube']['info'])  ? $options['youtube']['info'] 	: 1;
-				$logo  = isset($options['youtube']['logo'])  ? $options['youtube']['logo'] 	: 1;
-				$rel 	 = isset($options['youtube']['rel']) 	 ? $options['youtube']['rel'] 	: 1;
-				$fs 	 = isset($options['youtube']['fs']) 	 ? $options['youtube']['fs'] 		: 1;
-				$wmode = isset($options['youtube']['wmode'])&& $options['youtube']['wmode'] != 'auto' ? '&wmode='.$options['youtube']['wmode'] : '';
+				$params = array(
+					'origin'         => esc_attr(home_url()),
+					'theme'          => isset($options['youtube']['theme']) ? $options['youtube']['theme'] : 'dark',
+					'color'          => isset($options['youtube']['color']) ? $options['youtube']['color'] : 'red',
+					'enablejsapi'    => isset($options['youtube']['jsapi']) ? $options['youtube']['jsapi'] : null,
+					'showinfo'       => isset($options['youtube']['info'])  ? $options['youtube']['info']  : 1,
+					'modestbranding' => isset($options['youtube']['logo'])  ? $options['youtube']['logo']  : 1,
+					'rel'            => isset($options['youtube']['rel'])   ? $options['youtube']['rel']   : 1,
+					'fs'             => isset($options['youtube']['fs'])    ? $options['youtube']['fs']    : 1,
+					'start'          => isset($meta['time'])     ? $meta['time']     : null,
+					'end'            => isset($meta['end_time']) ? $meta['end_time'] : null,
+					'autoplay'       => $autoplay,
+					'wmode'          => isset($options['youtube']['wmode'])&& $options['youtube']['wmode'] != 'auto' ? $options['youtube']['wmode'] : null,
+					'playerapiid'    => isset($options['youtube']['jsapi'])&& $options['youtube']['jsapi'] == 1 ? 'fvpyt'.$post_id : null,
+				);
 
-				$src = 'http://www.youtube.com/embed/'.$meta['id'].'?theme='.$theme.$wmode.'&color='.$color.'&showinfo='.$info.'&modestbranding='.$logo.'&enablejsapi='.$jsapi.'&origin='.esc_attr(home_url()).'&rel='.$rel.'&fs='.$fs.'&start='.$meta['time'].'&autoplay='.$autoplay;
+				$src = 'http://www.youtube.com/embed/'.$meta['id'].'?'.http_build_query($params);
 				$embed = "\n\t" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" type="text/html" frameborder="0" id="fvpyt'.$post_id.'"></iframe>' . "\n";
 				break;
 

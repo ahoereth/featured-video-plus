@@ -266,13 +266,14 @@ class featured_video_plus_backend {
 		}
 
 		$meta = array(
-			'full'  => $url,
-			'id'    => isset($data['id'])       ? $data['id']       : '',
-			'sec'   => isset($data['sec'])      ? $data['sec']      : '',
-			'img'   => isset($img)              ? $img              : '',
-			'prov'  => isset($data['provider']) ? $data['provider'] : '',
-			'time'  => isset($data['time'])     ? $data['time']     : '',
-			'valid' => isset($data['valid'])    ? $data['valid']    : true
+			'full'     => $url,
+			'id'       => isset($data['id'])       ? $data['id']       : '',
+			'sec'      => isset($data['sec'])      ? $data['sec']      : '',
+			'img'      => isset($img)              ? $img              : '',
+			'prov'     => isset($data['provider']) ? $data['provider'] : '',
+			'time'     => isset($data['time'])     ? $data['time']     : '',
+			'end_time' => isset($data['end_time']) ? $data['end_time'] : '',
+			'valid'    => isset($data['valid'])    ? $data['valid']    : true
 		);
 
 		update_post_meta($post['id'], '_fvp_video', $meta);
@@ -338,20 +339,23 @@ class featured_video_plus_backend {
 				if( !empty($attr[1] ) || !empty($attr[2]) ) {
 					$min = !empty($attr[1]) ? $attr[1]*60 : 0;
 					$sek = !empty($attr[2]) ? $attr[2]    : 0;
-					$video_time = $min + $sek;
+					$start_time = $min + $sek;
 				} else {
 					preg_match('/start=(\d+)/', $url, $attr);
-					if( !empty($attr[1] ) )
-						$video_time = $attr[1];
-					else
-						$video_time = 0;
+					if( !empty($attr[1] ) ) $start_time = $attr[1];
+					else $start_time = 0;
+
+					preg_match('/end=(\d+)/', $url, $attr);
+					if( !empty($attr[1] ) ) $end_time = $attr[1];
+					else $end_time = 0;
 				}
 
 				// generate video metadata
 				$data = array(
 					'id'          => $video_id,
 					'provider'    => $provider,
-					'time'        => $video_time,
+					'time'        => $start_time,
+					'end_time'    => $end_time,
 					'title'       => $result['title'],
 					'description' => $result['keywords'],
 					'filename'    => sanitize_file_name($result['title']),
@@ -359,7 +363,7 @@ class featured_video_plus_backend {
 					'author'      => $result['author'],
 					'tags'        => $result['keywords'],
 					'img'         => ( isset($result['iurlmaxres']) && !empty($result['iurlmaxres']) ) ? $result['iurlmaxres'] : 'http://img.youtube.com/vi/' . $video_id . '/0.jpg',
-					'url'         => ( $video_time > 0 ) ? 'http://youtu.be/'.$video_id.'#t='.floor($video_time/60).'m'.($video_time%60).'s' : 'http://youtu.be/'.$video_id
+					'url'         => ( $start_time > 0 ) ? $url : 'http://youtu.be/'.$video_id
 				);
 
 				break;
