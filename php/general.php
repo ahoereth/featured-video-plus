@@ -80,7 +80,7 @@ class featured_video_plus {
 
 			case 'vimeo':
 				$options = get_option( 'fvp-settings' );
-				$src = 'http://player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].'&autoplay='.$autoplay;
+				$src = '//player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].'&autoplay='.$autoplay;
 				$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$size['width'].'" height="'.$size['height'].'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
 				break;
 
@@ -101,7 +101,7 @@ class featured_video_plus {
 					'playerapiid'    => isset($options['youtube']['jsapi'])&& $options['youtube']['jsapi'] == 1 ? 'fvpyt'.$post_id : null,
 				);
 
-				$src = 'http://www.youtube.com/embed/'.$meta['id'].'?'.http_build_query($params);
+				$src = '//www.youtube.com/embed/'.$meta['id'].'?'.http_build_query($params);
 				$embed = "\n\t" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" type="text/html" frameborder="0" id="fvpyt'.$post_id.'"></iframe>' . "\n";
 				break;
 
@@ -113,16 +113,16 @@ class featured_video_plus {
 				$hideinfo 	 = isset($options['dailymotion']['info']) 			 ?1-$options['dailymotion']['info'] 			: 0;
 				$syndication = empty($options['dailymotion']['syndication']) ? 	'' : '&syndication='.$options['dailymotion']['syndication'];
 
-				$dm['src'] = 'http://www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$logo.'&hideInfos='.$hideinfo.'&foreground=%23'.$foreground.'&highlight=%23'.$highlight.'&background=%23'.$background.$syndication.'&start='.$meta['time'].'&autoplay='.$autoplay;
+				$dm['src'] = '//www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$logo.'&hideInfos='.$hideinfo.'&foreground=%23'.$foreground.'&highlight=%23'.$highlight.'&background=%23'.$background.$syndication.'&start='.$meta['time'].'&autoplay='.$autoplay;
 				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$dm['src'].'" frameborder="0"></iframe>' . "\n";
 				break;
 
 			case 'liveleak':
-			$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+			$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="//www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
 				break;
 
 			case 'prochan':
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="http://www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
+				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="//www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
 				break;
 
 			default:
