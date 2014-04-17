@@ -116,11 +116,11 @@ function featured_video_plus_upgrade() {
 
 
 			case '1.8':
-				unset( 
-					$options['local']['cdn'], 
-					$options['local']['enabled'], 
-					$options['local']['foreground'], 
-					$options['local']['background'], 
+				unset(
+					$options['local']['cdn'],
+					$options['local']['enabled'],
+					$options['local']['foreground'],
+					$options['local']['background'],
 					$options['local']['controls']
 				);
 
@@ -140,6 +140,9 @@ function featured_video_plus_upgrade() {
 					if ( $meta != $meta_old )
 					update_post_meta($id, '_fvp_video', $meta);
 				}
+
+			case '1.9':
+				$options['issingle'] = false;
 
 
 		// *************************************************************

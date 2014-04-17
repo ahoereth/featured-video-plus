@@ -54,9 +54,14 @@ class featured_video_plus_settings {
 	 * @since 1.7
 	 */
 	function settings_usage() {
-		$options = get_option( 'fvp-settings' );
-		$usage = isset($options['usage']) ? $options['usage'] : 'replace';
+		$options  = get_option( 'fvp-settings' );
+		$usage    = isset($options['usage'])    ? $options['usage']    : 'replace';
+		$issingle = isset($options['issingle']) ? $options['issingle'] : false;
 ?>
+
+<input type="checkbox" name="fvp-settings[issingle]" id="fvp-settings-issingle" value="true" <?php checked(true, $issingle) ?>/>
+<label for="fvp-settings-issingle"><?php _e('Only show video when viewing single post/page, otherwise show post thumbnail.', 'featured-video-plus') ?></label>
+<br /><br />
 
 <input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-1" value="replace" <?php checked( 'replace', $usage ) ?>/><label for="fvp-settings-usage-1">&nbsp;<?php _e('Replace featured image automatically if possible', 					 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label><br />
 <input type="radio" name="fvp-settings[usage]" id="fvp-settings-usage-2" value="overlay" <?php checked( 'overlay', $usage ) ?>/><label for="fvp-settings-usage-2">&nbsp;<?php _e('Open video overlay when featured image is clicked. Define width below!', 'featured-video-plus'); ?></label><br />
@@ -81,11 +86,11 @@ if( !current_theme_supports('post-thumbnails') )
 		$autoplay = isset($options['autoplay']) ? $options['autoplay'] : 'no';
 ?>
 
-<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="yes" <?php checked( 'yes', 	$autoplay ) ?>/>
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-1" value="yes" <?php checked('yes', $autoplay) ?>/>
 <label for="fvp-settings-autoplay-1">&nbsp;<?php _e('yes', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="auto" <?php checked( 'auto', 	$autoplay ) ?>/>
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-2" value="auto" <?php checked('auto', $autoplay) ?>/>
 <label for="fvp-settings-autoplay-2">&nbsp;<?php _e('auto', 'featured-video-plus'); ?></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-3" value="no" <?php checked( 'no', 	$autoplay ) ?>/>
+<input type="radio" name="fvp-settings[autoplay]" id="fvp-settings-autoplay-3" value="no" <?php checked('no', $autoplay) ?>/>
 <label for="fvp-settings-autoplay-2">&nbsp;<?php _e('no', 'featured-video-plus'); ?>&nbsp;<span style="font-style: italic;">(<?php _e('default', 'featured-video-plus'); ?>)</span></label>
 
 <?php }
@@ -294,7 +299,8 @@ if( !current_theme_supports('post-thumbnails') )
 		$options  = get_option( 'fvp-settings' );
 
 		// Usage
-		$options['usage'] = isset($input['usage']) ? $input['usage'] : 'replace';
+		$options['usage']    =   isset($input['usage'])    ? $input['usage'] : 'replace';
+		$options['issingle'] = ! empty($input['issingle']) ? true : false;
 
 		// Sizing
 		if(isset($input['sizing']['width' ]['fixed'])) {

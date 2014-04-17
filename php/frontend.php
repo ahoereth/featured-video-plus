@@ -85,7 +85,8 @@ class featured_video_plus_frontend {
 
 		$options = get_option( 'fvp-settings' );
 
-		if (($options['usage']=='manual') || !has_post_video($post_id))
+		if ( ( isset($options['issingle']) && $options['issingle'] && ! is_single()) ||
+		     ( $options['usage']=='manual' || !has_post_video($post_id) ) )
 			return $html;
 
 		elseif ($options['usage']=='replace')
