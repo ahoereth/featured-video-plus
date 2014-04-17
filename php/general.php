@@ -26,11 +26,11 @@ class featured_video_plus {
 		if( !has_post_video($post_id) )
 			return false;
 
-		$meta 	= get_post_meta($post_id, '_fvp_video', true);
-		$options= get_option( 'fvp-settings' );
+		$meta    = get_post_meta($post_id, '_fvp_video', true);
+		$options = get_option( 'fvp-settings' );
 
-		$size 	= $this->get_size($size);
-		$size 	= array( 'width' => $size[0], 'height' => $size[1] );
+		$size = $this->get_size($size);
+		$size = array( 'width' => $size[0], 'height' => $size[1] );
 
 		if( ! is_admin() ) {
 			switch ( $options['autoplay'] ) {
@@ -79,26 +79,36 @@ class featured_video_plus {
 				break;
 
 			case 'vimeo':
-				$options = get_option( 'fvp-settings' );
-				$src = '//player.vimeo.com/video/'.$meta['id'].'?badge=0&amp;portrait='.$options['vimeo']['portrait'].'&amp;title='.$options['vimeo']['title'].'&amp;byline='.$options['vimeo']['byline'].'&amp;color='.$options['vimeo']['color'].'&autoplay='.$autoplay;
+				$option = $options['vimeo'];
+				$params = array(
+					'badge' => 0,
+					'portrait' => $option['portrait'],
+					'title' => $option['title'],
+					'byline' => $option['byline'],
+					'color' => $option['color'],
+					'autoplay' => $autoplay
+				);
+
+				$src = '//player.vimeo.com/video/'.$meta['id'].'?'.http_build_query($params);
 				$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$size['width'].'" height="'.$size['height'].'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
 				break;
 
 			case 'youtube':
+				$option = $options['youtube'];
 				$params = array(
 					'origin'         => esc_attr(home_url()),
-					'theme'          => isset($options['youtube']['theme']) ? $options['youtube']['theme'] : 'dark',
-					'color'          => isset($options['youtube']['color']) ? $options['youtube']['color'] : 'red',
-					'enablejsapi'    => isset($options['youtube']['jsapi']) ? $options['youtube']['jsapi'] : null,
-					'showinfo'       => isset($options['youtube']['info'])  ? $options['youtube']['info']  : 1,
-					'modestbranding' => isset($options['youtube']['logo'])  ? $options['youtube']['logo']  : 1,
-					'rel'            => isset($options['youtube']['rel'])   ? $options['youtube']['rel']   : 1,
-					'fs'             => isset($options['youtube']['fs'])    ? $options['youtube']['fs']    : 1,
+					'theme'          => isset($option['theme'])  ? $option['theme']  : 'dark',
+					'color'          => isset($option['color'])  ? $option['color']  : 'red',
+					'enablejsapi'    => isset($option['jsapi'])  ? $option['jsapi']  : null,
+					'showinfo'       => isset($option['info'])   ? $option['info']   : 1,
+					'modestbranding' => isset($option['logo'])   ? $option['logo']   : 1,
+					'rel'            => isset($option['rel'])    ? $option['rel']    : 1,
+					'fs'             => isset($option['fs'])     ? $option['fs']     : 1,
 					'start'          => isset($meta['time'])     ? $meta['time']     : null,
 					'end'            => isset($meta['end_time']) ? $meta['end_time'] : null,
 					'autoplay'       => $autoplay,
-					'wmode'          => isset($options['youtube']['wmode'])&& $options['youtube']['wmode'] != 'auto' ? $options['youtube']['wmode'] : null,
-					'playerapiid'    => isset($options['youtube']['jsapi'])&& $options['youtube']['jsapi'] == 1 ? 'fvpyt'.$post_id : null,
+					'wmode'          => isset($option['wmode']) && $option['wmode'] != 'auto' ? $option['wmode'] : null,
+					'playerapiid'    => isset($option['jsapi']) && $option['jsapi'] == 1      ? 'fvpyt'.$post_id : null,
 				);
 
 				$src = '//www.youtube.com/embed/'.$meta['id'].'?'.http_build_query($params);
@@ -106,15 +116,18 @@ class featured_video_plus {
 				break;
 
 			case 'dailymotion':
-				$foreground  = isset($options['dailymotion']['foreground'])  ? 	$options['dailymotion']['foreground'] : 'F7FFFD';
-				$highlight 	 = isset($options['dailymotion']['highlight']) 	 ? 	$options['dailymotion']['highlight'] 	: 'FFC300';
-				$background  = isset($options['dailymotion']['background'])  ? 	$options['dailymotion']['background'] : '171D1B';
-				$logo 	     = isset($options['dailymotion']['logo']) 			 ? 	$options['dailymotion']['logo'] 			: 1;
-				$hideinfo 	 = isset($options['dailymotion']['info']) 			 ?1-$options['dailymotion']['info'] 			: 0;
-				$syndication = empty($options['dailymotion']['syndication']) ? 	'' : '&syndication='.$options['dailymotion']['syndication'];
-
-				$dm['src'] = '//www.dailymotion.com/embed/video/'.$meta['id'].'?logo='.$logo.'&hideInfos='.$hideinfo.'&foreground=%23'.$foreground.'&highlight=%23'.$highlight.'&background=%23'.$background.$syndication.'&start='.$meta['time'].'&autoplay='.$autoplay;
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$dm['src'].'" frameborder="0"></iframe>' . "\n";
+				$option = $options['dailymotion'];
+				$params = array(
+					'foreground'  => isset($option['foreground'])   ?   $option['foreground'] : null,
+					'highlight'   => isset($option['highlight'])    ?   $option['highlight']  : null,
+					'background'  => isset($option['background'])   ?   $option['background'] : null,
+					'logo'        => isset($option['logo'])         ?   $option['logo']       : 1,
+					'hideInfos'   => isset($option['info'])         ? 1-$option['info']       : 0,
+					'syndication' => empty($option['syndication'])  ? null : $option['syndication'],
+					'start'       => $meta['time']
+				);
+				$src = '//www.dailymotion.com/embed/video/'.$meta['id'].'?'.http_build_query($params);
+				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" frameborder="0"></iframe>' . "\n";
 				break;
 
 			case 'liveleak':
