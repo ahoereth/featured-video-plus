@@ -1,27 +1,27 @@
 jQuery(document).ready(function($){
+    var context = fvp_post;
+
 
     /**
      * Set input field values to default on blur if empty and ajax submit if changed
+     *
      * @since 1.0
      */
     $('#fvp_video').blur(function() {
         t = $(this); // required to make use of it in ajax callback
 
-        t.val( $.trim( t.val()) );
-
-        value = t.val();
-        if((value.length === 0)                          ||
-           (value == fvp_backend_data.default_value    ) ){
-            t.addClass("defaultTextActive");
-            t.val( fvp_backend_data.default_value );
-        }
+        t.val( $.trim( t.val() ) );
         t.trigger('autosize');
 
+        // Did the input change?
         if( t.val() != t.siblings('.fvp_mirror').val() ) {
-            bg = t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage');
-            t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', "url('"+fvp_backend_data.loading_gif+"')");
-            $('#fvp_current_video').css({'backgroundImage':"url('"+fvp_backend_data.loading_gif+"')",'width':'256px'}).animate({'height':'144px'})
-                .children().animate({'opacity':0});
+
+            // save the previous background
+            var bg = t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage');
+
+            // display loading gif in input
+            t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', "url('"+context.loading_gif+"')");
+
             $.post( ajaxurl,
                 {
                     'action'    : 'fvp_ajax',
@@ -30,98 +30,111 @@ jQuery(document).ready(function($){
                     'fvp_video' : $('#fvp_video').val()
                 },
                 function(data) {
+                    // remember current video url
                     t.siblings('.fvp_mirror').val( t.val() );
+
+                    // reset loading icon
                     t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', bg);
-                    if(data.typ == 'removed'){
-                        $('#fvp_current_video').css({'backgroundImage':''}).animate({'height':'0px'});
-                        if( data.img != '' )
-                            $('#postimagediv .inside').html(data.img);
+
+                    // Was the video removed?
+                    if( data.typ == 'removed' ) {
+                        $('#fvp_current_video').html('').animate({'height':'0px'});
                     } else {
+                        // Display video
                         $('#fvp_current_video').html(data.video).animate({'height':'144px'});
+
+                        // Hide help notice
                         $("#fvp_help_notice").slideUp('fast');
+
+                        // Data is valid: Hide warnings etc
                         if (data.valid) {
-                            $('#postimagediv .inside').html(data.img);
                             $("#fvp_set_featimg_link, #fvp_featimg_warning").slideUp().addClass("fvp_hidden");
                             t.css('backgroundColor','#00FF00').animate({'backgroundColor':'white'}, 500, function() { t.css('backgroundColor',''); });
-                            if (data.prov == 'local' && fvp_backend_data.videojs)
-                                vjs = videojs('videojs'+data.id,{},function(){});
-                        } else
+
+                        // Data is invalid
+                        } else {
                             t.addClass('fvp_invalid');
+                        }
                     }
+
+                    // update featured image
+                    $('#postimagediv .inside').html(data.img);
                 }, "json"
             );
         }
     });
 
-    /**
-     * Remove default values of input fields on focus
-     * @since 1.0
-     */
-    $(".fvp_input").focus(function() {
-        value = $(this).val();
-        if( value == fvp_backend_data.default_value ){
-            $(this).removeClass("defaultTextActive");
-            $(this).val("");
-        }
-    });
 
     /**
-     * Blur both input fields on page load, autosize them and prevent enter-keypress
+     * Blur input field on page load, autosize them and prevent enter-keypress
+     *
      * @see http://www.jacklmoore.com/autosize
      * @since 1.0
      */
     $(".fvp_input").autosize().trigger("blur").keypress(function(event) {
-        if (event.keyCode == 13) // enter
+        // enter key
+        if (event.keyCode == 13) {
             event.preventDefault();
+        }
     });
+
 
     /**
      * Select whole input field content on click
+     *
      * @since 1.2
      */
     $(".fvp_input").click(function() {
         $(this).select();
     });
 
+
     /**
      * Called when a change on the primary video input occurred
+     *
      * @since 1.2
      */
     function handleVideoInput( obj ) {
         var value = $.trim(obj.val());
         $("#fvp_help_notice").slideDown('fast');
 
-        if ( value.length === 0 || value == fvp_backend_data.default_value ) {
-            $("#fvp_video").removeClass('fvp_invalid'); //css('backgroundColor', 'white');
+        // Input field is empty
+        if ( value.length === 0 ) {
+            $("#fvp_video").removeClass('fvp_invalid');
             $("#fvp_localvideo_format_warning").slideUp('fast');
         }
 
-        if ( value.match( fvp_backend_data.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
+        // URL is local: Check file extension
+        if ( value.match( context.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
             var file_extension = /^.*\/(.*)\.(.*)/g;
             var match = file_extension.exec(value);
             if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
-                $("#fvp_video").removeClass('fvp_invalid'); //.css('backgroundColor', 'white');
+                $("#fvp_video").removeClass('fvp_invalid');
                 $("#fvp_localvideo_format_warning").slideUp('fast');
             } else {
-                $("#fvp_video").addClass('fvp_invalid'); //css('backgroundColor', 'lightYellow');
+                $("#fvp_video").addClass('fvp_invalid');
                 $("#fvp_localvideo_format_warning").slideDown('fast', 'linear');
             }
         } else {
-            $("#fvp_video").removeClass('fvp_invalid'); //.css('backgroundColor', 'white');
+            $("#fvp_video").removeClass('fvp_invalid');
             $("#fvp_localvideo_format_warning").slideUp('fast');
         }
     }
 
+
     /**
-     * recognize change on the primary video input
+     * Recognize change on the primary video input
+     *
      * @since 1.2
      */
     $("#fvp_video").bind("change paste keyup", function() {
         setTimeout(handleVideoInput($(this)), 200);
     });
 
+
     /**
-     * set featured image link and featured image requirement warning
+     * "Set featured image" link and featured image requirement warning
+     *
      * @since 1.1
      */
     $("#fvp_set_featimg_link").removeClass('fvp_hidden');
@@ -153,13 +166,16 @@ jQuery(document).ready(function($){
         $("#fvp_featimg_box_warning").addClass("fvp_hidden");
     });
 
+
     /**
      * Toggle for opening the contextual help
+     *
      * @since 1.3
      */
     $('#fvp_help_toggle').bind( 'click', function() {
         $('#contextual-help-link').trigger('click');
     });
+
 
     /**
      * Making use of the WordPress 3.5 Media Manager
@@ -215,16 +231,5 @@ jQuery(document).ready(function($){
         }
     };
 
-    // Media Manager was implemented in WordPress 3.5
-    if(fvp_backend_data.wp_35 == 1)
-        mediaControl.init();
-
-
-    /**
-     * Button in the top right of the Featured Video box. Planned for a feature release.
-     *
-     * @since 1.#
-     */
-    //$('#featured_video_plus-box .handlediv').after('<div class="box_topright"><a href="#" id="fvp_remove" title="Remove Featured Video"><br /></div></div>');
-
+    mediaControl.init();
 });

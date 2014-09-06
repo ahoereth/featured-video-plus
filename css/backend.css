@@ -1,3 +1,12 @@
+/* 2.0.0 */
+#fvp_current_video {
+	background: transparent fixed no-repeat center center;
+	width: 256px;
+	margin-bottom: 5px;
+}
+
+
+/* pre 2.0.0 */
 .wp-picker-holder {
 	position: absolute; bottom: 2.5em; left: -1em;
 	z-index: 1;
