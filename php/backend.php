@@ -39,46 +39,84 @@ class featured_video_plus_backend {
 	 * @see http://make.wordpress.org/core/2012/11/30/new-color-picker-in-wp-3-5/
 	 * @see http://ottopress.com/2010/passing-parameters-from-php-to-javascripts-in-plugins/
 	 * @see http://codex.wordpress.org/Function_Reference/wp_localize_script
+	 *
 	 * @since 1.0
 	 */
 	public function enqueue($hook_suffix) {
 		$min = SCRIPT_DEBUG ? '' : '.min';
-		// just required on options-media.php and would produce errors pre WordPress 3.1
-		if( ($hook_suffix == 'options-media.php') && (get_bloginfo('version') >= 3.1) ) {
-			if( wp_style_is( 'wp-color-picker', 'registered' ) ) {
-				// >=WP3.5
-				wp_enqueue_style( 'wp-color-picker' );
-				wp_enqueue_script( 'fvp_backend_35', FVP_URL . 'js/backend_35.js', array( 'wp-color-picker', 'jquery' ), FVP_VERSION );
-			} else {
-				// <WP3.5, fallback for the new WordPress Color Picker which was added in 3.5
-				wp_enqueue_style( 'farbtastic' );
-				wp_enqueue_script( 'farbtastic' );
-				wp_enqueue_script( 'fvp_backend_pre35', FVP_URL . 'js/backend_pre35.js', array( 'jquery' ), FVP_VERSION );
-			}
-			wp_enqueue_script( 'fvp_settings', FVP_URL . 'js/settings.js', array( 'jquery' ), FVP_VERSION );
+
+		// jQuery script for automatically resizing <textarea>s
+		wp_register_script(
+			'jquery.autosize',
+			FVP_URL . "js/jquery.autosize$min.js",
+			array( 'jquery' ),
+			FVP_VERSION,
+			false
+		);
+
+		// general backend style
+		wp_register_style(
+			'fvp-backend',
+			FVP_URL . "css/backend$min.css",
+			array(),
+			FVP_VERSION,
+			'all'
+		);
+
+		// Settings -> Media screen: options-media.php
+		if ( $hook_suffix == 'options-media.php' ) {
+
+			// script handling color pickers and dynamically hiding/showing options
+			wp_enqueue_script(
+				'fvp-settings',
+				FVP_URL . 'js/settings.js',
+				array(
+					'jquery',
+					'iris'
+				),
+				FVP_VERSION
+			);
+
+			// color picker
+			wp_enqueue_style( 'wp-color-picker' );
+
+			// see style registration above
+			wp_enqueue_style( 'fvp-backend' );
+
 		}
 
-		// just required on post.php and post-new.php
-		if( ($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php' ) {
-			wp_enqueue_script( 'jquery.autosize', FVP_URL . "js/jquery.autosize$min.js", array( 'jquery' ), FVP_VERSION );
-			wp_enqueue_script( 'fvp_backend', FVP_URL . "js/backend$min.js", array( 'jquery','jquery.autosize' ), FVP_VERSION );
+		// Edit & new post screen: post.php?post=%d & post-new.php
+		if( ( $hook_suffix == 'post.php' && isset( $_GET['post'] ) ) || $hook_suffix == 'post-new.php' ) {
 
-			wp_enqueue_style( 'wp-mediaelement' );
-			wp_enqueue_script( 'wp-mediaelement' );
+			// script handling featured video form interactions with ajax requests etc
+			wp_enqueue_script(
+				'fvp-post',
+				FVP_URL . "js/post$min.js",
+				array(
+					'jquery',
+					'jquery.autosize'
+				),
+				FVP_VERSION
+			);
 
-			$options = get_option('fvp-settings');
+			// some variables required in JS context
 			$upload_dir = wp_upload_dir();
-			wp_localize_script( 'fvp_backend', 'fvp_backend_data', array(
+			wp_localize_script( 'fvp-post', 'fvp_post', array(
 				'wp_upload_dir'     => $upload_dir['baseurl'],
-				'loading_gif'       => get_admin_url(null,'images/loading.gif'),
+				'loading_gif'       => get_admin_url( null,'images/loading.gif' ),
 				'default_value'     => $this->default_value,
-				'default_value_sec' => $this->default_value_sec,
-				'wp_35'             => get_bloginfo('version') >= 3.5
-			) );
+				'default_value_sec' => $this->default_value_sec
+			));
+
+			// HTML5 video handling
+			wp_enqueue_script( 'wp-mediaelement' );
+			wp_enqueue_style( 'wp-mediaelement' );
+
+			// see style registration above
+			wp_enqueue_style( 'fvp-backend' );
+
 		}
 
-		if( $hook_suffix == 'options-media.php' || (($hook_suffix == 'post.php' && isset($_GET['post'])) || $hook_suffix == 'post-new.php') )
-			wp_enqueue_style( 'fvp_backend', FVP_URL . "css/backend$min.css", array(), FVP_VERSION );
 	}
 
 	/**

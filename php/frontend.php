@@ -34,36 +34,66 @@ class featured_video_plus_frontend {
 	 */
 	public function enqueue() {
 		$min = SCRIPT_DEBUG ? '' : '.min';
-		$options = get_option('fvp-settings');
 
-		$deps = array('jquery');
+		$options = get_option( 'fvp-settings' );
 
-		wp_enqueue_script('jquery');
 
-		if ($options['sizing']['wmode'] == 'auto' && $options['usage']!='overlay') {
-			wp_enqueue_script('jquery.fitvids', FVP_URL . "js/jquery.fitvids$min.js", array( 'jquery' ), FVP_VERSION, false );
+		wp_register_script(
+			'jquery.fitvids',
+			FVP_URL . "js/jquery.fitvids$min.js",
+			array( 'jquery' ),
+			'1.1',
+			false
+		);
+
+		wp_register_script(
+			'jquery.domwindow',
+			FVP_URL . "js/jquery.domwindow$min.js",
+			array( 'jquery' ),
+			FVP_VERSION
+		);
+
+		// Basic dependencies. Is extended in the following.
+		$deps = array( 'jquery' );
+
+		// Is responsive video functionality required? Only when width is set to
+		// 'auto' and display mode is not set to overlay.
+		if ( $options['sizing']['wmode'] == 'auto' && $options['usage'] != 'overlay' ) {
 			$deps[] = 'jquery.fitvids';
 		}
 
-		if ($options['usage']=='overlay') {
-			wp_enqueue_script( 'jquery.domwindow', FVP_URL . "js/jquery.domwindow$min.js", array( 'jquery' ), FVP_VERSION );
+		// Is modal functionality required?
+		if ( $options['usage'] == 'overlay' ) {
 			$deps[] = 'jquery.domwindow';
 		}
 
-		wp_enqueue_script( 'fvp_frontend', FVP_URL . "js/frontend$min.js", $deps, FVP_VERSION );
+		// general frontend script
+		wp_enqueue_script(
+			'fvp-frontend',
+			FVP_URL . "js/frontend$min.js",
+			$deps,
+			FVP_VERSION
+		);
 
-		wp_localize_script( 'fvp_frontend', 'fvpdata', array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce' 	=> wp_create_nonce( 'featured-video-plus-nonce' ),
-			'fitvids' => isset($options['sizing']['wmode']) && $options['sizing']['wmode']=='auto',
-			'dynamic' => isset($options['usage']) && $options['usage']=='dynamic',
-			'overlay' => isset($options['usage']) && $options['usage']=='overlay',
-			'opacity' => '75',
-			'loadingw'=> FVP_URL . 'css/loading_w.gif',
-			'loadingb'=> FVP_URL . 'css/loading_b.gif'
-		) );
+		// some context for JS
+		wp_localize_script( 'fvp-frontend', 'fvp_frontend', array(
+			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
+			'nonce'    => wp_create_nonce( 'featured-video-plus-nonce' ),
+			'fitvids'  => ! empty( $options['sizing']['wmode'] ) && $options['sizing']['wmode'] == 'auto',
+			'dynamic'  => ! empty( $options['usage'] )           && $options['usage']           == 'dynamic',
+			'overlay'  => ! empty( $options['usage'] )           && $options['usage']           == 'overlay',
+			'opacity'  => '75',
+			'loadingw' => FVP_URL . 'css/loading_w.gif',
+			'loadingb' => FVP_URL . 'css/loading_b.gif'
+		));
 
-		wp_enqueue_style('fvp_frontend', FVP_URL . 'css/frontend.css', array(), FVP_VERSION );
+		// general frontend styles
+		wp_enqueue_style(
+			'fvp-frontend',
+			FVP_URL . 'css/frontend.css',
+			array(),
+			FVP_VERSION
+		);
 	}
 
 	/**
