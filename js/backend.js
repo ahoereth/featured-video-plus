@@ -179,7 +179,7 @@ jQuery(document).ready(function($){
             this._frame = wp.media({
                 title: $control.data('title'),
                 library: {
-                    type: 'video'
+                    type: 'document'
                 },
                 button: {
                     text: $control.data('button')

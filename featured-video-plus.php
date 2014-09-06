@@ -4,7 +4,7 @@ Plugin Name: Featured Video Plus
 Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
 Author: Alexander Höreth
-Version: 1.9
+Version: 1.9.1
 Author URI: http://yrnxt.com
 License: GPL2
 
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 if (!defined('FVP_VERSION'))
-	define('FVP_VERSION', '1.9');
+	define('FVP_VERSION', '1.9.1');
 
 // symlink proof
 $pathinfo = pathinfo(dirname(plugin_basename(__FILE__)));
@@ -60,21 +60,21 @@ if( is_admin() ) {
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 
 	// admin meta box
-	add_action('admin_menu', 				array( &$featured_video_plus_backend, 'metabox_register' ) );
-	add_action('save_post', 				array( &$featured_video_plus_backend, 'metabox_save' 	 ) );
+	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
+	add_action('save_post', array( &$featured_video_plus_backend, 'metabox_save' ) );
 
 	// enqueue admin scripts and styles
 	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
 
 	// link to media settings on plugins overview
-	add_filter('plugin_action_links', 	array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
+	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
 
 	// add upload mime types for HTML5 videos
-	add_filter('upload_mimes', 			array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
+	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
 
 	// post edit help
-	add_action('admin_init', 			array( &$featured_video_plus_backend, 'help' ) );
-	add_action( 'load-post.php', 		array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
+	add_action('admin_init', array( &$featured_video_plus_backend, 'help' ) );
+	add_action( 'load-post.php', array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
 		add_filter( 'contextual_help', 	array( &$featured_video_plus_backend, 'help_pre_33' ), 10, 3 );
 
@@ -84,14 +84,14 @@ if( is_admin() ) {
 	add_action( 'admin_init', array( &$featured_video_plus_settings, 'settings_init' ) );
 
 	// media settings help
-	add_action('admin_init',  array( &$featured_video_plus_settings, 'help' ) );
+	add_action('admin_init', array( &$featured_video_plus_settings, 'help' ) );
 	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
 	if( get_bloginfo('version') < 3.3 )
-		add_filter( 'contextual_help', 	array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
+		add_filter( 'contextual_help', array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
 
  	if (defined('DOING_AJAX')&&DOING_AJAX){
-		add_action( 'wp_ajax_fvp_ajax', 						array( &$featured_video_plus_backend, 'ajax' 			 ) );
-		add_action( 'wp_ajax_fvp_get_embed', 			 	array( &$featured_video_plus_backend, 'ajax_get_embed' ));
+		add_action( 'wp_ajax_fvp_ajax', array( &$featured_video_plus_backend, 'ajax' ) );
+		add_action( 'wp_ajax_fvp_get_embed', array( &$featured_video_plus_backend, 'ajax_get_embed' ));
 		add_action( 'wp_ajax_nopriv_fvp_get_embed', array( &$featured_video_plus_backend, 'ajax_get_embed' ));
 	}
 }
@@ -107,8 +107,8 @@ if( !is_admin() ) {
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
 
 	// filter get_post_thumbnail output
-	add_filter(		'post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
+	add_filter( 'post_thumbnail_html', array( &$featured_video_plus_frontend, 'filter_post_thumbnail'), 99, 5);
 
 	// shortcode
-	add_shortcode( 	'featured-video-plus', array( &$featured_video_plus_frontend, 'shortcode' ) );
+	add_shortcode( 'featured-video-plus', array( &$featured_video_plus_frontend, 'shortcode' ) );
 }

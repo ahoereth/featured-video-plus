@@ -145,7 +145,7 @@ function featured_video_plus_upgrade() {
 				$options['issingle'] = false;
 
 
-		// *************************************************************
+			// *************************************************************
 			default:
 				$options['version'] = FVP_VERSION;
 				break;

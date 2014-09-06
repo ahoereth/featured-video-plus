@@ -1,16 +1,16 @@
 === Featured Video Plus ===
 Contributors: a.hoereth
 Plugin Name: Featured Video Plus
-Plugin URI: http://yrnxt.com/category/wordpress/featured-video-plus/
+Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Tags: featured, post, video, image, thumbnail, html5, flash, youtube, vimeo, dailymotion, mp4, webm, ogg, embed, ajax
 Author: Alexander Höreth
 Author URI: http://yrnxt.com/
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=a%2ehoereth%40gmail%2ecom
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.2
-Tested up to: 3.9
-Stable tag: 1.9
+Tested up to: 4.0
+Stable tag: 1.9.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -64,6 +64,12 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 == Changelog ==
 
+
+= 1.9.1: 2014-09-06 =
+* __Last update compatible all the way back to WordPress 3.2!__
+* You can now specify the '[end](https://developers.google.com/youtube/player_parameters#end)' parameter for YouTube embeds ([*](http://wordpress.org/support/topic/how-to-specify-start-and-end-for-youtube-videos))
+* Added option for only displaying videos on single posts/pages ([*](http://wordpress.org/support/topic/i-need-to-only-change-the-featured-images-not-the-thumbnails),[*](http://wordpress.org/support/topic/video-thumbnails-with-link-to-post),[*](http://wordpress.org/support/topic/want-everything-of-fvp-other-than-feature-video-thumb))
+* Removed hardcoded http protocol for embeds [*](http://wordpress.org/support/topic/fix-for-videos-over-ssl)
 
 = 1.9: 2014-01-02 =
 * Replaced Video.js with MediaElement.js (ships with WordPress since 3.6 - __breaks local videos partially if you use an older WordPress version!__)
@@ -195,4 +201,4 @@ Take a look at your media settings and try different fixed sizes. If tweaking th
 Leave me a note in the support forums which video platforms you would like to see in a feature release!
 
 = How can I translate the plugin? =
-Grap the [featured-video-plus.pot](https://github.com/ahoereth/featured-video-plus/blob/master/lng/featured-video-plus.pot) file, [translate it](http://urbangiraffe.com/articles/translating-wordpress-themes-and-plugins/) and post it in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus). It will very lik be shipped with the next version.
+Grab the [featured-video-plus.pot](https://github.com/ahoereth/featured-video-plus/blob/master/lng/featured-video-plus.pot) file, [translate it](http://urbangiraffe.com/articles/translating-wordpress-themes-and-plugins/) and post it in the [Support Forum](http://wordpress.org/support/plugin/featured-video-plus). It will very likely be shipped with the next version.

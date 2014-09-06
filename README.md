@@ -39,6 +39,12 @@ All parameters are optional. If no `$post_id` is given the current post's ID wil
 
 ## Changelog ##
 
+### 1.9.1: 2014-09-06 ###
+* __Last update compatible all the way back to WordPress 3.2!__
+* You can now specify the '[end](https://developers.google.com/youtube/player_parameters#end)' parameter for YouTube embeds ([*](http://wordpress.org/support/topic/how-to-specify-start-and-end-for-youtube-videos))
+* Added option for only displaying videos on single posts/pages ([*](http://wordpress.org/support/topic/i-need-to-only-change-the-featured-images-not-the-thumbnails),[*](http://wordpress.org/support/topic/video-thumbnails-with-link-to-post),[*](http://wordpress.org/support/topic/want-everything-of-fvp-other-than-feature-video-thumb))
+* Removed hardcoded http protocol for embeds [*](http://wordpress.org/support/topic/fix-for-videos-over-ssl)
+
 ### 1.9: 2014-01-02 ###
 * Replaced Video.js with MediaElement.js (ships with WordPress since 3.6 - __breaks local videos partially if you use an older WordPress version!__)
 * Added Spanish translations! Translation by [WebHostingHub.com](http://webhostinghub.com)
