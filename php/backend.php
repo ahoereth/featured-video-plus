@@ -351,8 +351,8 @@ class featured_video_plus_backend {
 		if( isset($prov_data[1]) ) {
 			$provider = 'local';
 		} else {
-			require ABSPATH . '/' . WPINC . '/class-oembed.php';
-			$oembed = new WP_oEmbed();
+			require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
+			$oembed = _wp_oembed_get_object();
 
 			// fetch the oembed data with some arbitrary big size
 			$raw = $oembed->fetch(
