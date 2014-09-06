@@ -52,11 +52,10 @@ class featured_video_plus {
 
 		$valid = $meta['valid'];
 
-		switch ( $meta['prov'] ) {
-			case 'local':
-				// mediaelement.js is only available in WordPress 3.6 and higher.
-				if( get_bloginfo('version') < 3.6 ) break;
+		$provider = ! empty( $meta['provider'] ) ? $meta['provider'] : $meta['prov'];
 
+		switch ( $provider ) {
+			case 'local':
 				$videourl = wp_get_attachment_url( $meta['id'] );
 
 				$ext = pathinfo( $videourl, PATHINFO_EXTENSION );
@@ -78,68 +77,8 @@ class featured_video_plus {
 				$embed = wp_video_shortcode( $atts );
 				break;
 
-			case 'vimeo':
-				$option = $options['vimeo'];
-				$params = array(
-					'badge' => 0,
-					'portrait' => $option['portrait'],
-					'title' => $option['title'],
-					'byline' => $option['byline'],
-					'color' => $option['color'],
-					'autoplay' => $autoplay
-				);
-
-				$src = '//player.vimeo.com/video/'.$meta['id'].'?'.http_build_query($params);
-				$embed = "\n\t" . '<iframe src="'.$src.'" width="'.$size['width'].'" height="'.$size['height'].'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>' . "\n";
-				break;
-
-			case 'youtube':
-				$option = $options['youtube'];
-				$params = array(
-					'origin'         => esc_attr(home_url()),
-					'theme'          => isset($option['theme'])  ? $option['theme']  : 'dark',
-					'color'          => isset($option['color'])  ? $option['color']  : 'red',
-					'enablejsapi'    => isset($option['jsapi'])  ? $option['jsapi']  : null,
-					'showinfo'       => isset($option['info'])   ? $option['info']   : 1,
-					'modestbranding' => isset($option['logo'])   ? $option['logo']   : 1,
-					'rel'            => isset($option['rel'])    ? $option['rel']    : 1,
-					'fs'             => isset($option['fs'])     ? $option['fs']     : 1,
-					'start'          => isset($meta['time'])     ? $meta['time']     : null,
-					'end'            => isset($meta['end_time']) ? $meta['end_time'] : null,
-					'autoplay'       => $autoplay,
-					'wmode'          => isset($option['wmode']) && $option['wmode'] != 'auto' ? $option['wmode'] : null,
-					'playerapiid'    => isset($option['jsapi']) && $option['jsapi'] == 1      ? 'fvpyt'.$post_id : null,
-				);
-
-				$src = '//www.youtube.com/embed/'.$meta['id'].'?'.http_build_query($params);
-				$embed = "\n\t" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" type="text/html" frameborder="0" id="fvpyt'.$post_id.'"></iframe>' . "\n";
-				break;
-
-			case 'dailymotion':
-				$option = $options['dailymotion'];
-				$params = array(
-					'foreground'  => isset($option['foreground'])   ?   $option['foreground'] : null,
-					'highlight'   => isset($option['highlight'])    ?   $option['highlight']  : null,
-					'background'  => isset($option['background'])   ?   $option['background'] : null,
-					'logo'        => isset($option['logo'])         ?   $option['logo']       : 1,
-					'hideInfos'   => isset($option['info'])         ? 1-$option['info']       : 0,
-					'syndication' => empty($option['syndication'])  ? null : $option['syndication'],
-					'start'       => $meta['time']
-				);
-				$src = '//www.dailymotion.com/embed/video/'.$meta['id'].'?'.http_build_query($params);
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="'.$src.'" frameborder="0"></iframe>' . "\n";
-				break;
-
-			case 'liveleak':
-			$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="//www.liveleak.com/ll_embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
-				break;
-
-			case 'prochan':
-				$embed = "\n" . '<iframe width="'.$size['width'].'" height="'.$size['height'].'" src="//www.prochan.com/embed?f='.$meta['id'].'" frameborder="0" allowfullscreen></iframe>';
-				break;
-
 			default:
-				$embed = wp_oembed_get($meta['full'], $size);
+				$embed = wp_oembed_get( $meta['full'], $size );
 				break;
 		}
 

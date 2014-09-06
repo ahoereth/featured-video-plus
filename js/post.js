@@ -37,7 +37,7 @@ jQuery(document).ready(function($){
                     t.siblings('.fvp_video_choose').children('.fvp_media_icon').css('backgroundImage', bg);
 
                     // Was the video removed?
-                    if( data.typ == 'removed' ) {
+                    if( data.task == 'remove' ) {
                         $('#fvp_current_video').html('').animate({'height':'0px'});
                     } else {
                         // Display video
