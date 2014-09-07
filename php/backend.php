@@ -441,12 +441,27 @@ class featured_video_plus_backend {
 				break;
 
 			// dailymotion.com
+			// http://www.dailymotion.com/doc/api/player.html
 			case 'dailymotion':
 				$parameters = $this->handle_time_parameter( $parameters );
 
 				$data['parameters'] = $this->array_filter_keys($parameters, array(
 					'wmode',
 					'autoplay',
+					'api',
+					'background',
+					'chromeless',
+					'controls',
+					'foreground',
+					'highlight',
+					'html',
+					'id',
+					'info',
+					'logo',
+					'network',
+					'quality',
+					'related',
+					'startscreen',
 				));
 
 				break;
