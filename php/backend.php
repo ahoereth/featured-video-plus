@@ -370,11 +370,7 @@ class featured_video_plus_backend {
 			);
 		}
 
-		/*print_r($raw);
-		print_r($data);
-		die();*/
-
-		$parameters = $this->parse_query($url);
+		$parameters = $this->parse_url_parameters( $url );
 
 		// provider specific handling
 		switch ($provider) {
@@ -679,15 +675,32 @@ class featured_video_plus_backend {
 
 
 	/**
+	 * Function used for retrieving query (?..&..) and fragment (#..) parameters
+	 * of a given URL.
 	 *
-	 * @see   http://php.net/manual/en/function.parse-url.php
-	 * @see   http://php.net/manual/en/function.parse-str.php
-	 * @since 2.0.0
+	 * @see    http://php.net/manual/en/function.parse-url.php
+	 * @see    http://php.net/manual/en/function.parse-str.php
+	 * @since  2.0.0
+	 *
+	 * @param  {string} $url the URL to parse for parameters
+	 * @return array containing query and fragment parameters
 	 */
-	private function parse_query( $url ) {
+	private function parse_url_parameters( $url ) {
+		// parse query
 		$query = parse_url($url, PHP_URL_QUERY);
-		$parameters = array();
-		parse_str($query, $parameters);
+		$query_parameters = array();
+		parse_str($query, $query_parameters);
+
+		// parse fragment
+		$fragment = parse_url($url, PHP_URL_FRAGMENT);
+		$fragment_parameters = array();
+		parse_str($fragment, $fragment_parameters);
+
+		// merge query and fragment parameters
+		$parameters = array_merge(
+			$query_parameters,
+			$fragment_parameters
+		);
 
 		return $parameters;
 	}
