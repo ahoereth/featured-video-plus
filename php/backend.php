@@ -351,21 +351,10 @@ class featured_video_plus_backend {
 		if( isset($prov_data[1]) ) {
 			$provider = 'local';
 		} else {
-			require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
-			$oembed = _wp_oembed_get_object();
-
-			// fetch the oembed data with some arbitrary big size
-			$raw = $oembed->fetch(
-				$oembed->get_provider($url),
-				$url,
-				array(
-					'width'  => 4096,
-					'height' => 4096
-				)
-			);
-
+			$raw = $this->oembed_fetch($url);
 			$provider = strtolower( $raw->provider_name );
 
+			// If no provider is returned the URL is invalid
 			if ( empty($provider) ) {
 				return array( 'valid' => false );
 			}
@@ -695,11 +684,36 @@ class featured_video_plus_backend {
 	 * @see   http://php.net/manual/en/function.parse-str.php
 	 * @since 2.0.0
 	 */
-	private function parse_query($url) {
+	private function parse_query( $url ) {
 		$query = parse_url($url, PHP_URL_QUERY);
 		$parameters = array();
 		parse_str($query, $parameters);
 
 		return $parameters;
+	}
+
+
+	/**
+	 * Utilizes the WordPress oembed class for fetching the oembed info object.
+	 *
+	 * @see   http://oembed.com/
+	 * @since 2.0.0
+	 */
+	private function oembed_fetch( $url ) {
+		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
+		$oembed = _wp_oembed_get_object();
+
+		// fetch the oEmbed data with some arbitrary big size to get the biggest
+		// thumbnail possible
+		$raw = $oembed->fetch(
+			$oembed->get_provider($url),
+			$url,
+			array(
+				'width'  => 4096,
+				'height' => 4096
+			)
+		);
+
+		return $raw;
 	}
 }
