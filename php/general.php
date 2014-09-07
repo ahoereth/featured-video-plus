@@ -9,6 +9,14 @@
  * @since 1.0
  */
 class featured_video_plus {
+	private $time;
+
+	public function __construct() {
+		$this->time = time();
+
+		add_filter('oembed_fetch_url', array($this, 'oembed_arguments'), 10, 3);
+	}
+
 
 	/**
 	 * Returns the featured video html, ready to echo.
@@ -77,8 +85,34 @@ class featured_video_plus {
 				$embed = wp_video_shortcode( $atts );
 				break;
 
-			default:
+
+			// youtube does not provide it's player API to oEmbed requests, therefore
+			// the plugin needs to manually interfere with the iframe src URL
+			case 'youtube':
 				$embed = wp_oembed_get( $meta['full'], $size );
+
+				$hook = '?feature=oembed';
+				$parameters = add_query_arg( $meta['parameters'], $hook );
+				$embed = str_replace( $hook, $parameters, $embed );
+				break;
+
+
+			case 'dailymotion':
+				$embed = wp_oembed_get( $meta['full'], $size );
+
+				$parameters = add_query_arg( $meta['parameters'], '' );
+				$embed = preg_replace('/src=([\'"])([^\'"]*)[\'"]/', 'src=$1$2' . $parameters . '$1', $embed);
+
+				break;
+
+			default:
+				$args = array_merge(
+					array( 'fvp' => $this->time ),
+					$size,
+					! empty( $meta['parameters'] ) ? $meta['parameters'] : array()
+				);
+
+				$embed = wp_oembed_get( $meta['full'], $args );
 				break;
 		}
 
@@ -162,4 +196,34 @@ class featured_video_plus {
 	function language() {
 		load_plugin_textdomain('featured-video-plus', FVP_DIR . 'lng/', FVP_NAME . '/lng/' );
 	}
+
+
+	/**
+	 * Enable additional parameters for oEmbed requests from inside the plugin.
+	 * The plugin only allows a limited set of parameters.
+	 *
+	 * @see    https://core.trac.wordpress.org/ticket/16996#comment:18
+	 * @param  {string} $provider The oEmbed provider (as URL)
+	 * @param  {string} $url      The oEmbed request URL
+	 * @param  {assoc}  $args     The additional parameters for the provider
+	 * @return {string}           $provider with added parameters.
+	 */
+	public function oembed_arguments( $provider, $url, $args ) {
+		// Only oEmbed requests from inside the plugin are allowed to have
+		// additional parameters!
+		if ( ! empty( $args['fvp'] ) && $args['fvp'] == $this->time ) {
+			// unset the plugin internal and default arguments
+			unset(
+				$args['fvp'],
+				$args['width'],
+				$args['height'],
+				$args['discover']
+			);
+
+			$provider = add_query_arg( $args, $provider );
+		}
+
+		return $provider;
+	}
+
 }

@@ -348,16 +348,17 @@ class featured_video_plus_backend {
 		preg_match('/'.preg_quote($local['baseurl'], '/').'/i', $url, $prov_data);
 
 		// handle local videos
-		if( isset($prov_data[1]) ) {
+		if( isset( $prov_data[1] ) ) {
 			$provider = 'local';
 		} else {
-			$raw = $this->oembed_fetch($url);
-			$provider = strtolower( $raw->provider_name );
+			$raw = $this->oembed_fetch( $url );
 
 			// If no provider is returned the URL is invalid
-			if ( empty($provider) ) {
+			if ( empty( $raw ) || empty( $raw->provider_name ) ) {
 				return array( 'valid' => false );
 			}
+
+			$provider = strtolower( $raw->provider_name );
 
 			$data = array(
 				'id'          => null,
@@ -373,7 +374,7 @@ class featured_video_plus_backend {
 		$parameters = $this->parse_url_parameters( $url );
 
 		// provider specific handling
-		switch ($provider) {
+		switch ( $provider ) {
 
 			// local video
 			case 'local':
@@ -392,42 +393,66 @@ class featured_video_plus_backend {
 				break;
 
 			// youtube.com
+			// https://developers.google.com/youtube/player_parameters
 			case 'youtube':
-				$legal_parameters = array(
+				$data['parameters'] = $this->array_filter_keys($parameters, array(
+					'autohide',
+					'autoplay',
+					'cc_load_policy',
+					'color',
+					'controls',
+					'disablekb',
+					'enablejsapi',
+					'end',
+					'fs',
+					'hl',
+					'iv_load_policy',
+					'list',
+					'listType',
+					'loop',
+					'modestbranding',
+					'origin',
+					'playerapiid',
+					'playlist',
+					'playsinline',
+					'rel',
+					'showinfo',
 					'start',
-					'end'
-				);
-
-				// #t=...
+					'theme',
+				));
 
 				break;
 
 			// vimeo.com
+			// http://developer.vimeo.com/apis/oembed
 			case 'vimeo':
-				// #t=80s
+				$data['parameters'] = $this->array_filter_keys($parameters, array(
+					'byline',
+					'title',
+					'portrait',
+					'color',
+					'autoplay',
+					'autopause',
+					'loop',
+					'api',
+					'player_id',
+				));
 
 				break;
 
 			// dailymotion.com
 			case 'dailymotion':
+				$parameters = $this->handle_time_parameter( $parameters );
 
-				// extract info of a time-link
-			/*	preg_match('/t=(?:(\d+)m)?(?:(\d+)s)?/', $url, $attr);
-				if( !empty($attr[1] ) || !empty($attr[2]) ) {
-					$min = !empty($attr[1]) ? $attr[1]*60 : 0;
-					$sek = !empty($attr[2]) ? $attr[2]    : 0;
-					$video_time = $min + $sek;
-				} else {
-					preg_match('/start=(\d+)/', $url, $attr);
-					if( !empty($attr[1] ) )
-						$video_time = $attr[1];
-					else
-						$video_time = 0;
-				}*/
+				$data['parameters'] = $this->array_filter_keys($parameters, array(
+					'wmode',
+					'autoplay',
+				));
 
 				break;
 		}
-		return isset($data) ? $data : false;
+
+		return ! empty( $data ) ? $data : false;
 	}
 
 
@@ -707,6 +732,91 @@ class featured_video_plus_backend {
 
 
 	/**
+	 * Calculates the amount of seconds depicted by a string structured like one
+	 * of the following possibilities:
+	 * 	##m##s
+	 * 	##m
+	 * 	##s
+	 * 	##
+	 *
+	 * @since  2.0.0
+	 *
+	 * @param  {string} $t
+	 * @return {int} seconds
+	 */
+	private function handle_m_s_string( $t ) {
+		$seconds = 0;
+
+		preg_match('/(\d+)m/', $t, $m);
+		if ( ! empty( $m[1] ) ) {
+			$seconds += $m[1]*60;
+		}
+
+		preg_match('/(\d+)s/', $t, $s);
+		if ( ! empty( $s[1] ) ) {
+			$seconds += $s[1];
+		}
+
+		if ( empty( $m[1] ) && empty( $s[1] ) ) {
+			$seconds += intval( $t );
+		}
+
+		return $seconds;
+	}
+
+
+	/**
+	 * Translates a source time parameter (mostly given as 't' in the
+	 * fragment (#..) of an URL in seconds to a destination parameter.
+	 *
+	 * Note: The source parameter overwrites the destination parameter!
+	 *
+	 * @since  2.0.0
+	 *
+	 * @param  {array}  $parameters Array of parameters, containing $src
+	 * @param  {string} $src        Key of the source parameter
+	 * @param  {string} $dst        Key of the destination parameter
+	 * @return {array}  Updated $parameters array
+	 */
+	private function handle_time_parameter( $parameters, $src = 't', $dst = 'start' ) {
+		if ( ! empty( $parameters[ $src ] ) ) {
+			$t = $this->handle_m_s_string( $parameters[ $src ] );
+
+			unset( $parameters[ $src ] );
+
+			if ( $t ) {
+				$parameters[ $dst ] = $t;
+			}
+		}
+
+		return $parameters;
+	}
+
+
+	/**
+	 * Only keeps key value pairs of the source $array if their keys are listed
+	 * in the $filter array.
+	 *
+	 * @since  2.0.0
+	 *
+	 * @param  {assoc} $array  Associative array to filter
+	 * @param  {array} $filter Enumerated array containing the legal keys to keep
+	 * @return {assoc} Filtered array
+	 */
+	private function array_filter_keys( $array, $filter ) {
+		$result = array();
+
+		foreach ( $filter as $key ) {
+			if ( ! empty( $array[ $key ] ) ) {
+				$result[ $key ] = $array[ $key ];
+			}
+		}
+
+		return $result;
+	}
+
+
+	/**
 	 * Utilizes the WordPress oembed class for fetching the oembed info object.
 	 *
 	 * @see   http://oembed.com/
@@ -719,7 +829,7 @@ class featured_video_plus_backend {
 		// fetch the oEmbed data with some arbitrary big size to get the biggest
 		// thumbnail possible
 		$raw = $oembed->fetch(
-			$oembed->get_provider($url),
+			$oembed->get_provider( $url ),
 			$url,
 			array(
 				'width'  => 4096,
@@ -727,6 +837,6 @@ class featured_video_plus_backend {
 			)
 		);
 
-		return $raw;
+		return ! empty( $raw ) ? $raw : false;
 	}
 }
