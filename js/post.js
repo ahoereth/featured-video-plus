@@ -24,7 +24,7 @@ jQuery(document).ready(function($){
 
             $.post( ajaxurl,
                 {
-                    'action'    : 'fvp_ajax',
+                    'action'    : 'fvp_save',
                     'id'        : $('#post_ID').val(),
                     'fvp_nonce' : $('#fvp_nonce').val(),
                     'fvp_video' : $('#fvp_video').val()

@@ -10,7 +10,7 @@
  * @param featured_video_plus instance
  */
 class featured_video_plus_backend {
-	private $super;
+	private $general;
 	private $help_localmedia;
 	private $help_urls;
 
@@ -22,11 +22,26 @@ class featured_video_plus_backend {
 	 *
 	 * @param featured_video_plus_instance required, dies without
 	 */
-	function __construct( $featured_video_plus_instance ){
-		if ( !isset($featured_video_plus_instance) )
+	function __construct( $general, $oembed ){
+		if ( ! isset( $general ) )
 			wp_die( 'featured_video_plus general instance required!', 'Error!' );
 
-		$this->super = $featured_video_plus_instance;
+		$this->general = $general;
+		$this->oembed  = $oembed;
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
+		add_action( 'admin_menu',            array( $this, 'metabox_register' ) );
+		add_action( 'save_post',             array( $this, 'metabox_save' ) );
+		add_action( 'admin_init',            array( $this, 'help' ) );
+		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
+
+		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2);
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			add_action( 'wp_ajax_fvp_save',             array( $this, 'metabox_save_ajax' ) );
+			add_action( 'wp_ajax_fvp_get_embed',        array( $this, 'ajax_get_embed' ) );
+			add_action( 'wp_ajax_nopriv_fvp_get_embed', array( $this, 'ajax_get_embed' ) );
+		}
 	}
 
 
@@ -220,12 +235,11 @@ class featured_video_plus_backend {
 	 *
 	 * @param int $post_id
 	 */
-	public function metabox_save($post_id){
-
-		if (( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || // Autosave, do nothing
-		    ( defined( 'DOING_AJAX' )     && DOING_AJAX )     || // AJAX?
-		    ( ! current_user_can( 'edit_post', $post_id ) )   || // Check user permissions
-		    ( false !== wp_is_post_revision( $post_id ) )        // Return if it's a post revision
+	public function metabox_save( $post_id ){
+		if (( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
+		    ( defined( 'DOING_AJAX' )     && DOING_AJAX )     ||
+		    ( ! current_user_can( 'edit_post', $post_id ) )   ||
+		    ( false !== wp_is_post_revision( $post_id ) )
 		   ) return;
 
 		$post = array(
@@ -236,17 +250,18 @@ class featured_video_plus_backend {
 			'fvp_sec'         => ! empty( $_POST['fvp_sec'] )         ? $_POST['fvp_sec']         : ''
 		);
 
-		$this->save($post);
+		$this->save( $post );
 
 		return;
 	}
+
 
 	/**
 	 * Forwards ajax save requests to the $this->save function and generates a response.
 	 *
 	 * @since 1.5
 	 */
-	public function ajax() {
+	public function metabox_save_ajax() {
 		$post = array(
 			'id'              => $_POST['id'],
 			'fvp_nonce'       => ! empty( $_POST['fvp_nonce'] )       ? $_POST['fvp_nonce']       : '',
@@ -260,7 +275,7 @@ class featured_video_plus_backend {
 
 		$img = _wp_post_thumbnail_html( get_post_thumbnail_id( $post['id'] ), $post['id'] );
 
-		if (has_post_video($post['id'])){
+		if ( has_post_video( $post['id'] ) ){
 			$video = get_the_post_video( $post['id'], array( 256, 144 ) );
 			$response = json_encode(array(
 				'type'  => 'update',
@@ -277,17 +292,15 @@ class featured_video_plus_backend {
 			));
 		}
 
-		echo $response;
-		die();
+		exit( $response );
 	}
 
 
 	/**
 	 * Used for processing a save request.
 	 *
+	 * @see   http://codex.wordpress.org/Function_Reference/update_post_meta
 	 * @since 1.5
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/update_post_meta
 	 */
 	function save( $post ) {
 		if( ( isset( $post['fvp_nonce'] ) && ! wp_verify_nonce( $post['fvp_nonce'], FVP_NAME ) ) )
@@ -322,7 +335,7 @@ class featured_video_plus_backend {
 			array(
 				'full'  => $url,
 				'img'   => ! empty( $img ) ? $img : null,
-				'valid' => true // can be overwritten by $data
+				'valid' => 1 // can be overwritten by $data
 			),
 			$data
 		);
@@ -333,25 +346,27 @@ class featured_video_plus_backend {
 
 
 	/**
-	 * Returns an array containing video information like id provider imgurl etc
-	 * Code existing since 1.0, got it own function in 1.5
+	 * Returns an array containing video information like id provider imgurl etc.
 	 *
 	 * @see   http://oembed.com/
 	 * @since 1.5
 	 *
-	 * @param string video a video url
+	 * @param  {string} $url The video URL
+	 * @return {assoc}  Associative array containing the video information data
 	 */
 	function get_video_data( $url ) {
 		$data = array();
 
 		$local = wp_upload_dir();
-		preg_match('/'.preg_quote($local['baseurl'], '/').'/i', $url, $prov_data);
+		$islocal = strpos( $url, $local['baseurl'] );
 
 		// handle local videos
-		if( isset( $prov_data[1] ) ) {
+		if( $islocal !== false ) {
 			$provider = 'local';
+
+		// handle external videos
 		} else {
-			$raw = $this->oembed_fetch( $url );
+			$raw = $this->oembed->request( $url );
 
 			// If no provider is returned the URL is invalid
 			if ( empty( $raw ) || empty( $raw->provider_name ) ) {
@@ -371,7 +386,7 @@ class featured_video_plus_backend {
 			);
 		}
 
-		$parameters = $this->parse_url_parameters( $url );
+		$data['parameters'] = $this->oembed->get_args( $url, $provider );
 
 		// provider specific handling
 		switch ( $provider ) {
@@ -387,83 +402,9 @@ class featured_video_plus_backend {
 				}
 
 				$data = array(
-					'id'  => $this->get_post_by_url($url),
+					'id'  => $this->get_post_by_url( $url ),
 					'url' => $url
 				);
-				break;
-
-			// youtube.com
-			// https://developers.google.com/youtube/player_parameters
-			case 'youtube':
-				$data['parameters'] = $this->array_filter_keys($parameters, array(
-					'autohide',
-					'autoplay',
-					'cc_load_policy',
-					'color',
-					'controls',
-					'disablekb',
-					'enablejsapi',
-					'end',
-					'fs',
-					'hl',
-					'iv_load_policy',
-					'list',
-					'listType',
-					'loop',
-					'modestbranding',
-					'origin',
-					'playerapiid',
-					'playlist',
-					'playsinline',
-					'rel',
-					'showinfo',
-					'start',
-					'theme',
-				));
-
-				break;
-
-			// vimeo.com
-			// http://developer.vimeo.com/apis/oembed
-			case 'vimeo':
-				$data['parameters'] = $this->array_filter_keys($parameters, array(
-					'byline',
-					'title',
-					'portrait',
-					'color',
-					'autoplay',
-					'autopause',
-					'loop',
-					'api',
-					'player_id',
-				));
-
-				break;
-
-			// dailymotion.com
-			// http://www.dailymotion.com/doc/api/player.html
-			case 'dailymotion':
-				$parameters = $this->handle_time_parameter( $parameters );
-
-				$data['parameters'] = $this->array_filter_keys($parameters, array(
-					'wmode',
-					'autoplay',
-					'api',
-					'background',
-					'chromeless',
-					'controls',
-					'foreground',
-					'highlight',
-					'html',
-					'id',
-					'info',
-					'logo',
-					'network',
-					'quality',
-					'related',
-					'startscreen',
-				));
-
 				break;
 		}
 
@@ -476,11 +417,15 @@ class featured_video_plus_backend {
 	 * Since 1.0, got it own function in 1.5
 	 *
 	 * @since 1.5
+	 *
+	 * @param  {int}   $post_id
+	 * @param  {assoc} $data    Video information data containing img_url
+	 * @return {int}   ID of the inserted attachment
 	 */
 	function set_featured_video_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
-		$img  = $this->super->get_post_by_custom_meta('_fvp_image', $data['provider'] . '?' . $data['id']);
-		$img2 = $this->super->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
+		$img  = $this->general->get_post_by_custom_meta('_fvp_image', $data['provider'] . '?' . $data['id']);
+		$img2 = $this->general->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
 		$img = ! empty( $img ) ? $img : $img2;
 
 		if( empty( $img ) ) {
@@ -534,12 +479,15 @@ class featured_video_plus_backend {
 
 
 	/**
-	 * Removes the old featured image
-	 * Used since 1.0, got it own function in 1.4
+	 * Removes the old featured image.
 	 *
 	 * @since 1.4
+	 *
+	 * @param {int} $post_id
+	 * @param {int} FVP video meta data containing 'img' with the FVP image
+	 *              attachment ID
 	 */
-	function delete_featured_video_image($post_id, $meta) {
+	function delete_featured_video_image( $post_id, $meta ) {
 		if ( empty( $meta['img'] ) )
 			return false;
 
@@ -547,38 +495,60 @@ class featured_video_plus_backend {
 		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
 
 		// Check if other posts use the image, if not we can delete it completely
-		$other = $this->super->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
+		$other = $this->general->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
 		if ( empty( $other ) ) {
 			wp_delete_attachment( $meta['img'] );
-			delete_post_meta( $meta['img'], '_fvp_image', $meta['provider'] . '?' . $meta['id'] );
 			delete_post_meta( $meta['img'], '_fvp_image_url', $meta['img_url'] );
+
+			// pre 2.0.0
+			delete_post_meta( $meta['img'], '_fvp_image', $meta['provider'] . '?' . $meta['id'] );
 		}
 	}
 
 
 	/**
 	 *
+	 * Located in backend class because all AJAX requests are handled on the
+	 * admin side of WordPress - WordPress only distinguishes between
+	 * priv and nopriv requests. This function is only called by the frontend
+	 * JavaScript.
+	 *
 	 * @since 1.7
 	 */
 	public function ajax_get_embed(){
 		header( "Content-Type: application/json" );
 
-		if ( !isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'featured-video-plus-nonce') ){
-			echo json_encode(array('success' => false, 'html' => 'invalid nonce'));
-			exit();
-		}
+		// bad request
+		if ( ! wp_verify_nonce( $_POST['nonce'], 'featured-video-plus-nonce' ) ) {
+			$response =  json_encode(array(
+				'success' => false,
+				'html'    => 'invalid nonce',
+			));
 
-		if (has_post_video($_POST['id'])){
-			$meta = get_post_meta($_POST['id'], '_fvp_video', true);
-
+		// return featured video as requested
+		} elseif ( has_post_video( $_POST['id'] ) ) {
+			$meta  = get_post_meta( $_POST['id'], '_fvp_video', true );
 			$video = get_the_post_video( $_POST['id'] );
-			echo json_encode(array('success' => 'true', 'html' => $video, 'id' => $meta['id']));
+
+			$response =  json_encode(array(
+				'success' => 'true',
+				'html'    => $video,
+				'id'      => $meta['id'],
+			));
+
+		// no video, return featured image
 		} else{
 			$image = get_the_post_thumbnail($_POST['id']);
-			echo json_encode(array('success' => 'false','html' => $image));
+
+			$response = json_encode(array(
+				'success' => 'false',
+				'html'    => $image
+			));
 		}
-		exit;
+
+		exit( $response );
 	}
+
 
 	/*
 	 * Initializes the help texts.
@@ -620,6 +590,7 @@ class featured_video_plus_backend {
 
 	}
 
+
 	/**
 	 * Adds help tabs to contextual help. WordPress 3.3+
 	 *
@@ -649,36 +620,6 @@ class featured_video_plus_backend {
 		}
 	}
 
-	/**
-	 * Adds help text to contextual help. WordPress 3.3-
-	 *
-	 * @see http://wordpress.stackexchange.com/a/35164
-	 *
-	 * @since 1.3
-	 */
-	public function help_pre_33( $contextual_help, $screen_id, $screen ) {
-		if( $screen->id != 'post' )
-			return $contextual_help;
-
-		$contextual_help .= '<hr /><h3>'.__('Featured Video','featured-video-plus').':&nbsp;'.__('Local Media', 'featured-video-plus').'</h3>';
-		$contextual_help .= $this->help_localmedia;
-		$contextual_help .= '<h3>'.__('Featured Video','featured-video-plus').':&nbsp;'.__('Valid URLs', 'featured-video-plus').'</h3>';
-		$contextual_help .= $this->help_urls;
-
-		return $contextual_help;
-	}
-
-	/**
-	 * Function to allow more upload mime types.
-	 *
-	 * @see http://codex.wordpress.org/Plugin_API/Filter_Reference/upload_mimes
-	 * @since 1.2
-	 */
-	function add_upload_mimes( $mimes=array() ) {
-		$mimes['webm'] = 'video/webm';
-
-		return $mimes;
-	}
 
 	/**
 	 * Adds a media settings link to the plugin info
@@ -694,164 +635,24 @@ class featured_video_plus_backend {
 		return $links;
 	}
 
+
 	/**
 	 * Gets post id by it's url / guid.
 	 *
 	 * @see http://codex.wordpress.org/Class_Reference/wpdb
 	 * @since 1.0
 	 *
-	 * @param string $url which url to look for
+	 * @param  {string} $url which url to look for
+	 * @return {int}    retrieved post ID
 	 */
-	function get_post_by_url($url) {
+	function get_post_by_url( $url ) {
 		global $wpdb;
-		$id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT ID FROM {$wpdb->posts} WHERE guid=%s;",
-					$url
-				)
-			);
+
+		$id = $wpdb->get_var($wpdb->prepare(
+			"SELECT ID FROM {$wpdb->posts} WHERE guid=%s;",
+			$url
+		));
+
 		return $id;
-	}
-
-
-	/**
-	 * Function used for retrieving query (?..&..) and fragment (#..) parameters
-	 * of a given URL.
-	 *
-	 * @see    http://php.net/manual/en/function.parse-url.php
-	 * @see    http://php.net/manual/en/function.parse-str.php
-	 * @since  2.0.0
-	 *
-	 * @param  {string} $url the URL to parse for parameters
-	 * @return array containing query and fragment parameters
-	 */
-	private function parse_url_parameters( $url ) {
-		// parse query
-		$query = parse_url($url, PHP_URL_QUERY);
-		$query_parameters = array();
-		parse_str($query, $query_parameters);
-
-		// parse fragment
-		$fragment = parse_url($url, PHP_URL_FRAGMENT);
-		$fragment_parameters = array();
-		parse_str($fragment, $fragment_parameters);
-
-		// merge query and fragment parameters
-		$parameters = array_merge(
-			$query_parameters,
-			$fragment_parameters
-		);
-
-		return $parameters;
-	}
-
-
-	/**
-	 * Calculates the amount of seconds depicted by a string structured like one
-	 * of the following possibilities:
-	 * 	##m##s
-	 * 	##m
-	 * 	##s
-	 * 	##
-	 *
-	 * @since  2.0.0
-	 *
-	 * @param  {string} $t
-	 * @return {int} seconds
-	 */
-	private function handle_m_s_string( $t ) {
-		$seconds = 0;
-
-		preg_match('/(\d+)m/', $t, $m);
-		if ( ! empty( $m[1] ) ) {
-			$seconds += $m[1]*60;
-		}
-
-		preg_match('/(\d+)s/', $t, $s);
-		if ( ! empty( $s[1] ) ) {
-			$seconds += $s[1];
-		}
-
-		if ( empty( $m[1] ) && empty( $s[1] ) ) {
-			$seconds += intval( $t );
-		}
-
-		return $seconds;
-	}
-
-
-	/**
-	 * Translates a source time parameter (mostly given as 't' in the
-	 * fragment (#..) of an URL in seconds to a destination parameter.
-	 *
-	 * Note: The source parameter overwrites the destination parameter!
-	 *
-	 * @since  2.0.0
-	 *
-	 * @param  {array}  $parameters Array of parameters, containing $src
-	 * @param  {string} $src        Key of the source parameter
-	 * @param  {string} $dst        Key of the destination parameter
-	 * @return {array}  Updated $parameters array
-	 */
-	private function handle_time_parameter( $parameters, $src = 't', $dst = 'start' ) {
-		if ( ! empty( $parameters[ $src ] ) ) {
-			$t = $this->handle_m_s_string( $parameters[ $src ] );
-
-			unset( $parameters[ $src ] );
-
-			if ( $t ) {
-				$parameters[ $dst ] = $t;
-			}
-		}
-
-		return $parameters;
-	}
-
-
-	/**
-	 * Only keeps key value pairs of the source $array if their keys are listed
-	 * in the $filter array.
-	 *
-	 * @since  2.0.0
-	 *
-	 * @param  {assoc} $array  Associative array to filter
-	 * @param  {array} $filter Enumerated array containing the legal keys to keep
-	 * @return {assoc} Filtered array
-	 */
-	private function array_filter_keys( $array, $filter ) {
-		$result = array();
-
-		foreach ( $filter as $key ) {
-			if ( ! empty( $array[ $key ] ) ) {
-				$result[ $key ] = $array[ $key ];
-			}
-		}
-
-		return $result;
-	}
-
-
-	/**
-	 * Utilizes the WordPress oembed class for fetching the oembed info object.
-	 *
-	 * @see   http://oembed.com/
-	 * @since 2.0.0
-	 */
-	private function oembed_fetch( $url ) {
-		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
-		$oembed = _wp_oembed_get_object();
-
-		// fetch the oEmbed data with some arbitrary big size to get the biggest
-		// thumbnail possible
-		$raw = $oembed->fetch(
-			$oembed->get_provider( $url ),
-			$url,
-			array(
-				'width'  => 4096,
-				'height' => 4096
-			)
-		);
-
-		return ! empty( $raw ) ? $raw : false;
 	}
 }

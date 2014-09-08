@@ -38,45 +38,30 @@ if (!defined('FVP_DIR'))
 if (!defined('FVP_URL'))
 	define('FVP_URL', plugins_url(FVP_NAME) . '/');
 
+include_once( FVP_DIR . 'php/class-oembed.php' );
+$oembed = new FVP_oEmbed();
+
 // init general class, located in php/general.php
 include_once( FVP_DIR . 'php/general.php' );
-$featured_video_plus = new featured_video_plus();
+$fvp_general = new featured_video_plus( $oembed );
+
 
 // include api functions which are intended to be used by developers
 include_once( FVP_DIR . 'php/functions.php' );
 
 // init translations
-add_action( 'plugins_loaded', array( &$featured_video_plus, 'language' ) );
+add_action( 'plugins_loaded', array( $fvp_general, 'language' ) );
 
 
 // only on backend / administration interface
 if( is_admin() ) {
 	// init backend class, located in php/backend.php
 	include_once( FVP_DIR . 'php/backend.php' );
-	$featured_video_plus_backend = new featured_video_plus_backend($featured_video_plus);
+	$featured_video_plus_backend = new featured_video_plus_backend( $fvp_general, $oembed );
 
 	// plugin upgrade/setup
 	include_once( FVP_DIR . '/php/upgrade.php' );
 	add_action( 'admin_init', 'featured_video_plus_upgrade' );
-
-	// admin meta box
-	add_action('admin_menu', array( &$featured_video_plus_backend, 'metabox_register' ) );
-	add_action('save_post', array( &$featured_video_plus_backend, 'metabox_save' ) );
-
-	// enqueue admin scripts and styles
-	add_action('admin_enqueue_scripts', array( &$featured_video_plus_backend, 	'enqueue' ) );
-
-	// link to media settings on plugins overview
-	add_filter('plugin_action_links', array( &$featured_video_plus_backend, 'plugin_action_link' ), 10, 2);
-
-	// add upload mime types for HTML5 videos
-	add_filter('upload_mimes', array( &$featured_video_plus_backend, 'add_upload_mimes' ) );
-
-	// post edit help
-	add_action('admin_init', array( &$featured_video_plus_backend, 'help' ) );
-	add_action( 'load-post.php', array( &$featured_video_plus_backend, 'tabs' ), 20 ); // $GLOBALS['pagenow']
-	if( get_bloginfo('version') < 3.3 )
-		add_filter( 'contextual_help', 	array( &$featured_video_plus_backend, 'help_pre_33' ), 10, 3 );
 
 	// admin settings
 	include_once( FVP_DIR . 'php/settings.php' );
@@ -86,14 +71,6 @@ if( is_admin() ) {
 	// media settings help
 	add_action('admin_init', array( &$featured_video_plus_settings, 'help' ) );
 	add_action( 'load-options-media.php', array( &$featured_video_plus_settings, 'tabs' ), 20 ); // $GLOBALS['pagenow']
-	if( get_bloginfo('version') < 3.3 )
-		add_filter( 'contextual_help', array( &$featured_video_plus_settings, 'help_pre_33' ), 10, 3 );
-
- 	if (defined('DOING_AJAX')&&DOING_AJAX){
-		add_action( 'wp_ajax_fvp_ajax', array( &$featured_video_plus_backend, 'ajax' ) );
-		add_action( 'wp_ajax_fvp_get_embed', array( &$featured_video_plus_backend, 'ajax_get_embed' ));
-		add_action( 'wp_ajax_nopriv_fvp_get_embed', array( &$featured_video_plus_backend, 'ajax_get_embed' ));
-	}
 }
 
 
@@ -101,7 +78,7 @@ if( is_admin() ) {
 if( !is_admin() ) {
 	// init frontend class, located in php/frontend.php
 	include_once( FVP_DIR . 'php/frontend.php' );
-	$featured_video_plus_frontend = new featured_video_plus_frontend($featured_video_plus);
+	$featured_video_plus_frontend = new featured_video_plus_frontend( $fvp_general );
 
 	// enqueue scripts and styles
 	add_action( 'wp_enqueue_scripts', array( &$featured_video_plus_frontend, 'enqueue' ) );
