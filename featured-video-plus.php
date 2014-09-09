@@ -44,16 +44,12 @@ require_once( FVP_DIR . 'php/class-main.php' );
 // ********************
 // BACKEND
 if( is_admin() ) {
-	include_once( FVP_DIR . 'php/class-backend.php' );
+	require_once( FVP_DIR . 'php/class-backend.php' );
 	$featured_video_plus = new FVP_Backend();
 
 	// SETTINGS
-	include_once( FVP_DIR . 'php/class-settings.php' );
+	require_once( FVP_DIR . 'php/class-settings.php' );
 	new FVP_Settings();
-
-	// UPGRADE
-	include_once( FVP_DIR . '/php/upgrade.php' );
-	add_action( 'admin_init', 'featured_video_plus_upgrade' );
 }
 
 

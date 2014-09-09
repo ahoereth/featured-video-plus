@@ -17,6 +17,8 @@ class FVP_Backend extends Featured_Video_Plus {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'admin_init',            array( $this, 'upgrade' ) );
+
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_menu',            array( $this, 'metabox_register' ) );
 		add_action( 'save_post',             array( $this, 'metabox_save' ) );
@@ -24,7 +26,6 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
 		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2);
-
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			add_action( 'wp_ajax_fvp_save',             array( $this, 'metabox_save_ajax' ) );
@@ -622,6 +623,30 @@ class FVP_Backend extends Featured_Video_Plus {
 		}
 
 		return $links;
+	}
+
+
+	/**
+	 * Initiates the upgrade (plugin installation or update) logic.
+	 *
+	 * @since 2.0.0
+	 */
+	public function upgrade() {
+		$options = $options_org = get_option( 'fvp-settings' );
+
+		// determine current version
+		if ( ! isset( $options['overwrite'] ) && ! isset( $options['usage'] ) ) {
+			$version = '0';
+		} else {
+			$version = ! empty( $options['version'] ) ? $options['version'] : '1.1';
+		}
+
+		// either execute install or upgrade logic
+		if ( $version == '0' ) {
+			include_once( FVP_DIR . 'php/install.php' );
+		} elseif ( $version != FVP_VERSION ) {
+			include_once( FVP_DIR . 'php/upgrade.php' );
+		}
 	}
 
 
