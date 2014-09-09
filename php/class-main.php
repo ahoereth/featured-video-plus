@@ -28,56 +28,50 @@ class Featured_Video_Plus {
 	public function get_the_post_video($post_id = null, $size = null) {
 		$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
-		if( !has_post_video($post_id) )
+		if( ! has_post_video( $post_id ) )
 			return false;
 
-		$meta    = get_post_meta($post_id, '_fvp_video', true);
+		$meta    = get_post_meta( $post_id, '_fvp_video', true );
 		$options = get_option( 'fvp-settings' );
+		$defaults = $options['default_args'];
 
-		$size = $this->get_size($size);
+		$size = $this->get_size( $size );
 		$size = array( 'width' => $size[0], 'height' => $size[1] );
 
-		if( ! is_admin() ) {
-			switch ( $options['autoplay'] ) {
-				case 'yes':
-					$autoplay = '1';
-					break;
-				case 'auto':
-					if (( is_single() ) ||
-						  ( defined('DOING_AJAX') && DOING_AJAX &&
-						  ( $options['usage'] == 'dynamic' || $options['usage'] == 'overlay')))
-						$autoplay = '1';
-				case 'no':
-				default:
-					$autoplay = '0';
-					break;
-			}
-		} else
-			$autoplay = '0';
+		$defaults['general']['autoplay'] = ! empty( $options['default_args']['general']['autoplay'] ) && ! is_admin();
 
 		$valid = $meta['valid'];
 
+		// provider key was 'prov' pre 2.0.0
 		$provider =   ! empty( $meta['provider'] ) ? $meta['provider'] :
 		            ( ! empty( $meta['prov'] )     ? $meta['prov']     : null );
 
 		switch ( $provider ) {
 			case 'local':
-				$videourl = wp_get_attachment_url( $meta['id'] );
-
-				$ext = pathinfo( $videourl, PATHINFO_EXTENSION );
-				if( $ext != 'mp4' && $ext != 'ogv' && $ext != 'webm' && $ext != 'ogg' )
-					break;
-
+				$videourl  = wp_get_attachment_url( $meta['id'] );
 				$videometa = wp_get_attachment_metadata( $meta['id'] );
+
+				// use massive video size/height for responsive videos because
+				// fitvids does not upscale videos
+				$width  = $size['width'];
+				$height = $size['height'];
+				if ( $options['sizing']['wmode'] == 'auto' && ! is_admin() ) {
+					$width = $videometa['width'] * 8;
+				}
+				if ( $options['sizing']['hmode'] == 'auto' && ! is_admin() ) {
+					if ( $options['sizing']['wmode'] == 'auto' ) {
+						$height = $videometa['height'] * 8;
+					} else {
+						$height = $videometa['height'] / $videometa['width'] * $videometa['height'];
+					}
+				}
 
 				$atts = array(
 					'src'      => $videourl,
-					'poster'   => ! empty( $options['local']['poster'] ) && $options['local']['poster'] && has_post_thumbnail( $post_id ) ? wp_get_attachment_url( get_post_thumbnail_id( $post_id ) ) : '',
-					'loop'     => ! empty( $options['local']['loop'] ) && $options['local']['loop'] ? 'on' : 'off',
-					'autoplay' => $autoplay == '1' ? 'on' : null,
-					'preload'  => null, // $size['height'], //$size['width'], //
-					'height'   => $options['sizing']['hmode' ] == 'auto' && ! is_admin() ? ( $options['sizing']['wmode' ] == 'auto' ? $videometa['height'] * 8 : $videometa['height'] / $videometa['width'] * $videometa['height'] ) : $size['height'],
-					'width'    => $options['sizing']['wmode' ] == 'auto' && ! is_admin() ? $videometa['width'] * 8 : $size['width'],
+					'width'    => $width,
+					'height'   => $height,
+					'autoplay' => $defaults['general']['autoplay']        ? 'on' : null,
+					'loop'     => ! empty( $defaults['general']['loop'] ) ? 'on' : null
 				);
 
 				$embed = wp_video_shortcode( $atts );
@@ -88,17 +82,22 @@ class Featured_Video_Plus {
 				$args = array_merge(
 					array( 'fvp' => $this->oembed->time ),
 					$size,
-					! empty( $meta['parameters'] ) ? $meta['parameters'] : array()
+					isset( $options['default_args']['general'] ) ? $options['default_args']['general'] : array(),
+					isset( $options['default_args'][$provider] ) ? $options['default_args'][$provider] : array(),
+					isset( $meta['parameters'] ) ? $meta['parameters'] : array()
 				);
 
 				$embed = $this->oembed->get_html( $meta['full'], $args, $provider );
 				break;
 		}
 
-		if ( ! $embed ) return '';
+		if ( empty( $embed ) )
+			return false;
 
 		$class = $options['sizing']['wmode' ] == 'auto' ? ' responsive' : '';
-		$containerstyle = isset($options['sizing']['align']) ? ' style="text-align: '.$options['sizing']['align'].'"' : '';
+		$containerstyle = isset( $options['sizing']['align'] ) ?
+			' style="text-align: '.$options['sizing']['align'].'"' : '';
+
 		$embed = "<div class=\"featured_video_plus{$class}\"{$containerstyle}>{$embed}</div>\n\n";
 		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
 
@@ -121,31 +120,42 @@ class Featured_Video_Plus {
 	protected function get_size( $size = null ) {
 		$options = get_option( 'fvp-settings' );
 
-		if( !is_array($size) ) {
-			if( isset($_wp_additional_image_sizes[$size]) )
-				$width = $_wp_additional_image_sizes[$size]['width'];
-			elseif( $size == 'thumbnail' || $size == 'thumb' )
-				$width = get_option( 'thumbnail_size_w' );
-			else if( $size == 'medium' )
-				$width = get_option( 'medium_size_w' );
-			else if( $size == 'large' )
-				$width = get_option( 'large_size_w' );
-			elseif( isset($options['sizing']['wmode']) && $options['sizing']['wmode'] == 'fixed' )
-				$width = $options['sizing']['width']; // auto width is applied by fitvids JS
-			else
-				$width = 560;
+		// fixed size requested as array( width, height )
+		if ( is_array( $size ) ) {
+			if ( ! empty( $size[0] ) && is_numeric( $size[0] ) ) {
+				$width  = $size[0];
+			}
+			if ( ! empty( $size[1] ) && is_numeric( $size[1] ) ) {
+				$height  = $size[1];
+			}
 
-		} elseif( !empty( $size[0] ) && is_numeric( $size[0] ) )
-			$width  = $size[0];
-		elseif( isset($options['sizing']['wmode']) && $options['sizing']['wmode'] == 'fixed' )
-			$width = $options['sizing']['width']; // auto width is applied by fitvids JS
-		else
-			$width = 560;
+		// size requested using a string pointing to a WordPress preset
+		} elseif ( is_string( $size ) ) {
+			global $_wp_additional_image_sizes;
+			$presets = get_intermediate_image_sizes();
+			foreach ( $presets as $preset ) {
+				if ( $preset == $size ) {
+					if ( in_array( $preset, array( 'thumbnail', 'medium', 'large' ) ) ) {
+						$width  = get_option( $preset . '_size_w' );
+						$height = get_option( $preset . '_size_h' );
+					} elseif ( isset( $_wp_additional_image_sizes[ $preset ] ) ) {
+						$width  = $_wp_additional_image_sizes[ $preset ]['width'];
+						$height = $_wp_additional_image_sizes[ $preset ]['height'];
+					}
+				}
+			}
 
-		if( isset($size[1]) && !empty( $size[1] ) && is_numeric( $size[1] ) )
-			$height = $size[1];
-		else
-			$height = $options['sizing']['hmode'] == 'auto' ? round($width / 16 * 9) : $options['sizing']['height'];
+		// single number provided - use it for the width, calculate height as 16/9
+		} elseif ( is_numeric( $size ) ) {
+			$width = $size;
+			$height = $options['sizing']['hmode'] == 'auto' ?
+				round($width / 16 * 9) : $options['sizing']['height'];
+		}
+
+		$width  = empty( $width  ) && ! empty( $options['sizing']['width']  ) ?
+			$options['sizing']['width'] : 640;
+		$height = empty( $height ) && ! empty( $options['sizing']['height'] ) ?
+			$options['sizing']['height'] : 360;
 
 		return array( $width, $height );
 	}

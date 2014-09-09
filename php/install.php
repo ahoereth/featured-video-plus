@@ -7,17 +7,17 @@ $options = array (
 	'ishome'   => false,
 
 	'sizing' => array(
-		'wmode' => 'auto',
-		'hmode' => 'auto',
-		'width' => 560,
-		'height' => 315,
+		'wmode'  => 'auto',
+		'hmode'  => 'auto',
+		'width'  => 640,
+		'height' => 360,
 	),
 
 	'default_args' => array(
-		'general' => array(),
-		'vimeo' => array(),
-		'youtube' => array(),
-		'dailymotion' => array (),
+		'general'     => array(),
+		'vimeo'       => array(),
+		'youtube'     => array(),
+		'dailymotion' => array(),
 	),
 );
 
