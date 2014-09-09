@@ -2,16 +2,9 @@
 /**
  * Class containing functions required on frontend. Enqueue scripts/styles, replace featured images by featured videos.
  *
- * @author ahoereth
- * @version 2013/04/16
- * @see ../featured_video_plus.php
- * @see featured_video_plus in general.php
  * @since 1.0
- *
- * @param featured_video_plus instance
  */
-class featured_video_plus_frontend {
-	private $featured_video_plus = null;
+class FVP_Frontend extends Featured_Video_Plus {
 
 	/**
 	 * Creates a new instace of this class, saves the featured_video_instance.
@@ -20,11 +13,13 @@ class featured_video_plus_frontend {
 	 *
 	 * @param featured_video_plus_instance required, dies without
 	 */
-	function __construct( $featured_video_plus_instance ) {
-		if ( !isset($featured_video_plus_instance) )
-			wp_die( 'featured_video_plus general instance required!', 'Error!' );
+	public function __construct() {
+		parent::__construct();
 
-		$this->featured_video_plus = $featured_video_plus_instance;
+		add_action( 'wp_enqueue_scripts',  array( $this, 'enqueue' ) );
+		add_filter( 'post_thumbnail_html', array( $this, 'filter_post_thumbnail' ), 99, 5 );
+
+		add_shortcode( 'featured-video-plus', array( $this, 'shortcode' ) );
 	}
 
 	/**
@@ -111,7 +106,7 @@ class featured_video_plus_frontend {
 	public function filter_post_thumbnail($html, $post_id, $post_thumbnail_id, $size, $attr) {
 		global $_wp_additional_image_sizes;
 
-		$size = $this->featured_video_plus->get_size();
+		$size = $this->get_size();
 
 		$options = get_option( 'fvp-settings' );
 

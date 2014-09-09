@@ -26,8 +26,11 @@ function has_post_video($post_id = null){
  * @param size
  */
 function get_the_post_video($post_id = null, $size = null) {
-	global $fvp_general;
-	return apply_filters( 'get_the_post_video_filter', $fvp_general->get_the_post_video( $post_id, $size ) );
+	global $featured_video_plus;
+	return apply_filters(
+		'get_the_post_video_filter',
+		$featured_video_plus->get_the_post_video( $post_id, $size )
+	);
 }
 
 /**

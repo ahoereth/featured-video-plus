@@ -7,9 +7,16 @@
  * @see ../featured_video_plus.php
  * @since 1.3
  */
-class featured_video_plus_settings {
+class FVP_Settings {
 	private $help_shortcode;
 	private $help_functions;
+
+	public function __construct() {
+		add_action( 'admin_init',             array( $this, 'settings_init' ) );
+		add_action( 'admin_init',             array( $this, 'help' ) );
+		add_action( 'load-options-media.php', array( $this, 'tabs' ), 20 );
+	}
+
 
 	/**
 	 * Initialises the plugin settings section, the settings fields and registers the options field and save function.

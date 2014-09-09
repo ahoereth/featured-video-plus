@@ -2,32 +2,20 @@
 /**
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
- * @author ahoereth
- * @see ../featured_video_plus.php
- * @see featured_video_plus in general.php
  * @since 1.0
  *
  * @param featured_video_plus instance
  */
-class featured_video_plus_backend {
-	private $general;
+class FVP_Backend extends Featured_Video_Plus {
 	private $help_localmedia;
 	private $help_urls;
 
 
 	/**
 	 * Creates a new instance of this class, saves the featured_video_instance and default value for the meta box input.
-	 *
-	 * @since 1.0
-	 *
-	 * @param featured_video_plus_instance required, dies without
 	 */
-	function __construct( $general, $oembed ){
-		if ( ! isset( $general ) )
-			wp_die( 'featured_video_plus general instance required!', 'Error!' );
-
-		$this->general = $general;
-		$this->oembed  = $oembed;
+	public function __construct() {
+		parent::__construct();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_menu',            array( $this, 'metabox_register' ) );
@@ -36,6 +24,7 @@ class featured_video_plus_backend {
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
 		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2);
+
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			add_action( 'wp_ajax_fvp_save',             array( $this, 'metabox_save_ajax' ) );

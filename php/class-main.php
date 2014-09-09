@@ -2,17 +2,16 @@
 /**
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
- * @author ahoereth
- * @see ../featured_video_plus.php
- * @see featured_video_plus_backend in backend.php
- * @see featured_video_plus_frontend in frontend.php
  * @since 1.0
  */
-class featured_video_plus {
-	private $oembed;
+class Featured_Video_Plus {
+	protected $oembed;
 
-	public function __construct( $oembed ) {
-		$this->oembed = $oembed;
+	public function __construct() {
+		require_once( FVP_DIR . 'php/class-oembed.php' );
+		$this->oembed = new FVP_oEmbed();
+
+		add_action( 'plugins_loaded', array( $this, 'language' ) );
 	}
 
 
@@ -106,10 +105,20 @@ class featured_video_plus {
 		return $embed;
 	}
 
+
 	/**
 	 * Determine featured video size
+	 *
+	 * @since  1.4.0
+	 *
+	 * @param  {array|string} Either a array containing a fixed width and height
+	 *                        at key 0 and 1 respectively or a string specifying
+	 *                        a predefined size:
+	 *                          thumbnail | thumb | medium | large
+	 * @return {array}        The desired video size also taking the options set
+	 *                        in the media settings into consideration.
 	 */
-	function get_size($size = null) {
+	protected function get_size( $size = null ) {
 		$options = get_option( 'fvp-settings' );
 
 		if( !is_array($size) ) {
@@ -141,6 +150,7 @@ class featured_video_plus {
 		return array( $width, $height );
 	}
 
+
 	/**
 	 * Gets a post by an meta_key meta_value pair. Returns it's post_id.
 	 *
@@ -151,7 +161,7 @@ class featured_video_plus {
 	 * @param string $meta_key which meta_key to look for
 	 * @param string $meta_value which meta_value to look for
 	 */
-	function get_post_by_custom_meta($meta_key, $meta_value = null) {
+	protected function get_post_by_custom_meta($meta_key, $meta_value = null) {
 		global $wpdb;
 		if( $meta_value !== null ) {
 			$prepared = $wpdb->prepare(
@@ -168,12 +178,13 @@ class featured_video_plus {
 		}
 	}
 
+
 	/**
 	 * Initializes i18n
 	 *
 	 * @since 1.3
 	 */
-	function language() {
+	public function language() {
 		load_plugin_textdomain('featured-video-plus', FVP_DIR . 'lng/', FVP_NAME . '/lng/' );
 	}
 
