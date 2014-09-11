@@ -152,10 +152,13 @@ class Featured_Video_Plus {
 				round($width / 16 * 9) : $options['sizing']['height'];
 		}
 
-		$width  = empty( $width  ) && ! empty( $options['sizing']['width']  ) ?
-			$options['sizing']['width'] : 640;
-		$height = empty( $height ) && ! empty( $options['sizing']['height'] ) ?
-			$options['sizing']['height'] : 360;
+		if ( empty( $width ) ) {
+			$width  = ! empty( $options['sizing']['width'] ) ? $options['sizing']['width'] : 640;
+		}
+
+		if ( empty( $height ) ) {
+			$height = ! empty( $options['sizing']['height'] ) ? $options['sizing']['height'] : 360;
+		}
 
 		return array( $width, $height );
 	}
