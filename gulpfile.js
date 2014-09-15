@@ -31,7 +31,7 @@ gulp.task('less', function () {
 
 // all *.js files in ./js are minified and saved as *.min.js
 gulp.task('js', function() {
-  gulp.src('./js/*.js')
+  gulp.src([ './js/*.js', '!./js/*.min.js' ])
     .pipe(uglify())
     .pipe(rename({
       suffix: ".min"
