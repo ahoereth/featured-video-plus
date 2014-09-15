@@ -45,7 +45,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.0
 	 */
-	public function enqueue($hook_suffix) {
+	public function enqueue( $hook_suffix ) {
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		// jQuery script for automatically resizing <textarea>s
@@ -60,7 +60,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		// general backend style
 		wp_register_style(
 			'fvp-backend',
-			FVP_URL . "css/backend$min.css",
+			FVP_URL . "styles/backend.css",
 			array(),
 			FVP_VERSION,
 			'all'
@@ -68,20 +68,6 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Settings -> Media screen: options-media.php
 		if ( $hook_suffix == 'options-media.php' ) {
-
-			// script handling color pickers and dynamically hiding/showing options
-			wp_enqueue_script(
-				'fvp-settings',
-				FVP_URL . 'js/settings.js',
-				array(
-					'jquery',
-					'iris'
-				),
-				FVP_VERSION
-			);
-
-			// color picker
-			wp_enqueue_style( 'wp-color-picker' );
 
 			// see style registration above
 			wp_enqueue_style( 'fvp-backend' );
