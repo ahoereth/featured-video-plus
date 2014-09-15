@@ -45,7 +45,10 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.0
 	 */
-	public function enqueue( $hook_suffix ) {
+	public function enqueue( $hook ) {
+		if( $hook != 'post.php' && $hook != 'post-new.php' )
+			return;
+
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		// jQuery script for automatically resizing <textarea>s
@@ -57,8 +60,26 @@ class FVP_Backend extends Featured_Video_Plus {
 			false
 		);
 
+		// script handling featured video form interactions with ajax requests etc
+		wp_enqueue_script(
+			'fvp-post',
+			FVP_URL . "js/post$min.js",
+			array(
+				'jquery',
+				'jquery.autosize'
+			),
+			FVP_VERSION
+		);
+
+		// some variables required in JS context
+		$upload_dir = wp_upload_dir();
+		wp_localize_script( 'fvp-post', 'fvp_post', array(
+			'wp_upload_dir' => $upload_dir['baseurl'],
+			'loading_gif'   => get_admin_url( null, 'images/loading.gif' )
+		));
+
 		// general backend style
-		wp_register_style(
+		wp_enqueue_style(
 			'fvp-backend',
 			FVP_URL . "styles/backend.css",
 			array(),
@@ -66,44 +87,9 @@ class FVP_Backend extends Featured_Video_Plus {
 			'all'
 		);
 
-		// Settings -> Media screen: options-media.php
-		if ( $hook_suffix == 'options-media.php' ) {
-
-			// see style registration above
-			wp_enqueue_style( 'fvp-backend' );
-
-		}
-
-		// Edit & new post screen: post.php?post=%d & post-new.php
-		if( ( $hook_suffix == 'post.php' && isset( $_GET['post'] ) ) || $hook_suffix == 'post-new.php' ) {
-
-			// script handling featured video form interactions with ajax requests etc
-			wp_enqueue_script(
-				'fvp-post',
-				FVP_URL . "js/post$min.js",
-				array(
-					'jquery',
-					'jquery.autosize'
-				),
-				FVP_VERSION
-			);
-
-			// some variables required in JS context
-			$upload_dir = wp_upload_dir();
-			wp_localize_script( 'fvp-post', 'fvp_post', array(
-				'wp_upload_dir'     => $upload_dir['baseurl'],
-				'loading_gif'       => get_admin_url( null, 'images/loading.gif' )
-			));
-
-			// HTML5 video handling
-			wp_enqueue_script( 'wp-mediaelement' );
-			wp_enqueue_style( 'wp-mediaelement' );
-
-			// see style registration above
-			wp_enqueue_style( 'fvp-backend' );
-
-		}
-
+		// HTML5 video handling
+		wp_enqueue_script( 'wp-mediaelement' );
+		wp_enqueue_style( 'wp-mediaelement' );
 	}
 
 
