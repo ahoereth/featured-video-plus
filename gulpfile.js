@@ -1,7 +1,7 @@
-var gulp = require('gulp');
-var less = require('gulp-less');
+var gulp   = require('gulp');
+var less   = require('gulp-less');
 var uglify = require('gulp-uglify');
-var rename = require("gulp-rename");
+var rename = require('gulp-rename');
 var rimraf = require('gulp-rimraf');
 
 
@@ -34,7 +34,7 @@ gulp.task('js', function() {
   gulp.src([ './js/*.js', '!./js/*.min.js' ])
     .pipe(uglify())
     .pipe(rename({
-      suffix: ".min"
+      suffix: '.min'
      }))
     .pipe(gulp.dest('./js'))
 });
