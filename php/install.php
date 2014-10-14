@@ -1,16 +1,13 @@
 <?php
 $options = array (
-	'version'  => FVP_VERSION,
-	'usage'    => 'replace',
+	'mode'     => 'replace',
 	'align'    => 'center',
 	'issingle' => false,
 	'ishome'   => false,
 
 	'sizing' => array(
-		'wmode'  => 'auto',
-		'hmode'  => 'auto',
+		'responsive' => true,
 		'width'  => 640,
-		'height' => 360,
 	),
 
 	'default_args' => array(
@@ -22,3 +19,4 @@ $options = array (
 );
 
 update_option( 'fvp-settings', $options );
+update_option( 'fvp-version', FVP_VERSION );

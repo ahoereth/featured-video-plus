@@ -25,9 +25,9 @@ switch ( $version ) {
 		$options['youtube'] = array(
 			'theme' => 'dark',
 			'color' => 'red',
-			'info' 	=> 1,
-			'rel' 	=> 1,
-			'fs' 	=> 1
+			'info'  => 1,
+			'rel'   => 1,
+			'fs'    => 1
 		);
 		$options['dailymotion'] = array(
 			'foreground'  => 'F7FFFD',
@@ -37,11 +37,11 @@ switch ( $version ) {
 			'info'        => 1
 		);
 		$options['sizing'] = array(
-			'wmode' 	=> $options['width'],
-			'hmode' 	=> $options['height'],
-			'width' 	=> 560,
-			'height' 	=> 315,
-			'align' 	=> 'left'
+			'wmode'  => $options['width'],
+			'hmode'  => $options['height'],
+			'width'  => 560,
+			'height' => 315,
+			'align'  => 'left'
 		);
 		unset( $options['width'], $options['height'] );
 
@@ -127,6 +127,28 @@ switch ( $version ) {
 	case '1.9.1':
 		$options['ishome'] = false;
 
+		$sizing = array(
+			'responsive' => ! empty( $options['sizing']['wmode'] ) ? (bool)  $options['sizing']['wmode'] : true,
+			'width'      => ! empty( $options['sizing']['width'] ) ? intval( $options['sizing']['width'] : 640,
+		);
+		unset( $options['sizing'] );
+		$options['sizing'] = $sizing;
+
+		$options['mode'] = $options['usage'];
+		$options['alignment'] = $options['align'];
+		$options['youtube']['showinfo']       = $options['youtube']['info'];
+		$options['youtube']['enablejsapi']    = $options['youtube']['jsapi'];
+		$options['youtube']['modestbranding'] = ( $options['youtube']['logo'] + 1 ) % 2;
+
+		unset(
+			$options['usage'],
+			$options['align'],
+			$options['youtube']['info'],
+			$options['youtube']['jsapi'],
+			$options['youtube']['logo'],
+			$options['version'] // now saved in its own field
+		);
+
 		// remove all previous defaults
 		$options['default_args'] = array(
 			'general' => array_diff_assoc(
@@ -159,6 +181,9 @@ switch ( $version ) {
 					'logo'  => 1,
 					'wmode' => 'auto',
 					'jsapi' => 0,
+					'showinfo' => 1,
+					'enablejsapi' => 0,
+					'modestbranding'  => 0,
 				)
 			),
 			'dailymotion' => array_diff_assoc(
@@ -182,7 +207,7 @@ switch ( $version ) {
 		);
 
 	default:
-		$options['version'] = FVP_VERSION;
 		update_option( 'fvp-settings', $options );
+		update_option( 'fvp-version', FVP_VERSION );
 		break;
 }

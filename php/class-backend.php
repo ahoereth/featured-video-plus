@@ -1,4 +1,9 @@
 <?php
+
+// dependencies
+require_once( FVP_DIR . 'php/class-html.php' );
+require_once( FVP_DIR . 'php/class-main.php' );
+
 /**
  * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
  *
@@ -170,7 +175,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$content .= "</p></div>\n";
 
 		// no featured image warning
-		$class = $has_post_image || !$has_post_video || ( isset( $options['usage'] ) && $options['usage'] == 'manual' ) ? ' fvp_hidden' : '';
+		$class = $has_post_image || ! $has_post_video || ( isset( $options['usage'] ) && $options['usage'] == 'manual' ) ? ' hidden' : '';
 		$content .= "<div id='fvp_featimg_warning' class='fvp_notice{$class}'><p class='description'>";
 		$content .= '<span style="font-weight: bold;">'.__('Featured Image').':</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
 		$content .= "</p></div>\n";
@@ -386,8 +391,8 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	function set_featured_video_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
-		$img  = $this->general->get_post_by_custom_meta('_fvp_image', $data['provider'] . '?' . $data['id']);
-		$img2 = $this->general->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
+		$img  = $this->get_post_by_custom_meta('_fvp_image', $data['provider'] . '?' . $data['id']);
+		$img2 = $this->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
 		$img = ! empty( $img ) ? $img : $img2;
 
 		if( empty( $img ) ) {
@@ -457,7 +462,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
 
 		// Check if other posts use the image, if not we can delete it completely
-		$other = $this->general->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
+		$other = $this->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
 		if ( empty( $other ) ) {
 			wp_delete_attachment( $meta['img'] );
 			delete_post_meta( $meta['img'], '_fvp_image_url', $meta['img_url'] );
@@ -604,13 +609,16 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 2.0.0
 	 */
 	public function upgrade() {
+		$version = get_option( 'fvp-version' );
 		$options = $options_org = get_option( 'fvp-settings' );
 
 		// determine current version
-		if ( ! isset( $options['overwrite'] ) && ! isset( $options['usage'] ) ) {
-			$version = '0';
-		} else {
-			$version = ! empty( $options['version'] ) ? $options['version'] : '1.1';
+		if ( empty( $version ) ) {
+			if ( ! isset( $options['overwrite'] ) && ! isset( $options['usage'] ) ) {
+				$version = '0';
+			} else {
+				$version = ! empty( $options['version'] ) ? $options['version'] : '1.1';
+			}
 		}
 
 		// either execute install or upgrade logic
