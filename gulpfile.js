@@ -7,7 +7,7 @@ var rimraf = require('gulp-rimraf');
 
 // run everything, then watch for changes
 gulp.task('default', ['less', 'js'], function() {
-  gulp.watch('./js/*.js', ['js']);
+  gulp.watch(['./js/*.js', '!./js/*.min.js'], ['js']);
   gulp.watch('./styles/*.less', ['less']);
 });
 
