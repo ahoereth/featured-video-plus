@@ -368,12 +368,11 @@ class FVP_Settings {
 			'word'   => '([a-z]*)',
 			'string' => '(\w*)',
 			'hex'    => '#?([0-9a-f]{3}[0-9a-f]{0,3})',
-
 		);
 
 		$datatypes = array(
-			'mode'      => $patterns['word'],
-			'condition' => "single|home",
+			'mode'      => "(replace|dynamic|overlay|manual)",
+			'condition' => "(single|home)",
 			'alignment' => "(left|center|right)",
 			'sizing' => array(
 				'responsive' => 'BOOLEAN',
@@ -431,7 +430,7 @@ class FVP_Settings {
 				$validated[$key] = (bool) $src[$key];
 			} else {
 				preg_match( '/' . $value . '/i', $src[$key], $match );
-				if ( isset( $match[1] ) ) {
+				if ( ! empty( $match[1] ) || '0' === $match[1] ) {
 					$validated[$key] = $match[1];
 				}
 			}
