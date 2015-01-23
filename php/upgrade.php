@@ -100,25 +100,6 @@ switch ( $version ) {
 			$options['local']['controls']
 		);
 
-		// check all featured video post metas
-		global $featured_video_plus;
-		$ids = $featured_video_plus->get_post_by_custom_meta( '_fvp_video' );
-		foreach ( $ids as $id ) {
-			$meta = $meta_old = maybe_unserialize( get_post_meta( $id, '_fvp_video', true ) );
-			// update video data ('attr' to 'time') and fix serialization, was in case '1.4'
-			if ( isset( $meta['attr'] ) ) {
-				$meta['time'] = $meta['attr'];
-				unset( $meta['attr'] );
-			}
-			// remove 'sec_id', only one local video file is used now.
-			if ( isset( $meta['sec_id'] ) ) {
-				unset( $meta['sec_id'] );
-			}
-			if ( $meta != $meta_old ) {
-				update_post_meta( $id, '_fvp_video', $meta );
-			}
-		}
-
 
 	case '1.9':
 		$options['issingle'] = false;
@@ -128,8 +109,8 @@ switch ( $version ) {
 		$options['ishome'] = false;
 
 		$sizing = array(
-			'responsive' => ! empty( $options['sizing']['wmode'] ) ? (bool)  $options['sizing']['wmode'] : true,
-			'width'      => ! empty( $options['sizing']['width'] ) ? intval( $options['sizing']['width'] : 640,
+			'responsive' => ! empty( $options['sizing']['wmode'] ) ? (bool)  $options['sizing']['wmode']   : true,
+			'width'      => ! empty( $options['sizing']['width'] ) ? intval( $options['sizing']['width'] ) : 640,
 		);
 		unset( $options['sizing'] );
 		$options['sizing'] = $sizing;
@@ -205,6 +186,30 @@ switch ( $version ) {
 			$options['dailymotion'],
 			$options['local']
 		);
+
+		// check all featured video post metas
+		global $featured_video_plus;
+		$ids = $featured_video_plus->get_post_by_custom_meta( '_fvp_video' );
+		foreach ( $ids as $id ) {
+			$meta = $meta_old = maybe_unserialize( get_post_meta( $id, '_fvp_video', true ) );
+			if ( isset( $meta['attr'] ) ) {
+				$meta['time'] = $meta['attr'];
+			}
+
+			if ( isset( $meta['prov'] ) ) {
+				$meta['provider'] = $meta['prov'];
+			}
+
+			unset(
+				$meta['sec_id'],
+				$meta['attr'],
+				$meta['prov']
+			);
+
+			if ( $meta != $meta_old ) {
+				update_post_meta( $id, '_fvp_video', $meta );
+			}
+		}
 
 	default:
 		update_option( 'fvp-settings', $options );

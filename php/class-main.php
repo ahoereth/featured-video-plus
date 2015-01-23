@@ -35,43 +35,28 @@ class Featured_Video_Plus {
 		$options = get_option( 'fvp-settings' );
 		$defaults = $options['default_args'];
 
-		$size = $this->get_size( $size );
-		$size = array( 'width' => $size[0], 'height' => $size[1] );
+		$defaults['general']['autoplay'] =
+			! empty( $defaults['general']['autoplay'] ) && ! is_admin();
 
-		$defaults['general']['autoplay'] = ! empty( $options['default_args']['general']['autoplay'] ) && ! is_admin();
+		$responsive = $options['sizing']['responsive'] && ! is_admin();
 
-		$valid = $meta['valid'];
-
-		// provider key was 'prov' pre 2.0.0
-		$provider =   ! empty( $meta['provider'] ) ? $meta['provider'] :
-		            ( ! empty( $meta['prov'] )     ? $meta['prov']     : null );
-
+		$provider = ! empty( $meta['provider'] ) ? $meta['provider'] : null;
 		switch ( $provider ) {
 			case 'local':
-				$videourl  = wp_get_attachment_url( $meta['id'] );
-				$videometa = wp_get_attachment_metadata( $meta['id'] );
-
-				// use massive video size/height for responsive videos because
-				// fitvids does not upscale videos
-				$width  = $size['width'];
-				$height = $size['height'];
-				if ( $options['sizing']['wmode'] == 'auto' && ! is_admin() ) {
-					$width = $videometa['width'] * 8;
-				}
-				if ( $options['sizing']['hmode'] == 'auto' && ! is_admin() ) {
-					if ( $options['sizing']['wmode'] == 'auto' ) {
-						$height = $videometa['height'] * 8;
-					} else {
-						$height = $videometa['height'] / $videometa['width'] * $videometa['height'];
-					}
-				}
+				$meta = wp_get_attachment_metadata( $meta['id'] );
+				$size = $this->get_size( $size, array(
+					'width'  => $meta['width'],
+					'height' => $meta['height'],
+				));
 
 				$atts = array(
-					'src'      => $videourl,
-					'width'    => $width,
-					'height'   => $height,
+					'src'      => wp_get_attachment_url( $meta['id'] ),
 					'autoplay' => $defaults['general']['autoplay']        ? 'on' : null,
-					'loop'     => ! empty( $defaults['general']['loop'] ) ? 'on' : null
+					'loop'     => ! empty( $defaults['general']['loop'] ) ? 'on' : null,
+					// use massive video size/height for responsive videos because
+					// fitvids does not upscale videos
+					'width'    => $responsive ? $size['width' ] * 8 : $size['width'],
+					'height'   => $responsive ? $size['height'] * 8 : $size['height'],
 				);
 
 				$embed = wp_video_shortcode( $atts );
@@ -79,6 +64,8 @@ class Featured_Video_Plus {
 
 
 			default:
+				$size = $this->get_size( $size );
+
 				$args = array_merge(
 					array( 'fvp' => $this->oembed->time ),
 					$size,
@@ -94,9 +81,9 @@ class Featured_Video_Plus {
 		if ( empty( $embed ) )
 			return false;
 
-		$class = $options['sizing']['wmode' ] == 'auto' ? ' responsive' : '';
-		$containerstyle = isset( $options['sizing']['align'] ) ?
-			' style="text-align: '.$options['sizing']['align'].'"' : '';
+		$class = $options['sizing']['responsive'] ? ' responsive' : '';
+		$containerstyle = isset( $options['alignment'] ) ?
+			' style="text-align: '.$options['alignment'].'"' : '';
 
 		$embed = "<div class=\"featured_video_plus{$class}\"{$containerstyle}>{$embed}</div>\n\n";
 		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
@@ -117,17 +104,15 @@ class Featured_Video_Plus {
 	 * @return {array}        The desired video size also taking the options set
 	 *                        in the media settings into consideration.
 	 */
-	protected function get_size( $size = null ) {
+	protected function get_size( $size = null, $original ) {
 		$options = get_option( 'fvp-settings' );
 
-		// fixed size requested as array( width, height )
+		// fixed size requested as array( width => #, height => # ) or array( #, # )
 		if ( is_array( $size ) ) {
-			if ( ! empty( $size[0] ) && is_numeric( $size[0] ) ) {
-				$width  = $size[0];
-			}
-			if ( ! empty( $size[1] ) && is_numeric( $size[1] ) ) {
-				$height  = $size[1];
-			}
+				$width = is_numeric( $size['width'] ) ? $size['width'] :
+					( is_numeric( $size[0] ) ? $size[0] : null );
+				$height = is_numeric( $size['height'] ) ? $size['height'] :
+					( is_numeric( $size[1] ) ? $size[1] : null );
 
 		// size requested using a string pointing to a WordPress preset
 		} elseif ( is_string( $size ) ) {
@@ -145,22 +130,27 @@ class Featured_Video_Plus {
 				}
 			}
 
-		// single number provided - use it for the width, calculate height as 16/9
+		// single number provided - use it for the width
 		} elseif ( is_numeric( $size ) ) {
 			$width = $size;
-			$height = $options['sizing']['hmode'] == 'auto' ?
-				round($width / 16 * 9) : $options['sizing']['height'];
 		}
 
 		if ( empty( $width ) ) {
-			$width  = ! empty( $options['sizing']['width'] ) ? $options['sizing']['width'] : 640;
+			$width = ! empty( $options['sizing']['width'] ) ?
+				$options['sizing']['width'] : 1280;
 		}
 
 		if ( empty( $height ) ) {
-			$height = ! empty( $options['sizing']['height'] ) ? $options['sizing']['height'] : 360;
+			// calculate height relative to width
+			$height = ! empty( $original ) ?
+				round($original['height'] * ($width / $original['width'])) :
+				$height = $width / 16 * 9;
 		}
 
-		return array( $width, $height );
+		return array(
+			'width'  => $width,
+			'height' => $height,
+		);
 	}
 
 

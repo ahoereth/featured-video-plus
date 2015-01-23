@@ -181,7 +181,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$content .= "</p></div>\n";
 
 		// set as featured image
-		$class = isset($meta['prov']) && $meta['prov'] == 'local' || !$has_post_video || ($has_post_image && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
+		$class = isset($meta['provider']) && $meta['provider'] == 'local' || ! $has_post_video || ($has_post_image && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
 		$content .= sprintf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a class="fvp_hidden" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
 
 		// current theme does not support Featured Images warning
@@ -369,6 +369,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				}
 
 				$data = array(
+					'provider' => 'local',
 					'id'  => $this->get_post_by_url( $url ),
 					'url' => $url
 				);
@@ -523,9 +524,8 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.3
 	 */
 	public function help() {
-		$mediahref = (get_bloginfo('version') >= 3.5) ? '<a href="#" class="insert-media" title="Add Media">' : '<a href="media-upload.php?post_id=4&amp;type=video&amp;TB_iframe=1&amp;width=640&amp;height=207" id="add_video" class="thickbox" title="Add Video">';
-		$general   = (get_bloginfo('version') >= 3.6) ? sprintf( __('To use local videos, copy the <code>Link To Media File</code> from your %sMedia Library%s and paste it into the text field.', 'featured-video-plus'), $mediahref, '</a>' ) :
-		                                                sprintf( __('To use local videos as Featured Videos WordPress 3.6 or higher is required.', 'featured-video-plus'), $mediahref, '</a>' );
+		$mediahref = '<a href="#" class="insert-media" title="Add Media">';
+		$general   = sprintf( __('To use local videos, copy the <code>Link To Media File</code> from your %sMedia Library%s and paste it into the text field.', 'featured-video-plus'), $mediahref, '</a>' );
 
 		$this->help_localmedia = '
 <h4 style="margin-bottom: 0;"></h4>
