@@ -8,9 +8,9 @@ Author URI: http://yrnxt.com/
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-Requires at least: 3.2
-Tested up to: 4.0
-Stable tag: 1.9.1
+Requires at least: 3.6
+Tested up to: 4.1
+Stable tag: 2.0.0
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo, Dailymotion.
 
@@ -63,6 +63,11 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 
 == Changelog ==
+
+
+= 2.0.0: 2015-01-xx =
+* __Requires WordPress 3.6 or higher now!__
+* Complete rewrite
 
 
 = 1.9.1: 2014-09-06 =
