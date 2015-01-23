@@ -104,15 +104,17 @@ class Featured_Video_Plus {
 	 * @return {array}        The desired video size also taking the options set
 	 *                        in the media settings into consideration.
 	 */
-	protected function get_size( $size = null, $original ) {
+	protected function get_size( $size = null, $original = null ) {
 		$options = get_option( 'fvp-settings' );
 
 		// fixed size requested as array( width => #, height => # ) or array( #, # )
 		if ( is_array( $size ) ) {
-				$width = is_numeric( $size['width'] ) ? $size['width'] :
-					( is_numeric( $size[0] ) ? $size[0] : null );
-				$height = is_numeric( $size['height'] ) ? $size['height'] :
-					( is_numeric( $size[1] ) ? $size[1] : null );
+				$width = isset( $size['width'] ) && is_numeric( $size['width'] ) ?
+					$size['width'] :
+					( isset( $size[0] ) && is_numeric( $size[0] ) ? $size[0] : null );
+				$height = isset( $size['height'] ) &&is_numeric( $size['height'] ) ?
+					$size['height'] :
+					( isset( $size[1] ) && is_numeric( $size[1] ) ? $size[1] : null );
 
 		// size requested using a string pointing to a WordPress preset
 		} elseif ( is_string( $size ) ) {

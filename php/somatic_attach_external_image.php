@@ -15,7 +15,6 @@
  */
 function somatic_attach_external_image( $url = null, $post_id = null, $thumb = null, $filename = null, $post_data = array() ) {
 	if ( !$url || !$post_id ) return new WP_Error('missing', "Need a valid URL and post ID...");
-	if ( !self::array_is_associative( $post_data ) ) return new WP_Error('missing', "Must pass post data as associative array...");
 
 	// Download file to temp location, returns full server path to temp file, ex; /home/somatics/public_html/mysite/wp-content/26192277_640.tmp MUST BE FOLLOWED WITH AN UNLINK AT SOME POINT
 	$tmp = download_url( $url );

@@ -57,12 +57,12 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		// Is responsive video functionality required? Only when width is set to
 		// 'auto' and display mode is not set to overlay.
-		if ( $options['sizing']['wmode'] == 'auto' && $options['usage'] != 'overlay' ) {
+		if ( $options['sizing']['responsive'] && $options['mode'] != 'overlay' ) {
 			$deps[] = 'jquery.fitvids';
 		}
 
 		// Is modal functionality required?
-		if ( $options['usage'] == 'overlay' ) {
+		if ( $options['mode'] == 'overlay' ) {
 			$deps[] = 'jquery.domwindow';
 		}
 
@@ -75,12 +75,12 @@ class FVP_Frontend extends Featured_Video_Plus {
 		);
 
 		// some context for JS
-		wp_localize_script( 'fvp-frontend', 'fvp_frontend', array(
+		wp_localize_script( 'fvp-frontend', 'fvpdata', array(
 			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'featured-video-plus-nonce' ),
-			'fitvids'  => ! empty( $options['sizing']['wmode'] ) && $options['sizing']['wmode'] == 'auto',
-			'dynamic'  => ! empty( $options['usage'] )           && $options['usage']           == 'dynamic',
-			'overlay'  => ! empty( $options['usage'] )           && $options['usage']           == 'overlay',
+			'fitvids'  => ! empty( $options['sizing']['responsive'] ) && $options['sizing']['responsive'],
+			'dynamic'  => ! empty( $options['mode'] ) && $options['mode'] == 'dynamic',
+			'overlay'  => ! empty( $options['mode'] ) && $options['mode'] == 'overlay',
 			'opacity'  => '75',
 			'loadingw' => FVP_URL . 'styles/loading_w.gif',
 			'loadingb' => FVP_URL . 'styles/loading_b.gif'
@@ -115,16 +115,16 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$options = get_option( 'fvp-settings' );
 
 		if ( ( isset($options['issingle']) && $options['issingle'] && ! is_single()) ||
-		     ( $options['usage']=='manual' || !has_post_video($post_id) ) )
+		     ( $options['mode']=='manual' || !has_post_video($post_id) ) )
 			return $html;
 
-		elseif ($options['usage']=='replace')
+		elseif ($options['mode']=='replace')
 			return get_the_post_video($post_id, $size);
 
-		elseif ($options['usage']=='overlay')
+		elseif ($options['mode']=='overlay')
 			return '<a href="#fvp_'.$post_id.'" class="fvp_overlay" onclick="return false;">'.$html.'</a><div id="fvp_'.$post_id.'" style="display: none;"></div>';
 
-		else//if ($options['usage']=='dynamic')
+		else//if ($options['mode']=='dynamic')
 			return '<a href="#fvp_'.$post_id.'" id="fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
 
 	}

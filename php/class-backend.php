@@ -175,7 +175,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$content .= "</p></div>\n";
 
 		// no featured image warning
-		$class = $has_post_image || ! $has_post_video || ( isset( $options['usage'] ) && $options['usage'] == 'manual' ) ? ' hidden' : '';
+		$class = $has_post_image || ! $has_post_video || ( isset( $options['mode'] ) && $options['mode'] == 'manual' ) ? ' hidden' : '';
 		$content .= "<div id='fvp_featimg_warning' class='fvp_notice{$class}'><p class='description'>";
 		$content .= '<span style="font-weight: bold;">'.__('Featured Image').':</span>&nbsp;'.__('For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus');
 		$content .= "</p></div>\n";
@@ -185,7 +185,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$content .= sprintf('<p id="fvp_set_featimg_box"'.$class.'>'."\n\t".'<span id="fvp_set_featimg_input">'."\n\t\t".'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'."\n\t\t".'<label for="fvp_set_featimg">&nbsp;%s</label>'."\n\t".'</span>'."\n\t".'<a class="fvp_hidden" id="fvp_set_featimg_link" href="#">%s</a>'."\n".'</p>'."\n", __('Set as Featured Image', 'featured-video-plus'), __('Set as Featured Image', 'featured-video-plus') );
 
 		// current theme does not support Featured Images warning
-		if( !current_theme_supports('post-thumbnails') && $options['usage'] != 'manual' ) {
+		if( !current_theme_supports('post-thumbnails') && $options['mode'] != 'manual' ) {
 			$content .= '<p class="fvp_warning description"><span style="font-weight: bold;">'.__('The current theme does not support Featured Images', 'featured-video-plus').':</span>&nbsp;'.sprintf(__('To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.', 'featured-video-plus'), '<a href="'.get_admin_url(null, '/options-media.php').'">', '</a>' )."</p>\n\n";
 		}
 
@@ -614,7 +614,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// determine current version
 		if ( empty( $version ) ) {
-			if ( ! isset( $options['overwrite'] ) && ! isset( $options['usage'] ) ) {
+			if ( ! isset( $options['overwrite'] ) && ! isset( $options['mode'] ) ) {
 				$version = '0';
 			} else {
 				$version = ! empty( $options['version'] ) ? $options['version'] : '1.1';

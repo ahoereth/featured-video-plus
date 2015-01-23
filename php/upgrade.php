@@ -117,8 +117,8 @@ switch ( $version ) {
 
 		$options['mode'] = $options['usage'];
 		$options['alignment'] = $options['align'];
-		$options['youtube']['showinfo']       = $options['youtube']['info'];
-		$options['youtube']['enablejsapi']    = $options['youtube']['jsapi'];
+		$options['youtube']['showinfo'] = $options['youtube']['info'];
+		$options['youtube']['enablejsapi'] = $options['youtube']['jsapi'];
 		$options['youtube']['modestbranding'] = ( $options['youtube']['logo'] + 1 ) % 2;
 
 		unset(
@@ -143,7 +143,7 @@ switch ( $version ) {
 				)
 			),
 			'vimeo' => array_diff_assoc(
-				$options['vimeo'],
+				! empty( $options['vimeo'] ) ? $options['vimeo'] : array(),
 				array(
 					'portrait' => 0,
 					'title'    => 1,
@@ -152,7 +152,7 @@ switch ( $version ) {
 				)
 			),
 			'youtube' => array_diff_assoc(
-				$options['youtube'],
+				! empty( $options['youtube'] ) ? $options['youtube'] : array(),
 				array(
 					'theme' => 'dark',
 					'color' => 'red',
@@ -168,7 +168,7 @@ switch ( $version ) {
 				)
 			),
 			'dailymotion' => array_diff_assoc(
-				$options['dailymotion'],
+				! empty( $options['dailymotion'] ) ? $options['dailymotion'] : array(),
 				array(
 					'foreground'  => 'F7FFFD',
 					'highlight'   => 'FFC300',

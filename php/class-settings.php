@@ -92,7 +92,7 @@ class FVP_Settings {
 	 * @since 1.7
 	 */
 	public function mode() {
-		$options  = get_option( 'fvp-settings' );
+		$options = get_option( 'fvp-settings' );
 
 		echo FVP_HTML::radios(
 			'fvp-settings[mode]',
