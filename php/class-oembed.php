@@ -1,65 +1,7 @@
 <?php
 /**
- * API for fetching the HTML to embed remote content based on a provided URL.
- * Used internally by the {@link WP_Embed} class, but is designed to be generic.
- *
- * Supported providers:
- *
- * | ------------ | -------------------- | ----- | --------- |
- * |   Provider   |        Flavor        |  SSL  |   Since   |
- * | ------------ | -------------------- | ----- | --------- |
- * | Blip         | blip.tv              |       | 2.9.0     |
- * | Dailymotion  | dailymotion.com      |  Yes  | 2.9.0     |
- * | Flickr       | flickr.com           |  Yes  | 2.9.0     |
- * | Hulu         | hulu.com             |  Yes  | 2.9.0     |
- * | Photobucket  | photobucket.com      |       | 2.9.0     |
- * | Revision3    | revision3.com        |       | 2.9.0     |
- * | Scribd       | scribd.com           |  Yes  | 2.9.0     |
- * | Vimeo        | vimeo.com            |  Yes  | 2.9.0     |
- * | WordPress.tv | wordpress.tv         |  Yes  | 2.9.0     |
- * | YouTube      | youtube.com/watch    |  Yes  | 2.9.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Funny or Die | funnyordie.com       |  Yes  | 3.0.0     |
- * | Polldaddy    | polldaddy.com        |  Yes  | 3.0.0     |
- * | SmugMug      | smugmug.com          |  Yes  | 3.0.0     |
- * | YouTube      | youtu.be             |  Yes  | 3.0.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Twitter      | twitter.com          |  Yes  | 3.4.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Instagram    | instagram.com        |       | 3.5.0     |
- * | Instagram    | instagr.am           |       | 3.5.0     |
- * | Slideshare   | slideshare.net       |  Yes  | 3.5.0     |
- * | SoundCloud   | soundcloud.com       |  Yes  | 3.5.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Dailymotion  | dai.ly               |       | 3.6.0     |
- * | Flickr       | flic.kr              |  Yes  | 3.6.0     |
- * | Rdio         | rdio.com             |  Yes  | 3.6.0     |
- * | Rdio         | rd.io                |  Yes  | 3.6.0     |
- * | Spotify      | spotify.com          |  Yes  | 3.6.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Imgur        | imgur.com            |  Yes  | 3.9.0     |
- * | Meetup.com   | meetup.com           |  Yes  | 3.9.0     |
- * | Meetup.com   | meetu.ps             |  Yes  | 3.9.0     |
- * | ------------ | -------------------- | ----- | --------- |
- * | Animoto      | animoto.com          |  Yes  | 4.0.0     |
- * | Animoto      | video214.com         |  Yes  | 4.0.0     |
- * | CollegeHumor | collegehumor.com     |  Yes  | 4.0.0     |
- * | Issuu        | issuu.com            |  Yes  | 4.0.0     |
- * | Mixcloud     | mixcloud.com         |  Yes  | 4.0.0     |
- * | Polldaddy    | poll.fm              |  Yes  | 4.0.0     |
- * | TED          | ted.com              |  Yes  | 4.0.0     |
- * | YouTube      | youtube.com/playlist |  Yes  | 4.0.0     |
- * | ------------ | -------------------- | ----- | --------- |
- *
- * No longer supported providers:
- *
- * | ------------ | -------------------- | ----- | --------- | --------- |
- * |   Provider   |        Flavor        |  SSL  |   Since   |  Removed  |
- * | ------------ | -------------------- | ----- | --------- | --------- |
- * | Qik          | qik.com              |  Yes  | 2.9.0     | 3.9.0     |
- * | ------------ | -------------------- | ----- | --------- | --------- |
- * | Viddler      | viddler.com          |  Yes  | 2.9.0     | 4.0.0     |
- * | ------------ | -------------------- | ----- | --------- | --------- |
+ * Class providing additional functionality to WordPress' native oEmbed
+ * functionality.
  *
  * @link http://codex.wordpress.org/oEmbed oEmbed Codex Article
  * @link http://oembed.com/ oEmbed Homepage
@@ -74,6 +16,7 @@ class FVP_oEmbed {
 	public $time;
 
 	public function __construct() {
+		// Does not extend oEmbed in order to not initialize it a second time.
 		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
 		$this->super = _wp_oembed_get_object();
 
@@ -81,6 +24,19 @@ class FVP_oEmbed {
 
 		add_filter('oembed_fetch_url', array($this, 'additional_arguments'), 10, 3);
 	}
+
+
+	/**
+	 * Call methods from 'super' class if they don't exist here.
+	 *
+	 * @param  {string} $method
+	 * @param  {array}  $args
+	 * @return {}               Whatever the other method returns.
+	 */
+	public function __call( $method, $args ) {
+		return call_user_func_array( array( $this->super, $method ), $args );
+	}
+
 
 	/**
 	 * Utilizes the WordPress oembed class for fetching the oembed info object.
@@ -90,7 +46,7 @@ class FVP_oEmbed {
 	 */
 	public function request( $url ) {
 		// fetch the oEmbed data with some arbitrary big size to get the biggest
-		// thumbnail possible
+		// thumbnail possible.
 		$raw = $this->super->fetch(
 			$this->super->get_provider( $url ),
 			$url,
@@ -115,7 +71,7 @@ class FVP_oEmbed {
 
 		// Some providers do not provide it's player API to oEmbed requests,
 		// therefore the plugin needs to manually interfere with their iframe's
-		// source URL
+		// source URL..
 		switch ( $provider ) {
 
 			// YouTube.com
@@ -155,7 +111,7 @@ class FVP_oEmbed {
 		// Only oEmbed requests from inside the plugin are allowed to have
 		// additional parameters!
 		if ( ! empty( $args['fvp'] ) && $args['fvp'] == $this->time ) {
-			// unset the plugin internal and default arguments
+			// Unset plugin internal and default arguments.
 			unset(
 				$args['fvp'],
 				$args['width'],
