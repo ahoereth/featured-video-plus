@@ -392,9 +392,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	function set_featured_video_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
-		$img  = $this->get_post_by_custom_meta('_fvp_image', $data['provider'] . '?' . $data['id']);
-		$img2 = $this->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
-		$img = ! empty( $img ) ? $img : $img2;
+		$img = $this->get_post_by_custom_meta('_fvp_image_url', $data['img_url']);
 
 		if( empty( $img ) ) {
 
@@ -430,12 +428,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 			// save picture metadata
 			wp_update_attachment_metadata( $img, $img_meta );
-
-			// TODO: HANDLE THIS FROM OLD VERSIONS!
-			//update_post_meta( $img, '_fvp_image', $data['provider'] . '?' . $data['id'] );
-
-			$url_without_protocol = str_replace( parse_url( $data['img_url'], PHP_URL_SCHEME ), '', $data['img_url'] );
-			update_post_meta( $img, '_fvp_image_url', $url_without_protocol );
+			update_post_meta( $img, '_fvp_image_url', $data['img_url'] );
 		}
 
 		if ( ! has_post_thumbnail( $post_id ) ) {
