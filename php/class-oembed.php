@@ -311,10 +311,10 @@ class FVP_oEmbed {
 	/**
 	 * Calculates the amount of seconds depicted by a string structured like one
 	 * of the following possibilities:
-	 * 	##m##s
-	 * 	##m
-	 * 	##s
-	 * 	##
+	 *   ##m##s
+	 *   ##m
+	 *   ##s
+	 *   ##
 	 *
 	 * @since  2.0.0
 	 *

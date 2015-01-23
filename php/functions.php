@@ -78,8 +78,8 @@ function get_the_post_video_image($post_id = null, $size = null) {
 		return false;
 
 	global $featured_video_plus;
-	$id 	= $featured_video_plus->get_post_by_custom_meta('_fvp_image', $meta['prov'] . '?' . $meta['id']);
-	$size 	= $featured_video_plus->get_size($size);
+	$id   = $featured_video_plus->get_post_by_custom_meta('_fvp_image', $meta['prov'] . '?' . $meta['id']);
+	$size = $featured_video_plus->get_size($size);
 
 	return wp_get_attachment_image($id, $size);
 }
@@ -99,7 +99,7 @@ function get_the_post_video_url($post_id, $fallback = false){
 	if (!isset($meta) || empty($meta['full']))
 		return false;
 
-	if (isset($meta['prov']) && $meta['prov'] == 'local')
+	if (isset($meta['provider']) && $meta['provider'] == 'local')
 		if (!$fallback)
 			return wp_get_attachment_url($meta['id']);
 		else

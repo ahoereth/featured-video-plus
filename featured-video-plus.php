@@ -40,12 +40,9 @@ if (!defined('FVP_URL'))
 	define('FVP_URL', plugins_url(FVP_NAME) . '/');
 
 
-require_once( FVP_DIR . 'php/class-main.php' );
-
-
 // ********************
 // BACKEND
-if( is_admin() ) {
+if ( is_admin() ) {
 	require_once( FVP_DIR . 'php/class-backend.php' );
 	$featured_video_plus = new FVP_Backend();
 
@@ -57,7 +54,7 @@ if( is_admin() ) {
 
 // ********************
 // FRONTEND
-if( ! is_admin() ) {
+if ( ! is_admin() ) {
 	require_once( FVP_DIR . 'php/class-frontend.php' );
 	$featured_video_plus = new FVP_Frontend();
 }

@@ -1,4 +1,8 @@
 <?php
+
+// dependencies
+require_once( FVP_DIR . 'php/class-main.php' );
+
 /**
  * Class containing functions required on frontend. Enqueue scripts/styles, replace featured images by featured videos.
  *
@@ -78,14 +82,14 @@ class FVP_Frontend extends Featured_Video_Plus {
 			'dynamic'  => ! empty( $options['usage'] )           && $options['usage']           == 'dynamic',
 			'overlay'  => ! empty( $options['usage'] )           && $options['usage']           == 'overlay',
 			'opacity'  => '75',
-			'loadingw' => FVP_URL . 'css/loading_w.gif',
-			'loadingb' => FVP_URL . 'css/loading_b.gif'
+			'loadingw' => FVP_URL . 'styles/loading_w.gif',
+			'loadingb' => FVP_URL . 'styles/loading_b.gif'
 		));
 
 		// general frontend styles
 		wp_enqueue_style(
 			'fvp-frontend',
-			FVP_URL . 'css/frontend.css',
+			FVP_URL . 'styles/frontend.css',
 			array(),
 			FVP_VERSION
 		);
