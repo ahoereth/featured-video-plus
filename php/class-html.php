@@ -115,6 +115,12 @@ class FVP_HTML {
 			return '';
 		}
 
+		if ( is_string( $attributes ) ) {
+			$attributes = array(
+				'value' => $attributes,
+			);
+		}
+
 		$input = self::html(
 			'input',
 			array_merge( (array) $attributes, array(
@@ -326,7 +332,7 @@ class FVP_HTML {
 			array(
 				'value' => $default,
 				'data-default' => $default,
-				'class' => 'wpforms-colorpicker',
+				'class' => self::$name . '-colorpicker',
 			)
 		);
 

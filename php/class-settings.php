@@ -15,23 +15,8 @@ class FVP_Settings {
 	public function __construct() {
 		FVP_HTML::add_screens( self::$hook );
 
-		add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue' ) );
 		add_action( 'admin_init',             array( $this, 'settings_init' ) );
 		add_action( 'load-options-media.php', array( $this, 'help' ), 20 );
-	}
-
-
-	public function enqueue( $hook ) {
-		if ( self::$hook != $hook )
-			return;
-
-		// script handling color pickers and dynamically hiding/showing options
-		wp_enqueue_script(
-			'fvp-settings',
-			FVP_URL . 'js/settings.js',
-			array( 'jquery' ),
-			FVP_VERSION
-		);
 	}
 
 
@@ -280,6 +265,19 @@ class FVP_Settings {
 						'enablejsapi' => __( 'Enable JavaScript API', 'featured-video-plus' ),
 					),
 					$youtube
+				),
+				FVP_HTML::html(
+					'strong',
+					'wmode:'
+				),
+				FVP_HTML::radios(
+					'fvp-settings[default_args][youtube][wmode]',
+					array(
+						'auto' => 'auto',
+						'opaque' => 'opaque',
+						'transparent' => 'transparent',
+					),
+					! empty( $youtube['wmode'] ) ? $youtube['wmode'] : null
 				)
 			),
 
@@ -396,7 +394,7 @@ class FVP_Settings {
 					'rel'            => $patterns['digit'],
 					'showinfo'       => $patterns['digit'],
 					'enablejsapi'    => $patterns['digit'],
-					//'wmode'          => $patterns['word'],
+					'custom'         => $patterns['string']
 				),
 				'dailymotion' => array(
 					'syndication' => $patterns['number'],

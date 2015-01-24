@@ -23,13 +23,16 @@ This plugin enables you to define Featured Videos, which can automatically be di
 2. insert the `[featured-video-plus]`-__Shortcode__ in your posts or
 3. manually make use of the __PHP functions__ in your theme's source files.
 
-Instead of option 1 the plugin can also request the videos using an AJAX request when the Featured Image is clicked. This reduces load times and gives you the flexibility to display videos in a lightbox to ensure your theme does not break.
+Additionally you can choose to only show the video after the user clicks the original image - either in a lightbox or inline.
 
-See the theme in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). Also take a look at the [Garvan](http://www.web2feel.com/garvan/) video blogging theme which makes optimal use of this plugin.
+See the plugin in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). Also take a look at the [Garvan](http://www.web2feel.com/garvan/) video blogging theme which makes optimal use of this plugin.
 
-Beside your __Local Videos__ (WordPress 3.6+ required) you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618).
+Beside your __Local Videos__ you can use videos from __YouTube__, __Vimeo__ and __Dailymotion__. If you miss a certain video platform: [Leave me a note](http://wordpress.org/support/plugin/featured-video-plus). For YouTube and Dailymotion the plugin also features [time-links](http://support.google.com/youtube/bin/answer.py?hl=en&answer=116618). If some site is not supported by the plugin you can still use all `iframe`-embed codes.
 
-The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic featured image replacement, turn on autoplay, define your Dailymotion Syndication Key and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
+The plugin adds customization options to your Media Settings. Beside aesthetic individualizations for each video platform's player you can turn off automatic featured image replacement, turn on autoplay or looping and tweak video sizing. By default videos try to dynamically fit their parent containers width. Take a look at *Settings -> Media*.
+
+= Support =
+I do read all support questions in the forum but cannot reply to all of them. The plugin is an unpaid side project. If you need support consider [buying me a cookie](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6) - best way to attract my attention.
 
 = Shortcode =
 
@@ -42,15 +45,10 @@ The plugin adds customization options to your Media Settings. Beside aesthetic i
 	has_post_video( $post_id )
 	get_the_post_video( $post_id, $size )
 	get_the_post_video_url( $post_id )
-	get_the_post_video_image_url( $post_id, $fallback )
 	get_the_post_video_image( $post_id )
+	get_the_post_video_image_url( $post_id )
 
-All parameters are optional. If no `$post_id` is given the current post's ID will be used. `$size` is either a string keyword (`thumbnail`, `medium`, `large` or `full`) or a 2-item array representing width and height in pixels, e.g. array(560,320). $fallback by default is false, when set to true this will return the fallback URL for local videos.
-
-
-
-
-*This plugin was created with the original [Featured Video](http://wordpress.org/extend/plugins/featured-video/) plugin in mind. __Featured Video Plus__ was freshly coded from ground up to bring you more features and to integrate more seamlessly into WordPress.*
+All parameters are optional. If no `$post_id` is given the current post's ID will be used. `$size` is either a string keyword (`thumbnail`, `medium`, `large` or `full`) or a 2-item array representing width and height in pixels, e.g. array(560,320).
 
 
 == Installation ==
@@ -67,7 +65,8 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 = 2.0.0: 2015-01-xx =
 * __Requires WordPress 3.6 or higher now!__
-* Complete rewrite
+* Complete codebase rewrite
+* Support for embed codes
 
 
 = 1.9.1: 2014-09-06 =
@@ -149,26 +148,6 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 = 1.0: 2012-12-13 =
 * Release
 
-
-== Upgrade Notice ==
-
-= 1.6 =
-Smoothness
-
-= 1.5 =
-AJAX!
-
-= 1.4 =
-WP3.5 Media Manager, time-links...
-
-= 1.3 =
-Internationalization! More user friendly, more customizations.
-
-= 1.2 =
-Now featuring your local videos!
-
-= 1.1 =
-Feature Dailymotion Videos on your posts!
 
 
 == Screenshots ==

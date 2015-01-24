@@ -2,6 +2,7 @@ var gulp   = require('gulp');
 var less   = require('gulp-less');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+var readme = require('gulp-readme-to-markdown');
 var del    = require('del');
 
 
@@ -36,4 +37,17 @@ gulp.task('js', function() {
       suffix: '.min'
      }))
     .pipe(gulp.dest('./js'));
+});
+
+gulp.task('readme', function() {
+  gulp.src([ 'readme.txt' ])
+    .pipe(readme({
+      details: false,
+      screenshot_ext: ['jpg', 'jpg', 'png'],
+      extract: {
+        'changelog': 'CHANGELOG',
+        'Frequently Asked Questions': 'FAQ'
+      }
+    }))
+    .pipe(gulp.dest('.'));
 });
