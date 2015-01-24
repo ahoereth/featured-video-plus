@@ -245,16 +245,16 @@ class FVP_Backend extends Featured_Video_Plus {
 		if ( has_post_video( $post['id'] ) ){
 			$video = get_the_post_video( $post['id'], array( 256, 144 ) );
 			$response = json_encode(array(
-				'type'  => 'update',
-				'valid' => $meta['valid'],
-				'video' => $video,
-				'img'   => $img,
-				'prov'  => $meta['provider']
+				'type'     => 'update',
+				'valid'    => isset( $meta['valid'] ) ? $meta['valid'] : null,
+				'video'    => $video,
+				'img'      => $img,
+				'provider' => isset( $meta['provider'] ) ? $meta['provider'] : null
 			));
 		} else {
 			$response = json_encode(array(
 				'task'  => 'remove',
-				'valid' => $meta['valid'],
+				'valid' => isset( $meta['valid'] ) ? $meta['valid'] : null,
 				'img'   => $img
 			));
 		}

@@ -62,6 +62,9 @@ class Featured_Video_Plus {
 				$embed = wp_video_shortcode( $atts );
 				break;
 
+			case null:
+				$embed = $meta['full'];
+				break;
 
 			default:
 				$size = $this->get_size( $size );
@@ -170,15 +173,15 @@ class Featured_Video_Plus {
 		global $wpdb;
 		if( $meta_value !== null ) {
 			$prepared = $wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s LIMIT 1",
-							$meta_key, $meta_value
-						);
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s LIMIT 1",
+				$meta_key, $meta_value
+			);
 			return $wpdb->get_var( $prepared );
 		} else {
 			$prepared = $wpdb->prepare(
-							"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s",
-							$meta_key
-						);
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s",
+				$meta_key
+			);
 			return $wpdb->get_col( $prepared );
 		}
 	}
