@@ -2,20 +2,19 @@ var gulp   = require('gulp');
 var less   = require('gulp-less');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-var rimraf = require('gulp-rimraf');
+var del    = require('del');
 
 
 // run everything, then watch for changes
-gulp.task('default', ['less', 'js'], function() {
+gulp.task('default', ['clean', 'less', 'js'], function() {
   gulp.watch(['./js/*.js', '!./js/*.min.js'], ['js']);
   gulp.watch('./styles/*.less', ['less']);
 });
 
 
 // remove minified js and compiled less/css
-gulp.task('clean', function() {
-  return gulp.src([ './styles/*.css', './js/*.min.js' ], { read: false })
-    .pipe(rimraf());
+gulp.task('clean', function(cb) {
+  del([ './styles/*.css', './js/*.min.js' ], cb);
 });
 
 
@@ -36,5 +35,5 @@ gulp.task('js', function() {
     .pipe(rename({
       suffix: '.min'
      }))
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./js'));
 });
