@@ -394,7 +394,7 @@ class FVP_Settings {
 					'rel'            => $patterns['digit'],
 					'showinfo'       => $patterns['digit'],
 					'enablejsapi'    => $patterns['digit'],
-					'custom'         => $patterns['string']
+					'wmode'          => "(auto|opaque|transparent)",
 				),
 				'dailymotion' => array(
 					'syndication' => $patterns['number'],
