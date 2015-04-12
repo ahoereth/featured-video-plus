@@ -52,13 +52,13 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 ## Screenshots ##
 
 1. Featured Video and Featured Image boxes on the post edit screen.
-![1. Featured Video and Featured Image boxes on the post edit screen.](http://ps.w.org/featured-video-plus/assets/screenshot-1.jpg)
+![1. Featured Video and Featured Image boxes on the post edit screen.](https://ps.w.org/featured-video-plus/assets/screenshot-1.jpg)
 
 2. A Featured Video in the Twenty Twelve theme.
-![2. A Featured Video in the Twenty Twelve theme.](http://ps.w.org/featured-video-plus/assets/screenshot-2.jpg)
+![2. A Featured Video in the Twenty Twelve theme.](https://ps.w.org/featured-video-plus/assets/screenshot-2.jpg)
 
 3. Settings -> Media screen
-![3. Settings -> Media screen](http://ps.w.org/featured-video-plus/assets/screenshot-3.png)
+![3. Settings -> Media screen](https://ps.w.org/featured-video-plus/assets/screenshot-3.png)
 
 
 

@@ -65,8 +65,8 @@ The plugin is ready to go. Now edit your posts and add video links to the "Featu
 
 = 2.0.0: 2015-01-xx =
 * __Requires WordPress 3.6 or higher now!__
-* Complete codebase rewrite
-* Support for embed codes
+* Major refactor
+* Support for raw embed codes and [all core providers sources](https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F)
 
 
 = 1.9.1: 2014-09-06 =
