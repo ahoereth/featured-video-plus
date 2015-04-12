@@ -410,25 +410,26 @@ class FVP_Backend extends Featured_Video_Plus {
 			);
 
 			// attach external image
-			include_once( FVP_DIR . 'php/somatic_attach_external_image.php' );
-			$img = somatic_attach_external_image(
-				$data['img_url'],
-				$post_id,
-				false, // make featured image automatically
-				$img_data['post_name'],
-				$img_data
-			);
+			$file = array();
+			$file['name'] = basename( $data['img_url'] );
+			$file['tmp_name'] = download_url( $data['img_url'] );
+			$url_type = image_type_to_extension( exif_imagetype( $file['tmp_name'] ), false );
+			$file['name'] = basename( $data['img_url'] . '.' . $url_type );
+			if ( is_wp_error( $file['tmp_name'] ) ) {
+				return $file['tmp_name'];
+			}
+			$img = media_handle_sideload( $file, $post_id, $img_data['post_content'] );
 
 			// generate picture metadata
 			$img_meta = wp_get_attachment_metadata( $img );
 			$img_meta['image_meta'] = array_merge(
 				$img_meta['image_meta'],
 				array(
-					'credit'       => $data['id'],
-					'camera'       => $data['provider'],
-					'caption'      => $data['description'],
-					'copyright'    => $data['author'],
-					'title'        => $data['title'],
+					'credit'    => $data['id'],
+					'camera'    => $data['provider'],
+					'caption'   => $data['description'],
+					'copyright' => $data['author'],
+					'title'     => $data['title'],
 				)
 			);
 
