@@ -1,98 +1,20 @@
-jQuery(document).ready(function($){
+(function($) {
+  'use strict';
+  /* global fvp_post, ajaxurl */
+
   var context = fvp_post;
 
-  // elements
-  var $input = $( '#fvp_video' );
-  var $media = $input.siblings('.fvp_video_choose').children('.fvp_media_icon');
+  var $input;
+  var $media;
 
-  // ****************************************
-  // url input field handling
-  var currentUrl  = $input.val();
-  var mediaicon   = $media.css( 'backgroundImage' );
-  var loadingicon = "url('" + context.loading_gif + "')";
-
-  /**
-   * Automatically submit the video URL using AJAX when the input is blurred.
-   * Update video and featured image with the returned data.
-   */
-  $input.blur(function() {
-    $input.val( $.trim( $input.val() ) );
-
-    // don't do anything if input didn't change
-    if( $input.val() == currentUrl ) {
-      return;
-    }
-
-    // remember new url
-    currentUrl = $input.val();
-
-    // autosize input field
-    $input.trigger( 'autosize' );
-
-    // display loading gif in input
-    $media.css( { backgroundImage: loadingicon } );
-
-    submitVideo();
-  });
+  var mediaicon;
 
 
   /**
-   * Blur input field on page load, autosize them and prevent enter-keypress
-   *
-   * @see http://www.jacklmoore.com/autosize
-   * @since 1.0
+   * Submit video to server via ajax.
+   * 
+   * @param {bool} setFeatimg
    */
-  $(".fvp_input").autosize().trigger("blur").keypress(function(event) {
-    // enter key
-    if (event.keyCode == 13) {
-      event.preventDefault();
-    }
-  });
-
-
-  /**
-   * Select whole input field content on click
-   *
-   * @since 1.2
-   */
-  $(".fvp_input").click(function() {
-    $(this).select();
-  });
-
-
-  /**
-   * Called when a change on the primary video input occurred
-   *
-   * @since 1.2
-   */
-  function handleVideoInput( obj ) {
-    var value = $.trim(obj.val());
-    $("#fvp_help_notice").slideDown('fast');
-
-    // Input field is empty
-    if ( value.length === 0 ) {
-      $("#fvp_video").removeClass('fvp_invalid');
-      $("#fvp_localvideo_format_warning").slideUp('fast');
-    }
-
-    // URL is local: Check file extension
-    if ( value.match( context.wp_upload_dir.replace(/\//g, "\\\/") ) ) {
-      var file_extension = /^.*\/(.*)\.(.*)/g;
-      var match = file_extension.exec(value);
-      if ( match[2] == 'webm' || match[2] == 'mp4' || match[2] == 'ogg' || match[2] == 'ogv' ) {
-        $("#fvp_video").removeClass('fvp_invalid');
-        $("#fvp_localvideo_format_warning").slideUp('fast');
-      } else {
-        $("#fvp_video").addClass('fvp_invalid');
-        $("#fvp_localvideo_format_warning").slideDown('fast', 'linear');
-      }
-    } else {
-      $("#fvp_video").removeClass('fvp_invalid');
-      $("#fvp_localvideo_format_warning").slideUp('fast');
-    }
-  }
-
-
   function submitVideo( setFeatimg ) {
     setFeatimg = setFeatimg || false;
 
@@ -100,7 +22,7 @@ jQuery(document).ready(function($){
       'action'         : 'fvp_save',
       'id'             : $( '#post_ID' ).val(),
       'fvp_nonce'      : $( '#fvp_nonce' ).val(),
-      'fvp_video'      : currentUrl,
+      'fvp_video'      : $input.val(),
       'fvp_set_featimg': setFeatimg
     }, function( data ) {
       // reset loading icon
@@ -136,89 +58,125 @@ jQuery(document).ready(function($){
     }, 'json' );
   }
 
-  /**
-   * Recognize change on the primary video input
-   *
-   * @since 1.2
-   */
-  $("#fvp_video").bind("change paste keyup", function() {
-    setTimeout(handleVideoInput($(this)), 200);
-  });
+
+  $(document).ready(function() {
+    // elements
+    $input = $('#fvp_video');
+    $media = $input.siblings('.fvp_video_choose').children('.fvp_media_icon');
+    mediaicon = $media.css( 'backgroundImage' );
+
+    var loadingicon = 'url(\'' + context.loading_gif + '\')';
+    var currentUrl  = $input.val();
 
 
-  // Button for quickly setting a featured image if none is set.
-  //   Only works on initial page load, not if the post thumbnail is reloaded
-  //   after an ajax request.
-  $('.fvp-set_featimg')
-    .show()
-    .click(function(event) {
-      event.preventDefault();
-      submitVideo( true );
+    // Automatically submit the video URL using AJAX when the input is blurred.
+    // Update video and featured image with the returned data.
+    $input.blur(function() {
+      $input.val( $.trim( $input.val() ) );
+
+      // don't do anything if input didn't change
+      if (currentUrl === $input.val()) {
+        return;
+      }
+
+      // remember new url
+      currentUrl = $input.val();
+
+      // autosize input field
+      $input.trigger('autosize');
+
+      // display loading gif in input
+      $media.css({ backgroundImage: loadingicon });
+
+      submitVideo();
     });
 
-  /**
-   * Toggle for opening the contextual help
-   *
-   * @since 1.3
-   */
-  $('#fvp_help_toggle').bind( 'click', function() {
-    $('#contextual-help-link').trigger('click');
-  });
+
+    // Initialize autosizing the url input field, disable enter key and
+    // auto select content on click.
+    // @see http://www.jacklmoore.com/autosize
+    $input
+      .autosize()
+      .trigger('blur')
+      .keypress(function(event) {
+        if (13 === event.keyCode) { // enter key
+          event.preventDefault();
+          $(this).trigger('blur');
+        }
+      })
+      .click(function() {
+        $(this).select();
+      });
 
 
-  /**
-   * Making use of the WordPress 3.5 Media Manager
-   *
-   * @see http://www.blazersix.com/blog/wordpress-image-widget/
-   * @see https://github.com/blazersix/simple-image-widget/blob/master/js/simple-image-widget.js
-   */
-  var $control, $controlTarget, mediaControl;
+    // Button for quickly setting a featured image if none is set.
+    //   Only works on initial page load, not if the post thumbnail is reloaded
+    //   after an ajax request.
+    $('.fvp-set_featimg')
+      .show()
+      .click(function(event) {
+        event.preventDefault();
+        submitVideo( true );
+      });
 
-  mediaControl = {
-    // Initializes a new media manager or returns an existing frame.
-    // @see wp.media.featuredImage.frame()
-    frame: function() {
-      if ( this._frame )
+
+    // WordPress 3.5 Media Manager
+    // @see http://www.blazersix.com/blog/wordpress-image-widget/
+    // @see https://github.com/blazersix/simple-image-widget/blob/master/js/simple-image-widget.js
+    var $control;
+    var mediaControl = {
+      // Initializes a new media manager or returns an existing frame.
+      // @see wp.media.featuredImage.frame()
+      frame: function() {
+        if (this._frame) {
+          return this._frame;
+        }
+
+        this._frame = wp.media({
+          title: $control.data('title'),
+          library: {
+            type: 'document'
+          },
+          button: {
+            text: $control.data('button')
+          },
+          multiple: false
+        });
+
+        this
+          ._frame.on('open', this.updateFrame)
+          .state('library').on('select', this.select);
+
         return this._frame;
+      },
 
-      this._frame = wp.media({
-        title: $control.data('title'),
-        library: {
-          type: 'document'
-        },
-        button: {
-          text: $control.data('button')
-        },
-        multiple: false
-      });
+      select: function() {
+        var selection = this.get('selection'),
+          returnProperty = 'url';
 
-      this._frame.on( 'open', this.updateFrame ).state('library').on( 'select', this.select );
+        $( $control.data('target') )
+          .val( selection.pluck( returnProperty ) )
+          .trigger('autosize')
+          .change()
+          .removeClass('defaultTextActive');
+        $('#fvp_video').blur();
+      },
 
-      return this._frame;
-    },
+      updateFrame: function() {
+        // Do something when the media frame is opened.
+      },
 
-    select: function() {
-      var selection = this.get('selection'),
-        returnProperty = 'url';
+      init: function() {
+        $('#wpbody').on('click', '.fvp_video_choose', function(e) {
+          e.preventDefault();
 
-      $( $control.data('target') ).val( selection.pluck( returnProperty ) ).trigger('autosize').change().removeClass("defaultTextActive");
-      $('#fvp_video').blur();
-    },
+          $control = $(this).closest('.fvp_input_wrapper');
 
-    updateFrame: function() {
-      // Do something when the media frame is opened.
-    },
+          mediaControl.frame().open();
+        });
+      }
+    };
 
-    init: function() {
-      $('#wpbody').on('click', '.fvp_video_choose', function(e) {
-        e.preventDefault();
-
-        $control = $(this).closest('.fvp_input_wrapper');
-
-        mediaControl.frame().open();
-      });
-    }
-  };
-
-  mediaControl.init();
-});
+    mediaControl.init();
+  });
+})(jQuery);
