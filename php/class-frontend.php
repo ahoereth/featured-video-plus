@@ -36,7 +36,6 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		$options = get_option( 'fvp-settings' );
 
-
 		wp_register_script(
 			'jquery.fitvids',
 			FVP_URL . "js/jquery.fitvids$min.js",
@@ -57,12 +56,12 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		// Is responsive video functionality required? Only when width is set to
 		// 'auto' and display mode is not set to overlay.
-		if ( $options['sizing']['responsive'] && $options['mode'] != 'overlay' ) {
+		if ( $options['sizing']['responsive'] && 'overlay' !== $options['mode'] ) {
 			$deps[] = 'jquery.fitvids';
 		}
 
 		// Is modal functionality required?
-		if ( $options['mode'] == 'overlay' ) {
+		if ( 'overlay' === $options['mode'] ) {
 			$deps[] = 'jquery.domwindow';
 		}
 
@@ -83,7 +82,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 			'overlay'  => ! empty( $options['mode'] ) && $options['mode'] == 'overlay',
 			'opacity'  => '75',
 			'loadingw' => FVP_URL . 'styles/loading_w.gif',
-			'loadingb' => FVP_URL . 'styles/loading_b.gif'
+			'loadingb' => FVP_URL . 'styles/loading_b.gif',
 		));
 
 		// general frontend styles
@@ -114,18 +113,20 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		$options = get_option( 'fvp-settings' );
 
-		if ( ( isset($options['issingle']) && $options['issingle'] && ! is_single()) ||
-		     ( $options['mode']=='manual' || !has_post_video($post_id) ) )
+		if (
+			( isset( $options['issingle'] ) && $options['issingle'] && ! is_single() ) ||
+			( 'manual' === $options['mode'] || ! has_post_video( $post_id ) ) ) {
 			return $html;
 
-		elseif ($options['mode']=='replace')
-			return get_the_post_video($post_id, $size);
+		} elseif ( 'replace' === $options['mode'] ) {
+			return get_the_post_video( $post_id, $size );
 
-		elseif ($options['mode']=='overlay')
+		} elseif ( 'overlay' === $options['mode'] ) {
 			return '<a href="#fvp_'.$post_id.'" class="fvp_overlay" onclick="return false;">'.$html.'</a><div id="fvp_'.$post_id.'" style="display: none;"></div>';
+		}
 
-		else//if ($options['mode']=='dynamic')
-			return '<a href="#fvp_'.$post_id.'" id="fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
+		//else//if ( 'dynamic' === $options['mode'] )
+		return '<a href="#fvp_'.$post_id.'" id="fvp_'.$post_id.'" class="fvp_dynamic" onclick="fvp_dynamic('.$post_id.');return false;">'.$html.'</a>';
 
 	}
 
@@ -140,7 +141,8 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$w = isset($atts['width'])  ? $atts['width'] : '';
 		$h = isset($atts['height']) ? $atts['height'] : '';
 
-		if(has_post_video())
-			return get_the_post_video(null, array($w, $h));
+		if ( has_post_video() ) {
+			return get_the_post_video( null, array( $w, $h ) );
+		}
 	}
 }

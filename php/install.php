@@ -1,5 +1,5 @@
 <?php
-$options = array (
+$options = array(
 	'mode'     => 'replace',
 	'align'    => 'center',
 	'issingle' => false,

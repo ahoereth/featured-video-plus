@@ -1,5 +1,4 @@
 <?php
-if ( ! class_exists( 'FVP_HTML' ) ) :
 
 class FVP_HTML {
 
@@ -11,8 +10,9 @@ class FVP_HTML {
 
 	public static function static_init() {
 		static $initiated;
-		if ( $initiated )
+		if ( $initiated ) {
 			return;
+		}
 
 		add_action( 'admin_enqueue_scripts', array( get_class(), 'enqueue' ) );
 
@@ -27,15 +27,16 @@ class FVP_HTML {
 
 	public static function enqueue( $hook ) {
 		// only enqueue scripts/styles on the specified screens - if specified
-		if ( empty( self::$screens ) || ! in_array( $hook, self::$screens ) )
+		if ( empty( self::$screens ) || ! in_array( $hook, self::$screens ) ) {
 			return;
+		}
 
 		// development or production?
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_style(
 			'fvphtml',
-			FVP_URL . "styles/html.css",
+			FVP_URL . 'styles/html.css',
 			array(),
 			FVP_VERSION
 		);
@@ -65,8 +66,17 @@ class FVP_HTML {
 	 * @return {string} composed HTML
 	 */
 	public static function html( $tag ) {
-		static $SELF_CLOSING_TAGS = array( 'area', 'base', 'basefont', 'br', 'hr',
-			'input', 'img', 'link', 'meta' );
+		static $SELF_CLOSING_TAGS = array(
+			'area',
+			'base',
+			'basefont',
+			'br',
+			'hr',
+			'input',
+			'img',
+			'link',
+			'meta',
+		);
 
 		$args = func_get_args();
 
@@ -76,11 +86,13 @@ class FVP_HTML {
 			$closing = $tag;
 			$attributes = array_shift( $args );
 			foreach ( $attributes as $key => $value ) {
-				if ( false === $value )
+				if ( false === $value ) {
 					continue;
+				}
 
-				if ( true === $value )
+				if ( true === $value ) {
 					$value = $key;
+				}
 
 				$tag .= ' ' . $key . '="' . esc_attr( $value ) . '"';
 			}
@@ -107,9 +119,25 @@ class FVP_HTML {
 	 * @return {string}
 	 */
 	public static function input( $name, $type = 'text', $attributes = array() ) {
-		$legal_types = array( 'text', 'password', 'checkbox', 'radio',
-			'color', 'data', 'datetime', 'datetime-local', 'email', 'month',
-			'number', 'range', 'search', 'tel', 'time', 'url', 'week' );
+		$legal_types = array(
+			'text',
+			'password',
+			'checkbox',
+			'radio',
+			'color',
+			'data',
+			'datetime',
+			'datetime-local',
+			'email',
+			'month',
+			'number',
+			'range',
+			'search',
+			'tel',
+			'time',
+			'url',
+			'week',
+		);
 
 		if ( ! in_array( $type, $legal_types ) ) {
 			return '';
@@ -186,7 +214,7 @@ class FVP_HTML {
 			array(
 				// there should be an option to force check the tickable using a boolean
 				'checked' => $checked == $value,
-				'value'   => $value
+				'value'   => $value,
 			)
 		);
 
@@ -386,11 +414,11 @@ class FVP_HTML {
 	public static function description( $content, $additional_classes = array() ) {
 		$html = self::html(
 			'p',
-			array( 'class' => implode( ' ',
-				array_merge(
-					array('description'),
+			array(
+				'class' => implode( ' ', array_merge(
+					array( 'description' ),
 					(array) $additional_classes
-				))
+				) )
 			),
 			$content
 		);
@@ -434,7 +462,7 @@ class FVP_HTML {
 					$hidden ? 'hidden' : '',
 				)),
 				'data-name'  => $name,
-				'data-value' => $value
+				'data-value' => $value,
 			),
 			$object
 		);
@@ -445,5 +473,3 @@ class FVP_HTML {
 }
 
 FVP_HTML::static_init();
-
-endif;

@@ -25,11 +25,12 @@ class Featured_Video_Plus {
 	 * @param bool $allowfullscreen
 	 * @param bool $container
 	 */
-	public function get_the_post_video($post_id = null, $size = null) {
+	public function get_the_post_video( $post_id = null, $size = null ) {
 		$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
-		if( ! has_post_video( $post_id ) )
+		if ( ! has_post_video( $post_id ) ) {
 			return false;
+		}
 
 		$meta    = get_post_meta( $post_id, '_fvp_video', true );
 		$options = get_option( 'fvp-settings' );
@@ -55,7 +56,7 @@ class Featured_Video_Plus {
 					'loop'     => ! empty( $defaults['general']['loop'] ) ? 'on' : null,
 					// use massive video size/height for responsive videos because
 					// fitvids does not upscale videos
-					'width'    => $responsive ? $size['width' ] * 8 : $size['width'],
+					'width'    => $responsive ? $size['width'] * 8  : $size['width'],
 					'height'   => $responsive ? $size['height'] * 8 : $size['height'],
 				);
 
@@ -73,7 +74,7 @@ class Featured_Video_Plus {
 					array( 'fvp' => $this->oembed->time ),
 					$size,
 					isset( $options['default_args']['general'] ) ? $options['default_args']['general'] : array(),
-					isset( $options['default_args'][$provider] ) ? $options['default_args'][$provider] : array(),
+					isset( $options['default_args'][ $provider ] ) ? $options['default_args'][ $provider ] : array(),
 					isset( $meta['parameters'] ) ? $meta['parameters'] : array()
 				);
 
@@ -81,8 +82,9 @@ class Featured_Video_Plus {
 				break;
 		}
 
-		if ( empty( $embed ) )
+		if ( empty( $embed ) ) {
 			return false;
+		}
 
 		$class = $options['sizing']['responsive'] ? ' responsive' : '';
 		$containerstyle = isset( $options['alignment'] ) ?
@@ -119,7 +121,7 @@ class Featured_Video_Plus {
 					$size['height'] :
 					( isset( $size[1] ) && is_numeric( $size[1] ) ? $size[1] : null );
 
-		// size requested using a string pointing to a WordPress preset
+			// size requested using a string pointing to a WordPress preset
 		} elseif ( is_string( $size ) ) {
 			global $_wp_additional_image_sizes;
 			$presets = get_intermediate_image_sizes();
@@ -135,7 +137,7 @@ class Featured_Video_Plus {
 				}
 			}
 
-		// single number provided - use it for the width
+			// single number provided - use it for the width
 		} elseif ( is_numeric( $size ) ) {
 			$width = $size;
 		}
@@ -148,7 +150,7 @@ class Featured_Video_Plus {
 		if ( empty( $height ) ) {
 			// calculate height relative to width
 			$height = ! empty( $original ) ?
-				round($original['height'] * ($width / $original['width'])) :
+				round( $original['height'] * ($width / $original['width']) ) :
 				$height = $width / 16 * 9;
 		}
 
@@ -171,10 +173,11 @@ class Featured_Video_Plus {
 	 */
 	protected function get_post_by_custom_meta($meta_key, $meta_value = null) {
 		global $wpdb;
-		if( $meta_value !== null ) {
+		if ( $meta_value !== null ) {
 			$prepared = $wpdb->prepare(
 				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s AND meta_value=%s LIMIT 1",
-				$meta_key, $meta_value
+				$meta_key,
+				$meta_value
 			);
 			return $wpdb->get_var( $prepared );
 		} else {
@@ -193,7 +196,11 @@ class Featured_Video_Plus {
 	 * @since 1.3
 	 */
 	public function language() {
-		load_plugin_textdomain('featured-video-plus', FVP_DIR . 'lng/', FVP_NAME . '/lng/' );
+		load_plugin_textdomain(
+			'featured-video-plus',
+			FVP_DIR . 'lng/',
+			FVP_NAME . '/lng/'
+		);
 	}
 
 }

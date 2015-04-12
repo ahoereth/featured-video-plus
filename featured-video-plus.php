@@ -28,16 +28,25 @@ License: GPL2
 
 */
 
-if ( ! defined( 'FVP_VERSION' ) )
+
+// ********************
+// CONSTANTS
+if ( ! defined( 'FVP_VERSION' ) ) {
 	define( 'FVP_VERSION', '1.9.2' );
+}
 
 $pathinfo = pathinfo( dirname( plugin_basename( __FILE__ ) ) );
-if ( ! defined( 'FVP_NAME' ) )
+if ( ! defined( 'FVP_NAME' ) ) {
 	define( 'FVP_NAME', $pathinfo['filename'] );
-if ( ! defined( 'FVP_DIR' ) )
+}
+
+if ( ! defined( 'FVP_DIR' ) ) {
 	define( 'FVP_DIR', plugin_dir_path( __FILE__ ) );
-if ( ! defined( 'FVP_URL' ) )
+}
+
+if ( ! defined( 'FVP_URL' ) ) {
 	define( 'FVP_URL', plugins_url( FVP_NAME ) . '/' );
+}
 
 
 // ********************

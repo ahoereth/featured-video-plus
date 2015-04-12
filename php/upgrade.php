@@ -13,35 +13,35 @@ switch ( $version ) {
 			get_users( array( 'role' => 'Super Admin'   ) )
 		);
 
-		foreach( $users as $user ) {
+		foreach ( $users AS $user ) {
 			delete_user_meta( $user->ID, 'fvp_activation_notification_ignore' );
 		}
 
 
 	case '1.2':
 		$options['videojs'] = array(
-			'skin' => 'videojs' //videojs,moonfy,tubejs
+			'skin' => 'videojs', //videojs,moonfy,tubejs
 		);
 		$options['youtube'] = array(
 			'theme' => 'dark',
 			'color' => 'red',
 			'info'  => 1,
 			'rel'   => 1,
-			'fs'    => 1
+			'fs'    => 1,
 		);
 		$options['dailymotion'] = array(
 			'foreground'  => 'F7FFFD',
 			'highlight'   => 'FFC300',
 			'background'  => '171D1B',
 			'logo'        => 1,
-			'info'        => 1
+			'info'        => 1,
 		);
 		$options['sizing'] = array(
 			'wmode'  => $options['width'],
 			'hmode'  => $options['height'],
 			'width'  => 560,
 			'height' => 315,
-			'align'  => 'left'
+			'align'  => 'left',
 		);
 		unset( $options['width'], $options['height'] );
 
@@ -83,9 +83,9 @@ switch ( $version ) {
 		$options['local']['poster']  = $options['local']['videojs']['poster'];
 		unset( $options['local']['videojs'] );
 
-		$options['local']['foreground'] = "cccccc";
-		$options['local']['highlight']  = "66a8cc";
-		$options['local']['background'] = "000000";
+		$options['local']['foreground'] = 'cccccc';
+		$options['local']['highlight']  = '66a8cc';
+		$options['local']['background'] = '000000';
 		$options['local']['controls']   = true;
 		$options['local']['loop']       = false;
 		$options['autoplay'] = $options['autoplay'] ? 'yes' : 'no'; //yes/auto/no
@@ -109,17 +109,20 @@ switch ( $version ) {
 		$options['ishome'] = false;
 
 		$sizing = array(
-			'responsive' => ! empty( $options['sizing']['wmode'] ) ? (bool)  $options['sizing']['wmode']   : true,
-			'width'      => ! empty( $options['sizing']['width'] ) ? intval( $options['sizing']['width'] ) : 640,
+			'responsive' => ! empty( $options['sizing']['wmode'] ) ?
+				(bool)  $options['sizing']['wmode']   : true,
+			'width'      => ! empty( $options['sizing']['width'] ) ?
+				intval( $options['sizing']['width'] ) : 640,
 		);
 		unset( $options['sizing'] );
 		$options['sizing'] = $sizing;
 
 		$options['mode'] = $options['usage'];
 		$options['alignment'] = $options['align'];
-		$options['youtube']['showinfo'] = $options['youtube']['info'];
+		$options['youtube']['showinfo']    = $options['youtube']['info'];
 		$options['youtube']['enablejsapi'] = $options['youtube']['jsapi'];
-		$options['youtube']['modestbranding'] = ( $options['youtube']['logo'] + 1 ) % 2;
+		$options['youtube']['modestbranding'] =
+			( $options['youtube']['logo'] + 1 ) % 2;
 
 		unset(
 			$options['usage'],

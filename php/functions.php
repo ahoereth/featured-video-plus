@@ -11,8 +11,9 @@ function has_post_video( $post_id = null ) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( ! isset( $meta ) || empty( $meta['full'] ) )
+	if ( ! isset( $meta ) || empty( $meta['full'] ) ) {
 		return false;
+	}
 
 	return true;
 }
@@ -55,12 +56,14 @@ function get_the_post_video_image_url( $post_id = null ) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if ( ! isset( $meta ) || empty( $meta['full'] ) )
+	if ( ! isset( $meta ) || empty( $meta['full'] ) ) {
 		return false;
+	}
 
 	// new way, post 2.0.0
-	if ( ! empty( $meta['img_url'] ) )
+	if ( ! empty( $meta['img_url'] ) ) {
 		return $meta['img_url'];
+	}
 
 	// old way, pre 2.0.0
 	global $featured_video_plus;
@@ -81,15 +84,16 @@ function get_the_post_video_image_url( $post_id = null ) {
  */
 function get_the_post_video_image( $post_id = null, $size = null ) {
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
-	if( ! isset( $meta ) || empty( $meta['full'] ) )
+	if ( ! isset( $meta ) || empty( $meta['full'] ) ) {
 		return false;
+	}
 
 	global $featured_video_plus;
-	$size = $featured_video_plus->get_size($size);
+	$size = $featured_video_plus->get_size( $size );
 
 	// new, post 2.0.0
 	if ( ! empty( $meta['img'] ) ) {
-		return wp_get_attachment_image($meta['img'], $size);
+		return wp_get_attachment_image( $meta['img'], $size );
 	}
 
 	// old, pre 2.0.0
@@ -97,7 +101,7 @@ function get_the_post_video_image( $post_id = null, $size = null ) {
 		'_fvp_image',
 		$meta['provider'] . '?' . $meta['id']
 	);
-	return wp_get_attachment_image($id, $size);
+	return wp_get_attachment_image( $id, $size );
 }
 
 /**
@@ -111,14 +115,16 @@ function get_the_post_video_image( $post_id = null, $size = null ) {
 function get_the_post_video_url( $post_id ) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
-	$meta = get_post_meta($post_id, '_fvp_video', true );
-	if ( ! isset( $meta ) || empty( $meta['full'] ) )
+	$meta = get_post_meta( $post_id, '_fvp_video', true );
+	if ( ! isset( $meta ) || empty( $meta['full'] ) ) {
 		return false;
+	}
 
-	if ( isset( $meta['provider'] ) && $meta['provider'] == 'local' )
+	if ( isset( $meta['provider'] ) && 'local' === $meta['provider'] ) {
 		return wp_get_attachment_url( $meta['id'] );
-	else if ( isset( $meta['full'] ) )
+	} else if ( isset( $meta['full'] ) ) {
 		return $meta['full'];
-	else
-		return false;
+	}
+
+	return false;
 }

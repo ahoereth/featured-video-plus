@@ -22,7 +22,7 @@ class FVP_oEmbed {
 
 		$this->time = time();
 
-		add_filter('oembed_fetch_url', array($this, 'additional_arguments'), 10, 3);
+		add_filter( 'oembed_fetch_url', array( $this, 'additional_arguments' ), 10, 3 );
 	}
 
 
@@ -52,7 +52,7 @@ class FVP_oEmbed {
 			$url,
 			array(
 				'width'  => 4096,
-				'height' => 4096
+				'height' => 4096,
 			)
 		);
 
@@ -89,7 +89,7 @@ class FVP_oEmbed {
 
 				$pattern     = "/src=([\"'])([^\"']*)[\"']/";
 				$replacement = 'src=$1$2' . $parameters . '$1';
-				$html = preg_replace($pattern, $replacement, $html);
+				$html = preg_replace( $pattern, $replacement, $html );
 				break;
 		}
 
@@ -171,7 +171,7 @@ class FVP_oEmbed {
 		);
 
 		$tlds = '(?:' . implode( ')|(?:', $tlds_set ) . ')';
-		$pattern = "/(?:www\.)?(.*)\.".$tlds."/";
+		$pattern = '/(?:www\.)?(.*)\.' . $tlds  '/';
 
 		preg_match( $pattern , $host, $match );
 
@@ -289,14 +289,14 @@ class FVP_oEmbed {
 	 */
 	private function parse_url_args( $url ) {
 		// parse query
-		$query = parse_url($url, PHP_URL_QUERY);
+		$query = parse_url( $url, PHP_URL_QUERY );
 		$query_args = array();
-		parse_str($query, $query_args);
+		parse_str( $query, $query_args );
 
 		// parse fragment
-		$fragment = parse_url($url, PHP_URL_FRAGMENT);
+		$fragment = parse_url( $url, PHP_URL_FRAGMENT );
 		$fragment_args = array();
-		parse_str($fragment, $fragment_args);
+		parse_str( $fragment, $fragment_args );
 
 		// merge query and fragment args
 		$args = array_merge(
@@ -324,12 +324,12 @@ class FVP_oEmbed {
 	private function handle_m_s_string( $t ) {
 		$seconds = 0;
 
-		preg_match('/(\d+)m/', $t, $m);
+		preg_match( '/(\d+)m/', $t, $m );
 		if ( ! empty( $m[1] ) ) {
-			$seconds += $m[1]*60;
+			$seconds += $m[1] * 60;
 		}
 
-		preg_match('/(\d+)s/', $t, $s);
+		preg_match( '/(\d+)s/', $t, $s );
 		if ( ! empty( $s[1] ) ) {
 			$seconds += $s[1];
 		}
