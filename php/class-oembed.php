@@ -171,7 +171,7 @@ class FVP_oEmbed {
 		);
 
 		$tlds = '(?:' . implode( ')|(?:', $tlds_set ) . ')';
-		$pattern = '/(?:www\.)?(.*)\.' . $tlds  '/';
+		$pattern = '/(?:www\.)?(.*)\.' . $tlds  . '/';
 
 		preg_match( $pattern , $host, $match );
 

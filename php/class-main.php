@@ -63,7 +63,7 @@ class Featured_Video_Plus {
 				$embed = wp_video_shortcode( $atts );
 				break;
 
-			case null:
+			case 'raw':
 				$embed = $meta['full'];
 				break;
 

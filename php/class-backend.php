@@ -31,6 +31,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
 		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2 );
+		add_filter( 'admin_post_thumbnail_html', array( $this, 'featured_image_notice' ), 10, 2 );
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			add_action( 'wp_ajax_fvp_save',             array( $this, 'metabox_save_ajax' ) );
@@ -51,7 +52,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.0
 	 */
 	public function enqueue( $hook ) {
-		if ( 'post.php' === $hook && 'post-new.php' !== $hook ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
 			return;
 		}
 
@@ -143,12 +144,6 @@ class FVP_Backend extends Featured_Video_Plus {
 			$post_id = $GLOBALS['post']->ID;
 		}
 
-		// required for conditionals
-		$post_thumbnail_id   = get_post_thumbnail_id( $post_id );
-		$post_thumbnail_meta = get_post_meta( $post_thumbnail_id, '_fvp_image', true );
-
-		$has_post_image = ! empty( $post_thumbnail_id )   ? true : false;
-		$featimg_is_fvp = ! empty( $post_thumbnail_meta ) ? true : false;
 		$has_post_video = has_post_video( $post_id );
 
 		$options = get_option( 'fvp-settings' );
@@ -170,31 +165,6 @@ class FVP_Backend extends Featured_Video_Plus {
 		$content .= "<input type='hidden' class='fvp_mirror' value='{$full}' />\n\t";
 		$content .= '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo( 'wpurl' ).'/wp-admin/images/media-button.png\');"></span></a>'."\n";
 		$content .= "</div>\n";
-
-		// local video format warning
-		$content .= '<div id="fvp_localvideo_format_warning" class="fvp_warning fvp_hidden"><p class="description">';
-		$content .= '<span style="font-weight: bold;">'.__( 'Supported Video Formats', 'featured-video-plus' ).':</span> <code>mp4</code>, <code>webM</code>, <code>m4v</code>, <code>wmv</code>, <code>flv</code> '.__( 'or', 'featured-video-plus' ).' <code>ogv</code>. <a href="http://mediaelementjs.com/#devices">'.__( 'More information', 'featured-video-plus' ).'</a>.';
-		$content .= "</p></div>\n";
-
-		// no featured image warning
-		$class = $has_post_image || ! $has_post_video || ( isset( $options['mode'] ) && $options['mode'] == 'manual' ) ? ' hidden' : '';
-		$content .= "<div id='fvp_featimg_warning' class='fvp_notice{$class}'><p class='description'>";
-		$content .= '<span style="font-weight: bold;">'.__( 'Featured Image' ).':</span>&nbsp;'.__( 'For automatically displaying the Featured Video a Featured Image is required.', 'featured-video-plus' );
-		$content .= "</p></div>\n";
-
-		// set as featured image
-		$class = isset($meta['provider']) && $meta['provider'] == 'local' || ! $has_post_video || ($has_post_image && $featimg_is_fvp) ? ' class="fvp_hidden"' : '';
-		$content .= sprintf(
-			'<p id="fvp_set_featimg_box"'.$class.'>'.
-			'<span id="fvp_set_featimg_input">'.
-			'<input id="fvp_set_featimg" name="fvp_set_featimg" type="checkbox" value="set_featimg" />'.
-			'<label for="fvp_set_featimg">&nbsp;%s</label>'.
-			'</span>'.
-			'<a class="fvp_hidden" id="fvp_set_featimg_link" href="#">%s</a>'.
-			'</p>',
-			__( 'Set as Featured Image', 'featured-video-plus' ),
-			__( 'Set as Featured Image', 'featured-video-plus' )
-		);
 
 		// current theme does not support Featured Images warning
 		if ( ! current_theme_supports( 'post-thumbnails' ) && 'manual' !== $options['mode'] ) {
@@ -238,9 +208,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$post = array(
 			'id'              => $post_id,
 			'fvp_nonce'       => ! empty( $_POST['fvp_nonce'] )       ? $_POST['fvp_nonce']       : '',
-			'fvp_set_featimg' => ! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
-			'fvp_video'       => ! empty( $_POST['fvp_video'] )       ? $_POST['fvp_video']       : '',
-			'fvp_sec'         => ! empty( $_POST['fvp_sec'] )         ? $_POST['fvp_sec']         : ''
+			'fvp_video'       => ! empty( $_POST['fvp_video'] )       ? $_POST['fvp_video']       : ''
 		);
 
 		$this->save( $post );
@@ -258,9 +226,8 @@ class FVP_Backend extends Featured_Video_Plus {
 		$post = array(
 			'id'              => $_POST['id'],
 			'fvp_nonce'       => ! empty( $_POST['fvp_nonce'] )       ? $_POST['fvp_nonce']       : '',
-			'fvp_set_featimg' => ! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
 			'fvp_video'       => ! empty( $_POST['fvp_video'] )       ? $_POST['fvp_video']       : '',
-			'fvp_sec'         => ! empty( $_POST['fvp_sec'] )         ? $_POST['fvp_sec']         : ''
+			'fvp_set_featimg' => ! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
 		);
 
 		// this also verifies the nonce
@@ -268,7 +235,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		$img = _wp_post_thumbnail_html( get_post_thumbnail_id( $post['id'] ), $post['id'] );
 
-		if ( has_post_video( $post['id'] ) ){
+		if ( has_post_video( $post['id'] ) ) {
 			$video = get_the_post_video( $post['id'], array( 256, 144 ) );
 			$response = json_encode( array(
 				'type'     => 'update',
@@ -296,7 +263,10 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.5
 	 */
 	function save( $post ) {
-		if ( ( isset( $post['fvp_nonce'] ) && ! wp_verify_nonce( $post['fvp_nonce'], FVP_NAME ) ) ) {
+		if (
+			! isset( $post['fvp_nonce'] ) ||
+			! wp_verify_nonce( $post['fvp_nonce'], FVP_NAME )
+		) {
 			return false;
 		}
 
@@ -306,30 +276,39 @@ class FVP_Backend extends Featured_Video_Plus {
 		// parse video url
 		$url = ! empty( $post['fvp_video'] ) ? trim( $post['fvp_video'] ) : '';
 
-		// url did not change or is and was empty
-		if ( ( ! empty( $meta['full'] ) && $url == $meta['full'] ) || ( empty( $meta['full'] ) && empty( $url ) ) ) {
+		// has featured image AND url did not change or is and was empty
+		if (
+			! $post['fvp_set_featimg'] && (
+				( ! empty( $meta['full'] ) && $url == $meta['full'] ) ||
+				(   empty( $meta['full'] ) && empty( $url ) )
+			)
+		) {
 			return false;
 		}
 
 		// there was a video and we want to delete it
 		if ( ! empty( $meta['full'] ) && empty( $url ) ) {
 			delete_post_meta( $post['id'], '_fvp_video' );
-			$this->delete_featured_video_image( $post['id'], $meta );
+			$this->delete_featured_image( $post['id'], $meta );
 			return false;
 		}
 
 		$data = $this->get_video_data( $url );
 
 		// Do we have a screen capture to pull?
-		if ( ! empty( $data['img_url'] ) ) {
-			$img = $this->set_featured_video_image( $post['id'], $data );
+		if ( empty( $data['img_url'] ) ) {
+			$data['img_url'] = FVP_URL . 'styles/placeholder.jpg';
+			$data['filename'] = 'Featured Video Plus Placeholder';
 		}
+
+		$img = $this->set_featured_image( $post['id'], $data );
 
 		$meta = array_merge(
 			array(
-				'full'  => $url,
-				'img'   => ! empty( $img ) ? $img : null,
-				'valid' => 1, // can be overwritten by $data
+				'full'     => $url,
+				'img'      => ! empty( $img ) ? $img : null,
+				'valid'    => 1, // can be overwritten by $data
+				'provider' => 'raw', // "
 			),
 			$data
 		);
@@ -417,7 +396,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  {assoc} $data    Video information data containing img_url
 	 * @return {int}   ID of the inserted attachment
 	 */
-	function set_featured_video_image( $post_id, $data ) {
+	function set_featured_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
 		$img = $this->get_post_by_custom_meta( '_fvp_image_url', $data['img_url'] );
 
@@ -425,9 +404,9 @@ class FVP_Backend extends Featured_Video_Plus {
 
 			// Generate attachment post metadata
 			$img_data = array(
-				'post_content' => $data['description'],
-				'post_title'   => $data['title'],
-				'post_name'    => $data['filename'],
+				'post_content' => ! empty( $data['description'] ) ? $data['description'] : '',
+				'post_title'   => ! empty( $data['title'] )       ? $data['title'] : '',
+				'post_name'    => ! empty( $data['filename'] )    ? $data['filename'] : '',
 			);
 
 			// attach external image
@@ -436,7 +415,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				$data['img_url'],
 				$post_id,
 				false, // make featured image automatically
-				$data['filename'],
+				$img_data['post_name'],
 				$img_data
 			);
 
@@ -475,7 +454,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param {int} FVP video meta data containing 'img' with the FVP image
 	 *              attachment ID
 	 */
-	function delete_featured_video_image( $post_id, $meta ) {
+	function delete_featured_image( $post_id, $meta ) {
 		if ( empty( $meta['img'] ) ) {
 			return false;
 		}
@@ -485,7 +464,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Check if other posts use the image, if not we can delete it completely
 		$other = $this->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
-		if ( empty( $other ) ) {
+		if ( empty( $other ) && ! empty( $meta['img_url'] ) ) {
 			wp_delete_attachment( $meta['img'] );
 			delete_post_meta( $meta['img'], '_fvp_image_url', $meta['img_url'] );
 
@@ -504,7 +483,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.7
 	 */
-	public function ajax_get_embed(){
+	public function ajax_get_embed() {
 		header( 'Content-Type: application/json' );
 
 		// bad request
@@ -624,13 +603,41 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.2
 	 */
-	function plugin_action_link($links, $file) {
+	function plugin_action_link( $links, $file ) {
 		if ( $file == FVP_NAME . '/' . FVP_NAME . '.php' ) {
 			$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/options-media.php">Media Settings</a>';
 			array_unshift( $links, $settings_link );
 		}
 
 		return $links;
+	}
+
+
+	/**
+	 * Add a notice about the requirement of a featured image to the
+	 * featured image meta box.
+	 *
+	 * @param  {string} $content
+	 * @param  {int}    $post_id
+	 * @return {string}
+	 */
+	function featured_image_notice( $content, $post_id ) {
+		if ( has_post_thumbnail( $post_id ) || ! has_post_video( $post_id ) ) {
+			return $content;
+		}
+
+		$notice  = '<span class="fvp-notice">';
+		$notice .= __(
+			'Featured Videos require a Featured Image for automatic replacement.',
+			'featured-video-plus'
+		);
+		$notice .= '&nbsp;<a href="#" class="fvp-set_featimg hidden">' . __(
+			'Auto set',
+			'featured-video-plus'
+		) . '</a>';
+		$notice .= '</span>';
+
+		return $notice . $content;
 	}
 
 

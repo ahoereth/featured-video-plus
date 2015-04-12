@@ -32,45 +32,7 @@ jQuery(document).ready(function($){
     // display loading gif in input
     $media.css( { backgroundImage: loadingicon } );
 
-    $.post( ajaxurl, {
-      'action'    : 'fvp_save',
-      'id'        : $( '#post_ID' ).val(),
-      'fvp_nonce' : $( '#fvp_nonce' ).val(),
-      'fvp_video' : currentUrl
-    }, function( data ) {
-      // reset loading icon
-      $media.css( { backgroundImage: mediaicon } );
-
-      // removed video
-      if( data.task == 'remove' ) {
-        $( '#fvp_current_video' ).html( '' ).animate( { height: 0 } );
-
-      // new video data
-      } else {
-        $( '#fvp_current_video' ).html( data.video ).animate( { height: 144 } );
-
-        // hide help notice
-        $( "#fvp_help_notice" ).slideUp( 'fast' );
-
-        // data is valid: Hide warnings etc
-        if ( data.valid ) {
-          $( "#fvp_set_featimg_link, #fvp_featimg_warning" ).slideUp();
-
-          $input
-            .css( { backgroundColor: '#00FF00' } )
-            .animate( { backgroundColor: '#fff' }, 500, function() {
-              $input.css( { backgroundColor: null } );
-            });
-
-        // data is invalid
-        } else {
-          $input.addClass('fvp_invalid');
-        }
-      }
-
-      // update featured image
-      $( '#postimagediv .inside' ).html( data.img );
-    }, "json" );
+    submitVideo();
   });
 
 
@@ -131,6 +93,49 @@ jQuery(document).ready(function($){
   }
 
 
+  function submitVideo( setFeatimg ) {
+    setFeatimg = setFeatimg || false;
+
+    $.post( ajaxurl, {
+      'action'         : 'fvp_save',
+      'id'             : $( '#post_ID' ).val(),
+      'fvp_nonce'      : $( '#fvp_nonce' ).val(),
+      'fvp_video'      : currentUrl,
+      'fvp_set_featimg': setFeatimg
+    }, function( data ) {
+      // reset loading icon
+      $media.css( { backgroundImage: mediaicon } );
+
+      // removed video
+      if( 'remove' === data.task ) {
+        $( '#fvp_current_video' ).html( '' ).animate( { height: 0 } );
+
+      // new video data
+      } else {
+        $( '#fvp_current_video' ).html( data.video ).animate( { height: 144 } );
+
+        // hide help notice
+        $( '#fvp_help_notice' ).slideUp( 'fast' );
+
+        // data is valid: Hide warnings etc
+        if ( data.valid ) {
+          $input
+            .css( { backgroundColor: '#00FF00' } )
+            .animate( { backgroundColor: '#fff' }, 500, function() {
+              $input.css( { backgroundColor: null } );
+            });
+
+        // data is invalid
+        } else {
+          $input.addClass('fvp_invalid');
+        }
+      }
+
+      // update featured image
+      $( '#postimagediv .inside' ).html( data.img );
+    }, 'json' );
+  }
+
   /**
    * Recognize change on the primary video input
    *
@@ -141,40 +146,15 @@ jQuery(document).ready(function($){
   });
 
 
-  /**
-   * "Set featured image" link and featured image requirement warning
-   *
-   * @since 1.1
-   */
-  $("#fvp_set_featimg_link").removeClass('fvp_hidden');
-  $("#fvp_set_featimg_input").addClass('fvp_hidden');
-
-  $("#fvp_set_featimg_link, #fvp_warning_set_featimg").click(function() {
-    $("#fvp_set_featimg").attr('checked', true);
-    //$("#fvp_set_featimg").closest("form").submit();
-    $.post( ajaxurl,
-      {
-        'action'    : 'fvp_ajax',
-        'id'        : $('#post_ID').val(),
-        'fvp_nonce' : $('#fvp_nonce').val(),
-        'fvp_video' : $input.url()
-      },
-      function (data) {
-        $('#postimagediv .inside').html(data.img);
-        $("#fvp_set_featimg_link, #fvp_featimg_warning").slideUp().addClass("fvp_hidden");
-      }, "json"
-    );
-    return false;
-  });
-
-  $("#remove-post-thumbnail").click(function() {
-    $("#fvp_set_featimg_link, #fvp_featimg_warning").slideDown().removeClass("fvp_hidden");
-  });
-
-  $("#set-post-thumbnail").click(function() {
-    $("#fvp_featimg_box_warning").addClass("fvp_hidden");
-  });
-
+  // Button for quickly setting a featured image if none is set.
+  //   Only works on initial page load, not if the post thumbnail is reloaded
+  //   after an ajax request.
+  $('.fvp-set_featimg')
+    .show()
+    .click(function(event) {
+      event.preventDefault();
+      submitVideo( true );
+    });
 
   /**
    * Toggle for opening the contextual help
