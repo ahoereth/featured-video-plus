@@ -1,11 +1,34 @@
 .featured_video_plus.responsive {
-	.wp-video,
-	.wp-video video {
-		width: 100% !important;
-		height: auto !important;
-	}
+  .wp-video,
+  .wp-video video {
+    width: 100% !important;
+    height: auto !important;
+  }
 
-	.wp-video .mejs-poster {
-		background-size: cover !important;
-	}
+  .wp-video .mejs-poster {
+    background-size: cover !important;
+  }
+}
+
+.fvp_overlay,
+.fvp_dynamic {
+  position: relative;
+  height: auto;
+  width: auto;
+
+  .fvp_loader {
+    background: transparent no-repeat scroll center center;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 10;
+  }
+}
+
+#DOMWindow {
+  background: transparent center center no-repeat;
+  width: auto;
+  height: auto;
+  margin: auto auto;
+  overflow: hidden;
 }

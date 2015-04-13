@@ -1,97 +1,170 @@
-/**
- * Used for removing anchors surrounding featured videos
- *
- * @since 1.8
- */
-function fvp_unwrap() {
-  jQuery('.featured_video_plus, a.fvp_overlay, a.fvp_dynamic').each(function() {
-    if( jQuery(this).parent().is('a') )
-      jQuery(this).unwrap();
-  });
-}
+(function($) {
+  'use strict';
+  /* global fvpdata */
 
-/**
- * Replace featured image with the featured video on click
- *
- * @since 1.7
- */
-function fvp_dynamic(id){
-  var t = jQuery('#fvp_'+id);
-  t.css({'position':'relative'})
-   .prepend(jQuery('<div />', {
-    'class':'fvp_loader',
-    'style':'background:transparent url(\''+fvpdata.loadingb+'\') no-repeat center center;'+
-            'position: absolute; margin: '+t.children('img').css('margin')+';'+
-            'height:'+t.children('img').css('height')+';width:'+t.children('img').css('width')+'; z-index:1000;'
-  }));
-  jQuery.post( fvpdata.ajaxurl,
-    {
-      'action': 'fvp_get_embed',
-      'nonce' : fvpdata.nonce,
-      'id'    : id
-    },
-  function(data){
-    if (data.success){
-      t.replaceWith(data.html);
-      fvp_unwrap();
-      if ( fvpdata.fitvids && fvpdata.overlay )
-        jQuery(".featured_video_plus").fitVids({customSelector: "iframe[src*='dailymotion.com']"});
-    }
-  });
-}
 
-jQuery(document).ready(function($){
-  // remove wrapping anchors
-  fvp_unwrap();
+  var $loader = $('<div />').addClass('fvp_loader');
+  var playBg = 'url(\'' + fvpdata.playicon + '\')';
+  var loadBg = 'url(\'' + fvpdata.loadicon + '\')';
+  var bgState;
 
-  // add hover effect
-  if( fvpdata.overlay || fvpdata.dynamic ){
-    $('.fvp_overlay,.fvp_dynamic').hover(
-      function(){ $(this).children('img').animate({opacity:0.65}); },
-      function(){ $(this).children('img').animate({opacity:1   }); }
-    );
-  }
 
-  // overlay click handler
-  if(fvpdata.overlay){
-    $('.fvp_overlay').click(function(){
-      $(this).openDOMWindow({
-        eventType:null,
-        windowPadding:0,
-        borderSize:0,
-        windowBGColor:'transparent',
-        overlayOpacity:fvpdata.opacity
-      });
-      $('#DOMWindow').css({'background':"transparent url('"+fvpdata.loadingw+"') center center no-repeat"});
-      var id = new RegExp('[\\?&amp;\\#]fvp_([0-9]+)').exec($(this).attr('href'));
-      if ($('#fvp_'+id[1]).html().length === 0){
-        jQuery.post( fvpdata.ajaxurl,
-          {
-            'action': 'fvp_get_embed',
-            'nonce' : fvpdata.nonce,
-            'id'    : id[1]
-          },
-        function(data){
-          if (data.success){
-            // save the data to not reload when opened again
-            //$('#fvp_'+id[1]).html(data.html); // removed due to bugs with Video.js
-
-            $('#DOMWindow').html(data.html).css({'width':'auto','height':'auto','margin':'auto auto','overflow':'hidden'});
-            $(window).trigger('scroll');
-
-            if ( fvpdata.videojs )
-              videojs('videojs'+data.id,{'autoplay':true},function(){});
-          }
-        });//.fail(function() { alert("failed here"); });;
-      }else{
-        $('#DOMWindow').html( $('#fvp_'+id[1]).html() ).css({'width':'auto','height':'auto','margin':'auto auto','overflow':'hidden'});
-        $(window).trigger('scroll');
+  /**
+   * Remove the link wrapping featured images on index pages
+   */
+  function unwrap() {
+    $('.has-post-video').find(
+      '.featured_video_plus, a.fvp_overlay, a.fvp_dynamic'
+    ).each(function() {
+      var $self = $(this);
+      if ( $self.parent().is('a') ) {
+        $self.unwrap();
       }
+
+      // Should already be done by unwrap.
+      $self.siblings('a.post-thumbnail').remove();
     });
   }
 
-  // fitvids
-  if ( fvpdata.fitvids && ! fvpdata.dynamic && ! fvpdata.overlay )
-    $(".featured_video_plus").fitVids( { customSelector: ["iframe", "object", "embed", ".video-js"] } );
 
-});
+  /**
+   * Autosize videos using fitvids for responsive videos
+   */
+  function fitVids() {
+    if (fvpdata.fitvids) {
+      $('.featured_video_plus.responsive').fitVids({
+        customSelector: ['iframe', 'object', 'embed', 'video']
+      });
+    }
+  }
+
+
+  /**
+   * Trigger the play / load icon (and preload them).
+   */
+  function triggerPlayLoad() {
+    // preload images
+    if (bgState === undefined) {
+      [fvpdata.playicon, fvpdata.loadicon].forEach(function(val) {
+        $('body').append( $('<img/>', { src: val }).hide() );
+      });
+    }
+
+    // trigger image
+    bgState = bgState === playBg ? loadBg : playBg;
+    $loader.css({ backgroundImage: bgState });
+  }
+
+
+  /**
+   * Handle mouseover and mouseout events.
+   */
+  function hover(event) {
+    var $elem = $(event.currentTarget);
+    var $img = $elem.children('img');
+
+    if (0 === $elem.find('.fvp_loader').length) {
+      $img.animate({ opacity: fvpdata.opacity });
+      $elem
+        .css({ position: 'relative' })
+        .prepend(
+          $loader
+            .css({
+              height    :  $img.height(),
+              width     :  $img.width(),
+              marginTop : -$img.height()/2,
+              marginLeft: -$img.width()/2
+            })
+        );
+    } else if (bgState !== loadBg) {
+      $img.animate({ opacity: 1 });
+      $loader.remove();
+    }
+  }
+
+
+  /**
+   * Replace a featured image with its featured video on-click.
+   */
+  function dynamicTrigger(event) {
+    event.preventDefault();
+    var $self = $(event.currentTarget);
+    var id = parseInt($self.attr('data-id'), 10);
+
+    triggerPlayLoad();
+
+    $.post(fvpdata.ajaxurl, {
+      'action': 'fvp_get_embed',
+      'nonce' : fvpdata.nonce,
+      'id'    : id
+    }, function(data){
+      if (data.success) {
+        $self.replaceWith(data.html);
+        unwrap();
+        fitVids();
+      }
+
+      triggerPlayLoad();
+    });
+  }
+
+
+  /**
+   * Show the overlay on-click.
+   */
+  function overlayTrigger(event) {
+    var $self = $(event.currentTarget);
+    var id = parseInt($self.attr('data-id'), 10);
+
+    $self.openDOMWindow({
+      eventType     : null,
+      windowPadding : 0,
+      borderSize    : 0,
+      windowBGColor : 'transparent',
+      overlayOpacity: fvpdata.opacity * 100
+    });
+
+    $('#DOMWindow').css({ backgroundImage: loadBg });
+
+    // Check if the result is already cached
+    if (0 === $('#fvp_' + id).html().length) {
+      $.post(fvpdata.ajaxurl, {
+          'action': 'fvp_get_embed',
+          'nonce' : fvpdata.nonce,
+          'id'    : id
+      }, function(data) {
+        if (data.success) {
+          // cache the result to not reload when opened again
+          $('#fvp_' + id).html(data.html);
+
+          $('#DOMWindow').html(data.html);
+          $(window).trigger('scroll');
+        }
+      });
+    } else {
+      // From cache
+      $('#DOMWindow').html( $('#fvp_' + id).html() );
+      $(window).trigger('scroll');
+    }
+  }
+
+
+  // Initialization after DOM is completly loaded.
+  $(document).ready(function() {
+    // remove wrapping anchors
+    unwrap();
+
+    // initialize fitvids if available
+    fitVids();
+
+    // add hover effect and preload icons
+    $('.fvp_overlay, .fvp_dynamic').hover(hover, hover);
+    triggerPlayLoad();
+
+    // on-demand video insertion click handler
+    $('.fvp_dynamic').click(dynamicTrigger);
+
+    // overlay click handler
+    $('.fvp_overlay').click(overlayTrigger);
+  });
+})(jQuery);
