@@ -5,19 +5,19 @@ require_once( FVP_DIR . 'php/class-html.php' );
 require_once( FVP_DIR . 'php/class-main.php' );
 
 /**
- * Class containing functions required WordPress administration panels. Metabox on post/page edit views and options section under settings->media.
+ * Class containing plugin specific WordPress administration panels
+ * functionality.
  *
- * @since 1.0
+ * Specifically a metabox on post/page edit views and a new options section
+ * under settings->media. Additionally the ajax request handlers and
+ * help tabs.
  *
- * @param featured_video_plus instance
+ * @since 1.0.0
  */
 class FVP_Backend extends Featured_Video_Plus {
-	private $help_localmedia;
-	private $help_urls;
-
 
 	/**
-	 * Creates a new instance of this class, saves the featured_video_instance and default value for the meta box input.
+	 * Register actions and filters.
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -27,7 +27,6 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_menu',            array( $this, 'metabox_register' ) );
 		add_action( 'save_post',             array( $this, 'metabox_save' ) );
-		add_action( 'admin_init',            array( $this, 'help' ) );
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
 		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2 );
@@ -44,12 +43,9 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Enqueue all scripts and styles needed when viewing the backend.
 	 *
-	 * @see http://codex.wordpress.org/Function_Reference/wp_style_is
-	 * @see http://make.wordpress.org/core/2012/11/30/new-color-picker-in-wp-3-5/
-	 * @see http://ottopress.com/2010/passing-parameters-from-php-to-javascripts-in-plugins/
-	 * @see http://codex.wordpress.org/Function_Reference/wp_localize_script
+	 * @since 1.0.0
 	 *
-	 * @since 1.0
+	 * @param {string} $hook Current view hook.
 	 */
 	public function enqueue( $hook ) {
 		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
@@ -58,7 +54,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
-		// jQuery script for automatically resizing <textarea>s
+		// jQuery script for automatically resizing <textarea>s.
 		wp_register_script(
 			'jquery.autosize',
 			FVP_URL . "js/jquery.autosize$min.js",
@@ -67,7 +63,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			false
 		);
 
-		// script handling featured video form interactions with ajax requests etc
+		// Script handling featured video form interactions with ajax requests etc.
 		wp_enqueue_script(
 			'fvp-post',
 			FVP_URL . "js/post$min.js",
@@ -78,14 +74,14 @@ class FVP_Backend extends Featured_Video_Plus {
 			FVP_VERSION
 		);
 
-		// some variables required in JS context
+		// Some variables required in JS context.
 		$upload_dir = wp_upload_dir();
 		wp_localize_script( 'fvp-post', 'fvp_post', array(
 			'wp_upload_dir' => $upload_dir['baseurl'],
 			'loading_gif'   => get_admin_url( null, 'images/loading.gif' )
 		));
 
-		// general backend style
+		// General backend style.
 		wp_enqueue_style(
 			'fvp-backend',
 			FVP_URL . 'styles/backend.css',
@@ -93,34 +89,29 @@ class FVP_Backend extends Featured_Video_Plus {
 			FVP_VERSION,
 			'all'
 		);
-
-		// HTML5 video handling
-		wp_enqueue_script( 'wp-mediaelement' );
-		wp_enqueue_style( 'wp-mediaelement' );
 	}
 
 
 	/**
-	 * Registers the metabox on post/page edit views.
+	 * Register the metabox on post/page edit views.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
-	function metabox_register() {
+	public function metabox_register() {
 		$post_types = get_post_types( array( 'public' => true ) );
 
-		// cycle through all post types
-		foreach ( $post_types as $post_type ) {
-
-			// ignore attachment post type
+		// Cycle through all post types.
+		foreach ( $post_types AS $post_type ) {
+			// Ignore attachment post type.
 			if ( 'attachment' === $post_type ) {
 				continue;
 			}
 
-			// register metabox
+			// Register metabox.
 			add_meta_box(
 				'featured_video_plus-box',
 				__( 'Featured Video', 'featured-video-plus' ),
-				array( &$this, 'metabox_content' ),
+				array( $this, 'metabox_content' ),
 				$post_type,
 				'side',
 				'core'
@@ -132,54 +123,63 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Callback function of the metabox; generates the HTML content.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
-	function metabox_content() {
+	public function metabox_content() {
 		wp_nonce_field( FVP_NAME, 'fvp_nonce' );
 
-		// get current post's id
-		if ( isset( $_GET['post'] ) ) {
-			$post_id = $_GET['post'];
-		} else {
-			$post_id = $GLOBALS['post']->ID;
-		}
-
-		$has_post_video = has_post_video( $post_id );
+		// Get current post's id.
+		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : $GLOBALS['post']->ID;
 
 		$options = get_option( 'fvp-settings' );
-		$meta    = get_post_meta( $post_id, '_fvp_video', true );
+		$meta = get_post_meta( $post_id, '_fvp_video', true );
+		$has_post_video = has_post_video( $post_id );
 
 		$content = '';
 
-		// current featured video
-		$hide     = $has_post_video ? '' : ' style="height:0px;"';
-		$video    = $has_post_video ? get_the_post_video( $post_id, array( 256, 144 ) ) : '';
-		$content .= "<div id='fvp_current_video'{$hide}>{$video}</div>\n\n";
+		// Current featured video.
+		$content .= sprintf(
+			'<div id="fvp_current_video"%s>%s</div>',
+			$has_post_video ? '' : ' style="height:0px;"',
+			$has_post_video ? get_the_post_video( $post_id, array( 256, 144 ) ) : ''
+		);
 
-		// input box containing the featured video URL including functionality for
-		// the media chooser
-		$valid = ! empty( $meta['valid'] ) && ! $meta['valid'] && ! empty( $meta['full'] ) ? ' fvp_invalid' : '';
+		// Input box containing the featured video URL input.
 		$full  = $has_post_video ? get_the_post_video_url( $post_id ) : '';
-		$content .= '<div class="fvp_input_wrapper" data-title="'.__( 'Set Featured Video', 'featured-video-plus' ).'" data-button="'.__( 'Set featured video', 'featured-video-plus' ).'" data-target="#fvp_video">'."\n\t";
-		$content .= "<textarea class='fvp_input{$valid}'' id='fvp_video' name='fvp_video' type='text' placeholder='".__( 'Video URL', 'featured-video-plus' )."'>{$full}</textarea>\n\t";
-		$content .= "<input type='hidden' class='fvp_mirror' value='{$full}' />\n\t";
-		$content .= '<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\''.get_bloginfo( 'wpurl' ).'/wp-admin/images/media-button.png\');"></span></a>'."\n";
-		$content .= "</div>\n";
 
-		// current theme does not support Featured Images warning
+		$content .= sprintf(
+			'<div class="fvp_input_wrapper" data-target="#fvp_video" data-title="%1$s"" data-button="%1$s">',
+			esc_attr__( 'Set Featured Video', 'featured-video-plus' )
+		);
+
+		$content .= sprintf(
+			'<textarea class="fvp_input" id="fvp_video" name="fvp_video" type="text" placeholder="%s">%s</textarea>',
+			esc_attr__( 'Video URL', 'featured-video-plus' ),
+			$full
+		);
+
+		$content .= sprintf(
+			'<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\'%s\');"></span></a>',
+			esc_attr( get_bloginfo( 'wpurl' ) . '/wp-admin/images/media-button.png' )
+		);
+
+		$content .= '</div>';
+
+		// 'Current theme does not support Featured Images' warning.
 		if ( ! current_theme_supports( 'post-thumbnails' ) && 'manual' !== $options['mode'] ) {
-			$content .=
-				'<p class="fvp_warning description"><span style="font-weight: bold;">'.
-				__( 'The current theme does not support Featured Images', 'featured-video-plus' ).
-				':</span>&nbsp;'.
-				sprintf(
-					__(
-						'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.',
-						'featured-video-plus'
-					),
-					'<a href="'.get_admin_url( null, '/options-media.php' ).'">',
-					'</a>'
-				).
+			$content .= sprintf(
+				'<p class="fvp_warning description"><span style="font-weight: bold;">%s</span>&nbsp;',
+				esc_html__( 'The current theme does not support Featured Images', 'featured-video-plus' )
+			);
+
+			$content .= sprintf(
+				esc_html__(
+					'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.',
+					'featured-video-plus'
+				),
+				'<a href="' . esc_attr( get_admin_url( null, '/options-media.php' ) ) . '">',
+				'</a>'
+			);
 				'</p>';
 		}
 
@@ -190,25 +190,26 @@ class FVP_Backend extends Featured_Video_Plus {
 
 
 	/**
-	 * Saves the changes made in the metabox: Splits URL in its parts, saves provider and id, pulls the screen capture, adds it to the gallery and as featured image.
+	 * Saves metabox changes - NON AJAX.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
+	 * @uses $this->save()
 	 *
-	 * @param int $post_id
+	 * @param {int} $post_id
 	 */
 	public function metabox_save( $post_id ){
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
 		     ( defined( 'DOING_AJAX' )     && DOING_AJAX )     ||
 		     ( ! current_user_can( 'edit_post', $post_id ) )   ||
 		     ( false !== wp_is_post_revision( $post_id ) )
-		   ) {
+		) {
 			return;
 		}
 
 		$post = array(
-			'id'              => $post_id,
-			'fvp_nonce'       => ! empty( $_POST['fvp_nonce'] )       ? $_POST['fvp_nonce']       : '',
-			'fvp_video'       => ! empty( $_POST['fvp_video'] )       ? $_POST['fvp_video']       : ''
+			'id'        => $post_id,
+			'fvp_nonce' => ! empty( $_POST['fvp_nonce'] ) ? $_POST['fvp_nonce'] : '',
+			'fvp_video' => ! empty( $_POST['fvp_video'] ) ? $_POST['fvp_video'] : ''
 		);
 
 		$this->save( $post );
@@ -218,9 +219,10 @@ class FVP_Backend extends Featured_Video_Plus {
 
 
 	/**
-	 * Forwards ajax save requests to the $this->save function and generates a response.
+	 * Saves metabox changes - AJAX.
 	 *
-	 * @since 1.5
+	 * @since 1.5.0
+	 * @uses $this->save()
 	 */
 	public function metabox_save_ajax() {
 		$post = array(
@@ -259,10 +261,12 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Used for processing a save request.
 	 *
-	 * @see   http://codex.wordpress.org/Function_Reference/update_post_meta
-	 * @since 1.5
+	 * @since 1.5.0
+	 *
+	 * @param  {assoc} $post
+	 * @return {assoc/bool} video meta data on success, false on failure
 	 */
-	function save( $post ) {
+	private function save( $post ) {
 		if (
 			! isset( $post['fvp_nonce'] ) ||
 			! wp_verify_nonce( $post['fvp_nonce'], FVP_NAME )
@@ -297,7 +301,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Do we have a screen capture to pull?
 		if ( empty( $data['img_url'] ) ) {
-			$data['img_url'] = FVP_URL . 'styles/placeholder.jpg';
+			$data['img_url'] = FVP_URL . 'img/playicon.png';
 			$data['filename'] = 'Featured Video Plus Placeholder';
 		}
 
@@ -321,13 +325,12 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Returns an array containing video information like id provider imgurl etc.
 	 *
-	 * @see   http://oembed.com/
-	 * @since 1.5
+	 * @since 1.5.0
 	 *
 	 * @param  {string} $url The video URL
 	 * @return {assoc}  Associative array containing the video information data
 	 */
-	function get_video_data( $url ) {
+	private function get_video_data( $url ) {
 		$data = array();
 
 		$local = wp_upload_dir();
@@ -387,57 +390,39 @@ class FVP_Backend extends Featured_Video_Plus {
 
 
 	/**
-	 * Pulls the new featured image picture to local and sets it as featured image.
-	 * Since 1.0, got it own function in 1.5
+	 * Sets a remote image as featured image for the given post.
 	 *
-	 * @since 1.5
+	 * @since 1.5.0
 	 *
 	 * @param  {int}   $post_id
 	 * @param  {assoc} $data    Video information data containing img_url
 	 * @return {int}   ID of the inserted attachment
 	 */
-	function set_featured_image( $post_id, $data ) {
+	private function set_featured_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
 		$img = $this->get_post_by_custom_meta( '_fvp_image_url', $data['img_url'] );
 
 		if ( empty( $img ) ) {
-
-			// Generate attachment post metadata
-			$img_data = array(
-				'post_content' => ! empty( $data['description'] ) ? $data['description'] : '',
-				'post_title'   => ! empty( $data['title'] )       ? $data['title'] : '',
-				'post_name'    => ! empty( $data['filename'] )    ? $data['filename'] : '',
+			$file = array(
+			  'name' => basename( $data['img_url'] ),
 			);
 
-			// attach external image
-			$file = array();
-			$file['name'] = basename( $data['img_url'] );
+			// Get external image
 			$file['tmp_name'] = download_url( $data['img_url'] );
+			if ( is_wp_error( $file['tmp_name'] ) ) {
+				return false;
+			}
+
+			// Insert into media library
 			$url_type = image_type_to_extension( exif_imagetype( $file['tmp_name'] ), false );
 			$file['name'] = basename( $data['img_url'] . '.' . $url_type );
-			if ( is_wp_error( $file['tmp_name'] ) ) {
-				return $file['tmp_name'];
-			}
-			$img = media_handle_sideload( $file, $post_id, $img_data['post_content'] );
+			$img = media_handle_sideload( $file, $post_id );
 
-			// generate picture metadata
-			$img_meta = wp_get_attachment_metadata( $img );
-			$img_meta['image_meta'] = array_merge(
-				$img_meta['image_meta'],
-				array(
-					'credit'    => $data['id'],
-					'camera'    => $data['provider'],
-					'caption'   => $data['description'],
-					'copyright' => $data['author'],
-					'title'     => $data['title'],
-				)
-			);
-
-			// save picture metadata
-			wp_update_attachment_metadata( $img, $img_meta );
+			// save picture source url in post meta
 			update_post_meta( $img, '_fvp_image_url', $data['img_url'] );
 		}
 
+		// set featured image
 		if ( ! has_post_thumbnail( $post_id ) ) {
 			set_post_thumbnail( $post_id, $img );
 		}
@@ -449,13 +434,13 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Removes the old featured image.
 	 *
-	 * @since 1.4
+	 * @since 1.4.0
 	 *
-	 * @param {int} $post_id
-	 * @param {int} FVP video meta data containing 'img' with the FVP image
-	 *              attachment ID
+	 * @param {int}   $post_id
+	 * @param {assoc} $meta    FVP video meta data containing 'img' with
+	 *                         the FVP image attachment ID.
 	 */
-	function delete_featured_image( $post_id, $meta ) {
+	private function delete_featured_image( $post_id, $meta ) {
 		if ( empty( $meta['img'] ) ) {
 			return false;
 		}
@@ -476,13 +461,14 @@ class FVP_Backend extends Featured_Video_Plus {
 
 
 	/**
+	 * Return video embed code.
 	 *
 	 * Located in backend class because all AJAX requests are handled on the
 	 * admin side of WordPress - WordPress only distinguishes between
 	 * priv and nopriv requests. This function is only called by the frontend
 	 * JavaScript.
 	 *
-	 * @since 1.7
+	 * @since 1.7.0
 	 */
 	public function ajax_get_embed() {
 		header( 'Content-Type: application/json' );
@@ -519,83 +505,65 @@ class FVP_Backend extends Featured_Video_Plus {
 	}
 
 
-	/*
-	 * Initializes the help texts.
-	 *
-	 * @since 1.3
-	 */
-	public function help() {
-		$mediahref = '<a href="#" class="insert-media" title="Add Media">';
-		$general   = sprintf(
-			__(
-				'To use local videos, copy the <code>Link To Media File</code> from your %sMedia Library%s and paste it into the text field.',
-				'featured-video-plus'
-			),
-			$mediahref,
-			'</a>'
-		);
-
-		$this->help_localmedia = '
-<h4 style="margin-bottom: 0;"></h4>
-<p>'.$general.'</p>
-<h4 style="margin-bottom: 0;">'.__( 'Supported Video Formats', 'featured-video-plus' ).':</h4>
-<p style="margin-top: 0;"><code>webM</code>, <code>mp4</code>, <code>ogv</code>, <code>m4v</code>, <code>wmv</code>, <code>flv</code></p>
-<h4 style="margin-bottom: 0;">'.__( 'Converting your videos', 'featured-video-plus' ).':</h4>
-<p style="margin-top: 0;">'.sprintf( __( 'Take a look at the %sMiro Video Converter%s. It is open source, lightweight and compatible with Windows, Mac and Linux.', 'featured-video-plus' ),'<a href="http://www.mirovideoconverter.com/" target="_blank">','</a>' ).'</p>
-<h4 style="margin-bottom: 0;">'.__( 'Fixing upload errors','featured-video-plus' ).':</h4>
-<ul style="margin-top: 0;">
-<li>'.sprintf( __( 'Read %sthis%s on how to increase the <strong>maximum file upload size</strong>.', 'featured-video-plus' ), '<a href="http://www.wpbeginner.com/wp-tutorials/how-to-increase-the-maximum-file-upload-size-in-wordpress/" target="_blank">', '</a>' ).'</li>
-</ul>'."\n";
-
-		$dir = wp_upload_dir();
-		$this->help_urls = '
-<p>'.__( 'These are some of the tested URL formats. Everything in bold is required, everything in brackets is optional.', 'featured-video-plus' ).'</p>
-<ul>
-	<li>Local Videos:
-	<ul><li><code><strong>'.$dir['baseurl'].'/<em>FOLDER/FILENAME.webm|mp4|ogg|ogv</em></strong></code></li></ul></li>
-	<li>YouTube:
-	<ul><li><code>[http(s)://](www.)<strong>youtu.be/<em>ELEVENCHARS</em></strong>(?random=13)(?t=1m3s)</code></li>
-	<li><code>[http(s)://](www.)<strong>youtube.com/watch?v=<em>ELEVENCHARS</em></strong>(?random=13)(?t=1m3s)</code></li>
-	<li><code>[http(s)://](www.)<strong>youtube.com/v/<em>ELEVENCHARS</em></strong>(?random=13)(?t=1m3s)</code></li></ul></li>
-	<li>Vimeo:
-	<ul><li><code>(http(s)://)(www.)<strong>vimeo.com/<em>UNIQUEID</em></strong>(#stuff)</code></li></ul></li>
-	<li>Dailymotion:
-	<ul><li><code>(http(s)://)(www.)<strong>dailymotion.com/video/<em>UNIQUEID</em></strong>(_video_title)(#stuff)</code></li></ul></li>
-</ul>'."\n";
-
-	}
-
-
 	/**
 	 * Adds help tabs to contextual help. WordPress 3.3+
 	 *
 	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
 	 *
-	 * @since 1.3
+	 * @since 1.3.0
 	 */
 	public function tabs() {
 		$screen = get_current_screen();
-		if ( 'post' !== $screen->id ) {
+		if ( 'post' !== $screen->id || get_bloginfo( 'version' ) < 3.3 ) {
 			return;
 		}
 
-		if ( get_bloginfo( 'version' ) >= 3.3 ) {
-			// LOCALVIDEOS HELP TAB
-			$screen->add_help_tab( array(
-				'id'      => 'fvp_help_localvideos',
-				'title'   => __( 'Featured Video', 'featured-video-plus' ).':&nbsp;'.
-					__( 'Local Media', 'featured-video-plus' ),
-				'content' => $this->help_localmedia,
-			) );
+		// Tab Headline
+		$help = sprintf(
+			'<h3>%s</h3>',
+			esc_html__( 'Featured Video Plus', 'featured-video-plus' )
+		);
 
-			// LEGAL URLs HELP TAB
-			$screen->add_help_tab( array(
-				'id'      => 'fvp_help_urls',
-				'title'   => __( 'Featured Video','featured-video-plus' ).':&nbsp;'.
-					__( 'Valid URLs', 'featured-video-plus' ),
-				'content' => $this->help_urls,
-			) );
-		}
+		// oEmbed
+		$help .= '<p>' . sprintf(
+			esc_html__( 'Take a video url from one of the %ssupported oembed providers%s and paste it into the Featured Video input field.', 'featured-video-plus' ),
+			'<a href="https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F">',
+			'</a>'
+		) . '</p>';
+
+		// Local
+		$help .= '<p>' . sprintf(
+			esc_html__( 'Alternatively you can select one of the videos from your media library using the small media icon to the right in the URL input vield. The plugin makes use of %sWordPress\' native functionality%s - no gurantee for compatibility with all formats.', 'featured-video-plus' ),
+			'<a href="http://mediaelementjs.com/">',
+			'</a>'
+		) . '</p>';
+
+		// Converting
+		$help .= sprintf(
+			'<h4 style="margin-bottom: 0;">%s</h4>',
+			esc_html__( 'Converting your videos', 'featured-video-plus' )
+		);
+
+		$help .= '<p style="margin-top: 0;">' . sprintf(
+			esc_html__( 'Take a look at the %sMiro Video Converter%s. It is open source, lightweight and compatible with Windows, Mac and Linux.', 'featured-video-plus' ),
+			'<a href="http://www.mirovideoconverter.com/" target="_blank">',
+			'</a>'
+		) . '</p>';
+
+		// Uploading
+		$help .= '<h4 style="margin-bottom: 0;">' . esc_html__( 'Fixing upload errors', 'featured-video-plus' ) . ':</h4>';
+		$help .= '<p style="margin-top: 0;">' . sprintf(
+			esc_html__( 'Read %sthis%s on how to increase the maximum file upload size.', 'featured-video-plus' ),
+			'<a href="http://goo.gl/yxov27" target="_blank">',
+			'</a>'
+		) . '</p>';
+
+		// REGISTER HELP TAB
+		$screen->add_help_tab( array(
+			'id'      => 'featured_video_plus',
+			'title'   => __( 'Featured Video Plus', 'featured-video-plus' ),
+			'content' => $help,
+		) );
 	}
 
 
