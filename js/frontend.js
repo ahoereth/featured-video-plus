@@ -33,7 +33,7 @@
   function fitVids() {
     if (fvpdata.fitvids) {
       $('.featured_video_plus.responsive').fitVids({
-        customSelector: ['iframe', 'object', 'embed', 'video']
+        customSelector: ['iframe', 'object', 'embed']
       });
     }
   }

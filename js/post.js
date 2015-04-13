@@ -12,7 +12,7 @@
 
   /**
    * Submit video to server via ajax.
-   * 
+   *
    * @param {bool} setFeatimg
    */
   function submitVideo( setFeatimg ) {
@@ -135,7 +135,7 @@
         this._frame = wp.media({
           title: $control.data('title'),
           library: {
-            type: 'document'
+            type: 'video'
           },
           button: {
             text: $control.data('button')

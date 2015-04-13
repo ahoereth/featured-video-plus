@@ -2,7 +2,7 @@
 /**
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 class Featured_Video_Plus {
 	protected $oembed;
@@ -18,7 +18,7 @@ class Featured_Video_Plus {
 	/**
 	 * Returns the featured video html, ready to echo.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param int $post_id
 	 * @param string|array $size
@@ -44,10 +44,10 @@ class Featured_Video_Plus {
 		$provider = ! empty( $meta['provider'] ) ? $meta['provider'] : null;
 		switch ( $provider ) {
 			case 'local':
-				$meta = wp_get_attachment_metadata( $meta['id'] );
+				$img_meta = wp_get_attachment_metadata( $meta['id'] );
 				$size = $this->get_size( $size, array(
-					'width'  => $meta['width'],
-					'height' => $meta['height'],
+					'width'  => $img_meta['width'],
+					'height' => $img_meta['height'],
 				));
 
 				$atts = array(
@@ -166,7 +166,7 @@ class Featured_Video_Plus {
 	 *
 	 * @see http://codex.wordpress.org/Class_Reference/wpdb
 	 * @see http://dev.mysql.com/doc/refman/5.0/en/regexp.html#operator_regexp
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param string $meta_key which meta_key to look for
 	 * @param string $meta_value which meta_value to look for
@@ -193,7 +193,7 @@ class Featured_Video_Plus {
 	/**
 	 * Initializes i18n
 	 *
-	 * @since 1.3
+	 * @since 1.3.0
 	 */
 	public function language() {
 		load_plugin_textdomain(
