@@ -34,7 +34,7 @@ class Featured_Video_Plus {
 
 		$meta    = get_post_meta( $post_id, '_fvp_video', true );
 		$options = get_option( 'fvp-settings' );
-		$defaults = $options['default_args'];
+		$defaults = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
 
 		$defaults['general']['autoplay'] =
 			! empty( $defaults['general']['autoplay'] ) && ! is_admin();

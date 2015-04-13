@@ -255,7 +255,7 @@ class FVP_Settings {
 	 */
 	public function arguments() {
 		$options     = get_option( 'fvp-settings' );
-		$args        = $options['default_args'];
+		$args        = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
 		$vimeo       = ! empty( $args['vimeo'] )       ? $args['vimeo'] : array();
 		$youtube     = ! empty( $args['youtube'] )     ? $args['youtube'] : array();
 		$dailymotion = ! empty( $args['dailymotion'] ) ? $args['dailymotion'] : array();
@@ -491,7 +491,10 @@ class FVP_Settings {
 				$validated[ $key ] = (bool) $src[ $key ];
 			} else {
 				preg_match( '/' . $value . '/i', $src[ $key ], $match );
-				if ( ! empty( $match[1] ) || '0' === $match[1] ) {
+				if (
+					! empty( $match[1] ) ||
+					( isset( $match[1] ) && '0' === $match[1] )
+				) {
 					$validated[ $key ] = $match[1];
 				}
 			}
