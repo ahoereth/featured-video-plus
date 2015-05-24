@@ -52,3 +52,16 @@
   margin: auto auto;
   overflow: hidden;
 }
+
+
+// Hides the link displayed below local videos as generated using
+// wp_mediaelement_fallback
+// @see http://codex.wordpress.org/Function_Reference/wp_mediaelement_fallback
+// @see https://core.trac.wordpress.org/browser/tags/4.2.2/src/wp-includes/media.php#L1917
+.featured_video_plus .wp-video a:not(.post-thumbnail) {
+  display: none;
+}
+
+.no-js .featured_video_plus .wp-video a:not(.post-thumbnail) {
+  display: inline;
+}

@@ -13,17 +13,10 @@
    * Remove the link wrapping featured images on index pages
    */
   function unwrap() {
-    $('.has-post-video').find(
-      '.featured_video_plus, a.fvp_overlay, a.fvp_dynamic'
-    ).each(function() {
-      var $self = $(this);
-      if ( $self.parent().is('a') ) {
-        $self.unwrap();
-      }
-
-      // Should already be done by unwrap.
-      $self.siblings('a.post-thumbnail').remove();
-    });
+    $('.has-post-video a.post-thumbnail>.featured_video_plus,' +
+      '.has-post-video a.post-thumbnail>.mejs-video,' +
+      '.has-post-video a.post-thumbnail>.wp-video'
+    ).unwrap();
   }
 
 
@@ -152,7 +145,9 @@
   // Initialization after DOM is completly loaded.
   $(document).ready(function() {
     // remove wrapping anchors
+    // doing this twice with a 1 second delay to fix wrapped local video posters
     unwrap();
+    setTimeout(unwrap, 1000);
 
     // initialize fitvids if available
     fitVids();
