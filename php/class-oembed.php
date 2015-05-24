@@ -11,30 +11,26 @@
  * @since 2.0.0
  */
 class FVP_oEmbed {
-	private $super;
-
-	public $time;
+	private $oembed;
 
 	public function __construct() {
 		// Does not extend oEmbed in order to not initialize it a second time.
 		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
-		$this->super = _wp_oembed_get_object();
-
-		$this->time = time();
+		$this->oembed = _wp_oembed_get_object();
 
 		add_filter( 'oembed_fetch_url', array( $this, 'additional_arguments' ), 10, 3 );
 	}
 
 
 	/**
-	 * Call methods from 'super' class if they don't exist here.
+	 * Call methods from 'oembed' class if they don't exist here.
 	 *
 	 * @param  {string} $method
 	 * @param  {array}  $args
 	 * @return {}               Whatever the other method returns.
 	 */
 	public function __call( $method, $args ) {
-		return call_user_func_array( array( $this->super, $method ), $args );
+		return call_user_func_array( array( $this->oembed, $method ), $args );
 	}
 
 
@@ -47,8 +43,8 @@ class FVP_oEmbed {
 	public function request( $url ) {
 		// fetch the oEmbed data with some arbitrary big size to get the biggest
 		// thumbnail possible.
-		$raw = $this->super->fetch(
-			$this->super->get_provider( $url ),
+		$raw = $this->oembed->fetch(
+			$this->oembed->get_provider( $url ),
 			$url,
 			array(
 				'width'  => 4096,
@@ -61,7 +57,7 @@ class FVP_oEmbed {
 
 
 	public function get_html( $url, $args = array(), $provider = null ) {
-		$html = $this->super->get_html( $url, $args );
+		$html = $this->oembed->get_html( $url, $args );
 
 		if ( empty( $provider ) ) {
 			return $html;
@@ -108,21 +104,13 @@ class FVP_oEmbed {
 	 * @return {string}           $provider with added parameters.
 	 */
 	public function additional_arguments( $provider, $url, $args ) {
-		// Only oEmbed requests from inside the plugin are allowed to have
-		// additional parameters!
-		if ( ! empty( $args['fvp'] ) && $args['fvp'] == $this->time ) {
-			// Unset plugin internal and default arguments.
-			unset(
-				$args['fvp'],
-				$args['width'],
-				$args['height'],
-				$args['discover']
-			);
+		unset(
+			$args['width'],
+			$args['height'],
+			$args['discover']
+		);
 
-			$provider = add_query_arg( $args, $provider );
-		}
-
-		return $provider;
+		return add_query_arg( $args, $provider );;
 	}
 
 
