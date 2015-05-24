@@ -1,9 +1,9 @@
 <?php
 $options = array(
-	'mode'     => 'replace',
-	'align'    => 'center',
-	'issingle' => false,
-	'ishome'   => false,
+	'mode'      => 'replace',
+	'alignment' => 'center',
+	'issingle'  => false,
+	'ishome'    => false,
 
 	'sizing' => array(
 		'responsive' => true,
