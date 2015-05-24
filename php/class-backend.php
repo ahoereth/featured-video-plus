@@ -29,13 +29,18 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'save_post',             array( $this, 'metabox_save' ) );
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
-		add_filter( 'plugin_action_links',   array( $this, 'plugin_action_link' ), 10, 2 );
-		add_filter( 'admin_post_thumbnail_html', array( $this, 'featured_image_notice' ), 10, 2 );
+		add_filter( 'plugin_action_links',
+		            array( $this, 'plugin_action_link' ),
+		            10, 2 );
+		add_filter( 'admin_post_thumbnail_html',
+		            array( $this, 'featured_image_notice' ),
+		            10, 2 );
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			add_action( 'wp_ajax_fvp_save',             array( $this, 'metabox_save_ajax' ) );
-			add_action( 'wp_ajax_fvp_get_embed',        array( $this, 'ajax_get_embed' ) );
-			add_action( 'wp_ajax_nopriv_fvp_get_embed', array( $this, 'ajax_get_embed' ) );
+			add_action( 'wp_ajax_fvp_save', array( $this, 'metabox_save_ajax' ) );
+			add_action( 'wp_ajax_fvp_get_embed', array( $this, 'ajax_get_embed' ) );
+			add_action( 'wp_ajax_nopriv_fvp_get_embed',
+			            array( $this, 'ajax_get_embed' ) );
 		}
 	}
 
@@ -140,36 +145,56 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Current featured video.
 		$content .= sprintf(
 			'<div id="fvp_current_video"%s>%s</div>',
-			$has_post_video ? '' : ' style="height:0px;"',
-			$has_post_video ? get_the_post_video( $post_id, array( 256, 144 ) ) : ''
+			$this->inline_styles( array(
+				'height: 0px' => (bool) $has_post_video,
+			), true, true ),
+			get_the_post_video( $post_id, array( 256, 144 ) )
 		);
 
 		// Input box containing the featured video URL input.
-		$full  = $has_post_video ? get_the_post_video_url( $post_id ) : '';
+		$full = $has_post_video ? get_the_post_video_url( $post_id ) : '';
 
+		// Media gallery wrapper.
 		$content .= sprintf(
-			'<div class="fvp_input_wrapper" data-target="#fvp_video" data-title="%1$s"" data-button="%1$s">',
+			'<div class="fvp_input_wrapper" data-target="#fvp_video" data-title="%1$s" data-button="%1$s">',
 			esc_attr__( 'Set Featured Video', 'featured-video-plus' )
 		);
 
+		// Video input.
 		$content .= sprintf(
 			'<textarea class="fvp_input" id="fvp_video" name="fvp_video" type="text" placeholder="%s">%s</textarea>',
 			esc_attr__( 'Video URL', 'featured-video-plus' ),
 			$full
 		);
 
+		// Media gallery button.
 		$content .= sprintf(
-			'<a href="#" class="fvp_video_choose"><span class="fvp_media_icon" style="background-image: url(\'%s\');"></span></a>',
-			esc_attr( get_bloginfo( 'wpurl' ) . '/wp-admin/images/media-button.png' )
+			'<a href="#" class="fvp_video_choose">' .
+				'<span class="fvp_media_icon"%s></span>' .
+			'</a>',
+			$this->inline_styles(array(
+				'background-image' => sprintf(
+					'url(%s/wp-admin/images/media-button.png)',
+					get_bloginfo( 'wpurl' )
+				)
+			), true, true)
 		);
 
+		// Close media gallery wrapper.
 		$content .= '</div>';
 
 		// 'Current theme does not support Featured Images' warning.
-		if ( ! current_theme_supports( 'post-thumbnails' ) && 'manual' !== $options['mode'] ) {
+		if (
+			! current_theme_supports( 'post-thumbnails' ) &&
+			'manual' !== $options['mode']
+		) {
+			$content .= '<p class="fvp_warning description">';
 			$content .= sprintf(
-				'<p class="fvp_warning description"><span style="font-weight: bold;">%s</span>&nbsp;',
-				esc_html__( 'The current theme does not support Featured Images', 'featured-video-plus' )
+				'<span style="font-weight: bold;">%s</span>&nbsp;',
+				esc_html__(
+					'The current theme does not support Featured Images',
+					'featured-video-plus'
+				)
 			);
 
 			$content .= sprintf(
@@ -226,16 +251,20 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	public function metabox_save_ajax() {
 		$post = array(
-			'id'              => $_POST['id'],
-			'fvp_nonce'       => ! empty( $_POST['fvp_nonce'] )       ? $_POST['fvp_nonce']       : '',
-			'fvp_video'       => ! empty( $_POST['fvp_video'] )       ? $_POST['fvp_video']       : '',
-			'fvp_set_featimg' => ! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
+			'id' => $_POST['id'],
+			'fvp_nonce' => ! empty( $_POST['fvp_nonce'] ) ? $_POST['fvp_nonce'] : '',
+			'fvp_video' => ! empty( $_POST['fvp_video'] ) ? $_POST['fvp_video'] : '',
+			'fvp_set_featimg' =>
+				! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
 		);
 
 		// this also verifies the nonce
 		$meta = $this->save( $post );
 
-		$img = _wp_post_thumbnail_html( get_post_thumbnail_id( $post['id'] ), $post['id'] );
+		$img = _wp_post_thumbnail_html(
+			get_post_thumbnail_id( $post['id'] ),
+			$post['id']
+		);
 
 		if ( has_post_video( $post['id'] ) ) {
 			$video = get_the_post_video( $post['id'], array( 256, 144 ) );
@@ -358,7 +387,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				'author'      => ! empty( $raw->author_name )   ? $raw->author_name : null,
 				'description' => ! empty( $raw->description )   ? $raw->description : null,
 				'img_url'     => ! empty( $raw->thumbnail_url ) ? $raw->thumbnail_url : null,
-				'filename'    => ! empty( $raw->title )         ? sanitize_file_name( $raw->title ) : null,
+				'filename'    => ! empty( $raw->title ) ? sanitize_file_name( $raw->title ) : null,
 			);
 		}
 
@@ -414,7 +443,10 @@ class FVP_Backend extends Featured_Video_Plus {
 			}
 
 			// Insert into media library
-			$url_type = image_type_to_extension( exif_imagetype( $file['tmp_name'] ), false );
+			$url_type = image_type_to_extension(
+				exif_imagetype( $file['tmp_name'] ),
+				false
+			);
 			$file['name'] = basename( $data['img_url'] . '.' . $url_type );
 			$img = media_handle_sideload( $file, $post_id );
 
@@ -455,7 +487,11 @@ class FVP_Backend extends Featured_Video_Plus {
 			delete_post_meta( $meta['img'], '_fvp_image_url', $meta['img_url'] );
 
 			// pre 2.0.0
-			delete_post_meta( $meta['img'], '_fvp_image', $meta['provider'] . '?' . $meta['id'] );
+			delete_post_meta(
+				$meta['img'],
+				'_fvp_image',
+				$meta['provider'] . '?' . $meta['id']
+			);
 		}
 	}
 
@@ -574,7 +610,10 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	function plugin_action_link( $links, $file ) {
 		if ( $file == FVP_NAME . '/' . FVP_NAME . '.php' ) {
-			$settings_link = '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/options-media.php">Media Settings</a>';
+			$settings_link = sprintf(
+				'<a href="%s/wp-admin/options-media.php">Media Settings</a>',
+				esc_attr( get_bloginfo( 'wpurl' ) )
+			);
 			array_unshift( $links, $settings_link );
 		}
 

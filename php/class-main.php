@@ -27,7 +27,7 @@ class Featured_Video_Plus {
 		$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 		if ( ! has_post_video( $post_id ) ) {
-			return false;
+			return '';
 		}
 
 		$meta    = get_post_meta( $post_id, '_fvp_video', true );
@@ -87,7 +87,7 @@ class Featured_Video_Plus {
 		}
 
 		if ( empty( $embed ) ) {
-			return false;
+			return '';
 		}
 
 		$classnames = array(
@@ -271,7 +271,13 @@ class Featured_Video_Plus {
 
 		// Style body.
 		foreach ( $assoc AS $key => $val ) {
-			$string .= sprintf( '%s: %s; ', esc_attr( $key ), esc_attr( $val ) );
+			if ( is_bool( $val ) && true === $val ) {
+				// $key is a property: value pair and $val a boolean condition
+				$string .= esc_attr( $key ) . '; ';
+			} else {
+				// $key is a property and $val a value
+				$string .= sprintf( '%s: %s; ', esc_attr( $key ), esc_attr( $val ) );
+			}
 		}
 
 		// Closing the attribute and trailing space.
