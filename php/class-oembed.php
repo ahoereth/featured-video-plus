@@ -18,7 +18,9 @@ class FVP_oEmbed {
 		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
 		$this->oembed = _wp_oembed_get_object();
 
-		add_filter( 'oembed_fetch_url', array( $this, 'additional_arguments' ), 10, 3 );
+		add_filter( 
+			'oembed_fetch_url', array( $this, 'additional_arguments' ), 10, 3
+		);
 	}
 
 
@@ -44,7 +46,7 @@ class FVP_oEmbed {
 		// fetch the oEmbed data with some arbitrary big size to get the biggest
 		// thumbnail possible.
 		$raw = $this->oembed->fetch(
-			$this->oembed->get_provider( $url ),
+			$this->get_provider( $url ),
 			$url,
 			array(
 				'width'  => 4096,
@@ -56,6 +58,15 @@ class FVP_oEmbed {
 	}
 
 
+	/**
+	 * The do-it-all function that takes a URL and attempts to return the HTML.
+	 *
+	 * @see WP_oEmbed::get_html()
+	 *
+	 * @param {string} $url The URL to the content that should be embedded.
+	 * @param {array}  $args Optional arguments. Usually passed from a shortcode.
+	 * @return {false/string} False on failure, other the embed HTML.
+	 */
 	public function get_html( $url, $args = array(), $provider = null ) {
 		$html = $this->oembed->get_html( $url, $args );
 
@@ -168,6 +179,60 @@ class FVP_oEmbed {
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Takes a URL and returns the corresponding oEmbed provider's URL, if there
+	 * is one.
+	 *
+	 * Backport from WordPress 4.0.0 to make this method available for earlier
+	 * WordPress releases.
+	 * @see https://github.com/WordPress/WordPress/blob/ed4aafa6929b36dc1d06708831a7cef258c16b54/wp-includes/class-oembed.php#L188-L226
+	 *
+	 * @param string        $url  The URL to the content.
+	 * @param string|array  $args Optional provider arguments.
+	 * @return false|string False on failure, otherwise the oEmbed provider URL.
+	 */
+	public function get_provider( $url, $args = '' ) {
+		// If the WordPress native oembed class has the get_provider function,
+		// use that one.
+		if ( method_exists( $this->oembed, 'get_provider' ) ) {
+			return $this->oembed->get_provider( $url, $args );
+		}
+
+		$provider = false;
+		if ( ! isset( $args['discover'] ) ) {
+			$args['discover'] = true;
+		}
+
+		foreach ( $this->oembed->providers AS $matchmask => $data ) {
+			list( $providerurl, $regex ) = $data;
+
+			// Turn the asterisk-type provider URLs into regex
+			if ( ! $regex ) {
+				$matchmask = '#' . str_replace(
+					'___wildcard___',
+					'(.+)',
+					preg_quote( str_replace( '*', '___wildcard___', $matchmask ), '#' )
+				) . '#i';
+				$matchmask = preg_replace(
+					'|^#http\\\://|', '#https?\://', $matchmask
+				);
+			}
+
+			if ( preg_match( $matchmask, $url ) ) {
+				// JSON is easier to deal with than XML
+				$provider = str_replace( '{format}', 'json', $providerurl );
+				break;
+			}
+		}
+
+		if ( ! $provider && $args['discover'] ) {
+			$provider = $this->oembed->discover( $url );
+		}
+
+		return $provider;
 	}
 
 
