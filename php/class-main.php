@@ -22,8 +22,6 @@ class Featured_Video_Plus {
 	 *
 	 * @param int $post_id
 	 * @param string|array $size
-	 * @param bool $allowfullscreen
-	 * @param bool $container
 	 */
 	public function get_the_post_video( $post_id = null, $size = null ) {
 		$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
@@ -35,32 +33,39 @@ class Featured_Video_Plus {
 		$meta    = get_post_meta( $post_id, '_fvp_video', true );
 		$options = get_option( 'fvp-settings' );
 		$defaults = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
-
-		$defaults['general']['autoplay'] =
-			! empty( $defaults['general']['autoplay'] ) && ! is_admin();
+		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
+		$general['autoplay'] = ! empty( $general['autoplay'] ) && ! is_admin();
 
 		$responsive = $options['sizing']['responsive'] && ! is_admin();
+		$alignment = ! empty($options['alignment']) ? $options['alignment'] : 'center';
 
-		$provider = ! empty( $meta['provider'] ) ? $meta['provider'] : null;
+		$args = array(
+			'id' => ! empty( $meta['id'] ) ? $meta['id'] : null,
+			'provider' => ! empty( $meta['provider'] ) ? $meta['provider'] : null,
+		);
+
+		$provider = $args['provider'];
 		switch ( $provider ) {
 			case 'local':
 				$img_meta = wp_get_attachment_metadata( $meta['id'] );
 				$size = $this->get_size( $size, array(
 					'width'  => $img_meta['width'],
 					'height' => $img_meta['height'],
-				));
+				) );
 
 				$atts = array(
 					'src'      => wp_get_attachment_url( $meta['id'] ),
-					'autoplay' => $defaults['general']['autoplay']        ? 'on' : null,
-					'loop'     => ! empty( $defaults['general']['loop'] ) ? 'on' : null,
+					'autoplay' => $general['autoplay'] ? 'on' : null,
+					'loop'     => ! empty( $general['loop'] ) ? 'on' : null,
 					// use massive video size/height for responsive videos because
 					// fitvids does not upscale videos
 					'width'    => $responsive ? $size['width'] * 8  : $size['width'],
 					'height'   => $responsive ? $size['height'] * 8 : $size['height'],
 				);
 
+				$args = array_merge( $args, $atts );
 				$embed = wp_video_shortcode( $atts );
+				$embed = apply_filters( 'fvp-local', $embed, $args );
 				break;
 
 			case 'raw':
@@ -68,17 +73,16 @@ class Featured_Video_Plus {
 				break;
 
 			default:
-				$size = $this->get_size( $size );
-
-				$args = array_merge(
-					array( 'fvp' => $this->oembed->time ),
-					$size,
-					isset( $options['default_args']['general'] ) ? $options['default_args']['general'] : array(),
-					isset( $options['default_args'][ $provider ] ) ? $options['default_args'][ $provider ] : array(),
+				$atts = array_merge(
+					$general,
+					$this->get_size( $size ),
+					! empty( $defaults[ $provider ] ) ? $defaults[ $provider ] : array(),
 					isset( $meta['parameters'] ) ? $meta['parameters'] : array()
 				);
 
-				$embed = $this->oembed->get_html( $meta['full'], $args, $provider );
+				$args = array_merge( $args, $atts );
+				$embed = $this->oembed->get_html( $meta['full'], $atts, $provider );
+				$embed = apply_filters( 'fvp-oembed', $embed, $args );
 				break;
 		}
 
@@ -86,12 +90,21 @@ class Featured_Video_Plus {
 			return false;
 		}
 
-		$class = $options['sizing']['responsive'] ? ' responsive' : '';
-		$containerstyle = isset( $options['alignment'] ) ?
-			' style="text-align: '.$options['alignment'].'"' : '';
+		$classnames = array(
+			'featured_video_plus' => true,
+			'responsive' => $responsive,
+		);
+		$classnames[ $provider ] = true;
 
-		$embed = "<div class=\"featured_video_plus{$class}\"{$containerstyle}>{$embed}</div>\n\n";
-		$embed = "\n\n<!-- Featured Video Plus v".FVP_VERSION."-->\n" . $embed;
+		$embed = sprintf(
+			"<!-- Featured Video Plus v%s -->\n<div%s%s>%s</div>\n\n",
+			FVP_VERSION,
+			$this->class_names($classnames, true, true),
+			$this->inline_styles(array(
+				'text-align' => $alignment,
+			), true, true),
+			$embed
+		);
 
 		return $embed;
 	}
@@ -203,4 +216,68 @@ class Featured_Video_Plus {
 		);
 	}
 
+
+	/**
+	 *
+	 * @param  {assoc}   $assoc
+	 * @param  {boolean} $attribute
+	 * @param  {boolean} $leadingspace
+	 * @param  {boolean} $trailingspace
+	 * @return {string}
+	 */
+	protected function class_names(
+		$assoc,
+		$attribute = false,
+		$leadingspace = false,
+		$trailingspace = false
+	) {
+		// Attribute opening and leading space.
+		$string  = $leadingspace ? ' ' : '';
+		$string .= $attribute ? 'class="' : '';
+
+		// Class list.
+		$classes = array();
+		foreach ( $assoc AS $key => $val ) {
+			if ( $val ) {
+				$classes[] = $key;
+			}
+		}
+		$string .= implode( ' ', $classes );
+
+		// Closing the attribute and trailing space.
+		$string .= $attribute ? '"' : '';
+		$string .= $trailingspace ? ' ' : '';
+
+		return $string;
+	}
+
+	/**
+	 *
+	 * @param  {assoc}   $assoc
+	 * @param  {boolean} $attribute
+	 * @param  {boolean} $leadingspace
+	 * @param  {boolean} $trailingspace
+	 * @return {string}
+	 */
+	protected function inline_styles(
+		$assoc,
+		$attribute = false,
+		$leadingspace = false,
+		$trailingspace = false
+	) {
+		// Attribute opening and leading space.
+		$string  = $leadingspace ? ' ' : '';
+		$string .= $attribute ? 'style="' : '';
+
+		// Style body.
+		foreach ( $assoc AS $key => $val ) {
+			$string .= sprintf( '%s: %s; ', esc_attr( $key ), esc_attr( $val ) );
+		}
+
+		// Closing the attribute and trailing space.
+		$string .= $attribute ? '"' : '';
+		$string .= $trailingspace ? ' ' : '';
+
+		return $string;
+	}
 }
