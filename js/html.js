@@ -1,5 +1,4 @@
-jQuery(document).ready(function($) {
-
+(function($) {
   var prefix = '.fvphtml';
 
   /**
@@ -22,126 +21,141 @@ jQuery(document).ready(function($) {
   // COLORPICKERS / IRIS
   // See http://automattic.github.io/Iris/
 
-  // get colorpickers
-  var $colorpickers = $( prefix + '-colorpicker' );
+  $(document).ready(function() {
+    var $colorpickers = $( prefix + '-colorpicker' );
+    $colorpickers
+      .iris({
+        // Update input background and text color live.
+        change: function(event, ui) {
+          var color = ui.color.toString().substr(1);
 
-  // initialize functionality
-  $colorpickers
-    .iris({
+          var r = parseInt(color.substr(0, 2), 16),
+              g = parseInt(color.substr(2, 2), 16),
+              b = parseInt(color.substr(4, 2), 16);
+          var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
 
-      /**
-       * Update input background and text color live.
-       */
-      change: function( event, ui ) {
-        var color = ui.color.toString().substr( 1 );
+          $(this).css({
+            backgroundColor: '#' + color,
+            color: ( yiq >= 128 ) ? '#000' : '#fff'
+          });
+        }
+      })
+      .click(function() {
+        var $this = $(this);
 
-        var r = parseInt( color.substr( 0, 2), 16 ),
-            g = parseInt( color.substr( 2, 2), 16 ),
-            b = parseInt( color.substr( 4, 2 ), 16 );
-        var yiq = ( ( r * 299 ) + ( g * 587 ) + ( b * 114 ) ) / 1000;
-
-        $(this).css({
-          backgroundColor: '#' + color,
-          color: ( yiq >= 128 ) ? '#000' : '#fff'
-        });
-      }
-    })
-    .click(function() {
-      $this = $( this );
-
-      // hide all other colorpickers when a single instance is opened
-      $colorpickers.not( $this ).iris( 'hide' );
-      $this.iris( 'show' );
-    });
+        // hide all other colorpickers when a single instance is opened
+        $colorpickers.not( $this ).iris('hide');
+        $this.iris('show');
+      });
+  });
 
 
   // ****************************************
   // TABBED OPTIONS
 
-  // get tabs
-  var $tabs = $( prefix + '-tabs');
+  $(document).ready(function() {
+    // get tabs
+    var $tabs = $(prefix + '-tabs');
 
-  // initialize every instance's functionality
-  for ( var i = $tabs.length - 1; i >= 0; i-- ) {
-    var $tab = $( $tabs[i] );
+    // initialize every instance's functionality
+    for ( var i = $tabs.length - 1; i >= 0; i-- ) {
+      var $tab = $( $tabs[i] );
 
-    // get titles and bodys
-    var $titles = $tab.children( prefix + '-tab-title' );
-    var $bodys  = $tab.children( prefix + '-tab-body' );
+      // get titles and bodys
+      var $titles = $tab.children(prefix + '-tab-title');
+      var $bodys  = $tab.children(prefix + '-tab-body');
 
-    // first title/body pair is active on initiation
-    $titles.first().addClass('active');
-    $bodys.first().addClass('active');
+      // first title/body pair is active on initiation
+      $titles.first().addClass('active');
+      $bodys.first().addClass('active');
 
-    // pull titles to top
-    $tab.prepend( $titles );
+      // pull titles to top
+      $tab.prepend( $titles );
 
-    // hide all but the initially active content
-    $bodys.filter( ':not(.active)' ).hide();
+      // hide all but the initially active content
+      $bodys.filter(':not(.active)').hide();
 
-    // initialize title click event
-    $tab.children( prefix + '-tab-title' ).click(function() {
-      var $title = $( this );
-      var $body  = $bodys.filter( "[data-hook='" + $title.data( 'hook' ) + "']" );
+      // initialize title click event
+      $tab.children(prefix + '-tab-title').click(function() {
+        var $title = $(this);
+        var $body  = $bodys.filter('[data-hook=\'' + $title.data('hook') + '\']');
 
-      // current active title is not clickable
-      if ( $title.hasClass( 'active' ) && $body.hasClass( 'active' ) ) {
-        return;
-      }
+        // current active title is not clickable
+        if ($title.hasClass('active') && $body.hasClass('active')) {
+          return;
+        }
 
-      // no longer active
-      $titles.removeClass( 'active' );
-      $bodys.removeClass( 'active' ).slideUp();
+        // no longer active
+        $titles.removeClass('active');
+        $bodys.removeClass('active').slideUp();
 
-      // newly active
-      $title.addClass( 'active' );
-      $body.addClass( 'active' ).slideDown();
-    });
-  }
+        // newly active
+        $title.addClass('active');
+        $body.addClass('active').slideDown();
+      });
+    }
+  });
 
 
   // ****************************************
   // CONDITIONALS
   // TODO: needs rewrite
 
-  $conditionals = $( prefix + '-conditional' );
-  $conditional_targets = [];
+  var triggers = {};
+  function conditionalTriggered() {
+    var $trigger = $(this);
+    var targets = triggers[ $trigger.attr('name') ];
+    for (var i = 0; i < targets.length; i++) {
+      var $target = $( targets[i] );
 
-  for ( var i = $conditionals.length - 1; i >= 0; i-- ) {
-    var $conditional = $( $conditionals[i] );
-    var name  = $conditional.data( 'name' );
+      var targetNames = $target.data('names').split('|');
+      var targetValues = $target.data('values').split('|');
 
-    $conditional_targets.push( $( "[name='" + name + "']" ) );
-  }
-
-  for ( var i = $conditional_targets.length - 1; i >= 0; i-- ) {
-    var $target = $( $conditional_targets[i] );
-
-    $target.change(function() {
-      $this = $( this );
-
-      var $focused = $conditionals.filter( "[data-name='" + $this.attr( 'name' ) + "']");
-
-      for ( var j = $focused.length - 1; j >= 0; j-- ) {
-        var $conditional = $( $focused[j] );
-
-        var operator     = true,
-            newValue     = $this.attr('type') == 'checkbox' && ! $this.prop('checked') ? null : $this.val(),
-            desiredValue = $conditional.data( 'value' );
-
-        if ( typeof desiredValue == 'string' && desiredValue.charAt( 0 ) == '!' ) {
-          operator     = false;
-          desiredValue = desiredValue.substr( 1 );
-        }
-
-        if ( (   operator && newValue != desiredValue ) ||
-             ( ! operator && newValue == desiredValue ) ) {
-          $conditional.addClass( 'hidden' );
-        } else {
-          $conditional.removeClass( 'hidden' );
-        }
+      var index = $.inArray($trigger.attr('name'), targetNames);
+      if (-1 === index) {
+        continue;
       }
-    });
+
+      var operator = true;
+      var desiredValue = targetValues[ index ];
+      var newValue = $trigger.attr('type') === 'checkbox' &&
+                     ! $trigger.prop('checked') ? null : $trigger.val();
+
+      if (
+        typeof desiredValue === 'string' &&
+        desiredValue.charAt(0) === '!'
+      ) {
+        operator = false;
+        desiredValue = desiredValue.substr(1);
+      }
+
+      if ((  operator && newValue !== desiredValue) ||
+          (! operator && newValue === desiredValue)) {
+        $target.addClass('hidden');
+      } else {
+        $target.removeClass('hidden');
+      }
+    }
   }
 
-});
+  $(document).ready(function() {
+    var $conditionals = $( prefix + '-conditional' );
+    for (var i = 0; i < $conditionals.length; i++) {
+      var $target = $( $conditionals[i] );
+      var names = $target.data('names').split('|');
+      for (var j = 0; j < names.length; j++) {
+        var name = names[j];
+        if (! triggers.hasOwnProperty(name)) {
+          triggers[ name ] = [];
+        }
+        triggers[ name ].push($target);
+      }
+    }
+
+    for (var trigger in triggers) {
+      var $trigger = $('[name=\'' + trigger + '\']');
+      $trigger.change(conditionalTriggered);
+    }
+  });
+
+})(jQuery);

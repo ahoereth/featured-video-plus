@@ -450,9 +450,8 @@ class FVP_HTML {
 		$hidden = ! empty( $args['hidden'] ) ? $args['hidden'] : null;
 		unset( $args['hidden'] );
 
-		reset( $args );
-		$name  = key( $args );
-		$value = $args[ $name ];
+		$name = implode( '|', array_keys( $args ) );
+		$value = implode( '|', array_values( $args ) );
 
 		$html = self::html(
 			'div',
@@ -461,8 +460,8 @@ class FVP_HTML {
 					self::$name . '-conditional',
 					$hidden ? 'hidden' : '',
 				)),
-				'data-name'  => $name,
-				'data-value' => $value,
+				'data-names'  => $name,
+				'data-values' => $value,
 			),
 			$object
 		);

@@ -196,8 +196,10 @@ class FVP_Settings {
 	 */
 	public function sizing() {
 		$options = get_option( 'fvp-settings' );
-		$responsive = ! empty( $options['sizing']['responsive'] ) ?
-			$options['sizing']['responsive'] : false;
+		$responsive =
+			! empty( $options['sizing']['responsive'] ) &&
+			$options['sizing']['responsive'] &&
+			$options['mode'] !== 'overlay';
 
 		echo FVP_HTML::checkbox(
 			'fvp-settings[sizing][responsive]',
@@ -219,8 +221,17 @@ class FVP_Settings {
 			),
 			array(
 				'fvp-settings[sizing][responsive]' => '!1',
+				'fvp-settings[mode]' => 'overlay',
 				'hidden' => $responsive,
 			)
+		);
+
+		echo FVP_HTML::description(
+			sprintf(
+				esc_html__( 'The %1$sresponsive%2$s setting does not work when using the %1$soverlay%2$s display mode and might break completly in some themes - in such cases you should use a fixed width instead.', 'featured-video-plus' ),
+				'<code>', '</code>'
+			),
+			array( 'fvp_warning' )
 		);
 
 	}

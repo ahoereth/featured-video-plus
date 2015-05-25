@@ -14,6 +14,8 @@
    */
   function unwrap() {
     $('.has-post-video a.post-thumbnail>.featured-video-plus,' +
+      '.has-post-video a.post-thumbnail>.fvp-dynamic,' +
+      '.has-post-video a.post-thumbnail>.fvp-overlay,' +
       '.has-post-video a.post-thumbnail>.mejs-video,' +
       '.has-post-video a.post-thumbnail>.wp-video'
     ).unwrap();
@@ -25,8 +27,24 @@
    */
   function fitVids() {
     if (fvpdata.fitvids) {
-      $('.featured-video-plus.responsive').fitVids({
+      $('.featured-video-plus.fvp-responsive').fitVids({
         customSelector: ['iframe', 'object', 'embed']
+      });
+    }
+  }
+
+
+  /**
+   * WordPress forces a maximum size of the global $contentwidth onto local
+   * videos - overwrite it.
+   */
+  function sizeLocal() {
+    if (fvpdata.width && ! fvpdata.fitvids) {
+      $('.fvp-local .wp-video').css({width: fvpdata.width, height: 'auto'});
+      var video = $('.fvp-local .wp-video .wp-video-shortcode');
+      video.attr({
+        width: fvpdata.width,
+        height: (fvpdata.width / video.attr('width') ) * video.attr('heigth')
       });
     }
   }
@@ -114,7 +132,9 @@
       windowPadding : 0,
       borderSize    : 0,
       windowBGColor : 'transparent',
-      overlayOpacity: fvpdata.opacity * 100
+      overlayOpacity: fvpdata.opacity * 100,
+      width : '100%',
+      height: '100%'
     });
 
     $('#DOMWindow').css({ backgroundImage: loadBg });
@@ -131,6 +151,7 @@
           $('#fvp-' + id).html(data.html);
 
           $('#DOMWindow').html(data.html);
+          sizeLocal();
           $(window).trigger('scroll');
         }
       });
@@ -151,6 +172,8 @@
 
     // initialize fitvids if available
     fitVids();
+
+    sizeLocal();
 
     // add hover effect and preload icons
     $('.fvp-overlay, .fvp-dynamic').hover(hover, hover);

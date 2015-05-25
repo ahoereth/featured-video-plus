@@ -87,12 +87,16 @@ class FVP_Frontend extends Featured_Video_Plus {
 		wp_localize_script( 'fvp-frontend', 'fvpdata', array(
 			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
 			'nonce'    => wp_create_nonce( 'featured-video-plus-nonce' ),
-			'fitvids'  => ! empty( $options['sizing']['responsive'] ) && $options['sizing']['responsive'],
-			'dynamic'  => 'dynamic' === $options['mode'],
-			'overlay'  => 'overlay' === $options['mode'],
+			'fitvids'  => ! empty( $options['sizing']['responsive'] ) &&
+			              $options['sizing']['responsive'],
+			'dynamic'  => 'dynamic' === $mode,
+			'overlay'  => 'overlay' === $mode,
 			'opacity'  => 0.75,
-			'loadicon' => 'overlay' === $options['mode'] ? FVP_URL . 'img/loadicon_w.gif' : FVP_URL . 'img/loadicon_b.gif',
+			'loadicon' => 'overlay' === $mode ? FVP_URL . 'img/loadicon_w.gif' :
+			                                    FVP_URL . 'img/loadicon_b.gif',
 			'playicon' => FVP_URL . 'img/playicon.png',
+			'width'    => ! empty( $options['sizing']['width'] ) ?
+				$options['sizing']['width'] : null
 		));
 
 		// general frontend styles
