@@ -33,7 +33,7 @@ class FVP_Settings {
 		// the featured video settings section on the media settings page
 		add_settings_section(
 			self::$section,
-			__( 'Featured Videos', 'featured-video-plus' ),
+			esc_html__( 'Featured Videos', 'featured-video-plus' ),
 			array( $this, 'section' ),
 			self::$page
 		);
@@ -43,7 +43,7 @@ class FVP_Settings {
 		if ( current_theme_supports( 'post-thumbnails' ) ) {
 			add_settings_field(
 				'fvp-mode',
-				__( 'Display mode', 'featured-video-plus' ),
+				esc_html__( 'Display mode', 'featured-video-plus' ),
 				array( $this, 'mode' ),
 				self::$page,
 				self::$section
@@ -51,7 +51,7 @@ class FVP_Settings {
 
 			add_settings_field(
 				'fvp-condition',
-				__( 'Views', 'featured-video-plus' ),
+				esc_html__( 'Views', 'featured-video-plus' ),
 				array( $this, 'condition' ),
 				self::$page,
 				self::$section
@@ -61,7 +61,7 @@ class FVP_Settings {
 		// video sizing options
 		add_settings_field(
 			'fvp-sizing',
-			__( 'Video Sizing', 'featured-video-plus' ),
+			esc_html__( 'Video Sizing', 'featured-video-plus' ),
 			array( $this, 'sizing' ),
 			self::$page,
 			self::$section
@@ -70,7 +70,7 @@ class FVP_Settings {
 		// video align options
 		add_settings_field(
 			'fvp-align',
-			__( 'Video Align', 'featured-video-plus' ),
+			esc_html__( 'Video Align', 'featured-video-plus' ),
 			array( $this, 'alignment' ),
 			self::$page,
 			self::$section
@@ -79,7 +79,7 @@ class FVP_Settings {
 		// video default url argument options
 		add_settings_field(
 			'fvp-defaults',
-			__( 'Default Arguments', 'featured-video-plus' ),
+			esc_html__( 'Default Arguments', 'featured-video-plus' ),
 			array( $this, 'arguments' ),
 			self::$page,
 			self::$section
@@ -88,7 +88,7 @@ class FVP_Settings {
 		// donation and support notice
 		add_settings_field(
 			'fvp-message',
-			__( 'Support', 'featured-video-plus' ),
+			esc_html__( 'Support', 'featured-video-plus' ),
 			array( $this, 'message' ),
 			self::$page,
 			self::$section
@@ -108,8 +108,8 @@ class FVP_Settings {
 	public function section() {
 		echo FVP_HTML::html(
 			'p',
-			sprintf( __( 'To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus' ), '<code>[featured-video-plus]</code>-Shortcode' ) .
-			sprintf( __( 'For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus' ), '<a href="#contextual-help" id="fvp_help_toggle">', '</a>' )
+			sprintf( esc_html__( 'To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus' ), '<code>[featured-video-plus]</code>-Shortcode' ) .
+			sprintf( esc_html__( 'For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus' ), '<a href="#contextual-help" id="fvp_help_toggle">', '</a>' )
 		);
 
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
@@ -117,9 +117,9 @@ class FVP_Settings {
 				FVP_HTML::html(
 				 	'span',
 					array( 'class' => 'bold' ),
-					__( 'The current theme does not support featured images.', 'featured-video-plus' )
+					esc_html__( 'The current theme does not support featured images.', 'featured-video-plus' )
 				) .
-				__( 'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus' ),
+				esc_html__( 'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus' ),
 				array( 'fvp_warning' )
 			);
 		}
@@ -137,16 +137,16 @@ class FVP_Settings {
 		echo FVP_HTML::radios(
 			'fvp-settings[mode]',
 			array(
-				'replace' => __( 'Replace featured image automatically.', 'featured-video-plus' ),
-				'dynamic' => __( 'Replace featured image on click.', 'featured-video-plus' ),
-				'overlay' => __( 'Open video overlay when featured image is clicked.', 'featured-video-plus' ),
-				'manual'  => __( 'Manual: PHP-functions or shortcodes.', 'featured-video-plus' ),
+				'replace' => esc_html__( 'Replace featured image automatically.', 'featured-video-plus' ),
+				'dynamic' => esc_html__( 'Replace featured image on click.', 'featured-video-plus' ),
+				'overlay' => esc_html__( 'Open video overlay when featured image is clicked.', 'featured-video-plus' ),
+				'manual'  => esc_html__( 'Manual: PHP-functions or shortcodes.', 'featured-video-plus' ),
 			),
 			! empty( $options['mode'] ) ? $options['mode'] : 'replace'
 		);
 
 		echo FVP_HTML::description(
-			sprintf( __( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">', '</a>' )
+			sprintf( esc_html__( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">', '</a>' )
 		);
 	}
 
@@ -163,7 +163,7 @@ class FVP_Settings {
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::description(
-				__( 'View options are not available in manual mode.', 'featured-video-plus' )
+				esc_html__( 'View options are not available in manual mode.', 'featured-video-plus' )
 			),
 			array(
 				'fvp-settings[mode]' => 'manual',
@@ -175,9 +175,9 @@ class FVP_Settings {
 			FVP_HTML::radios(
 				'fvp-settings[condition]',
 				array(
-					'none'   => __( 'Videos everywhere.', 'featured-video-plus' ),
-					'single' => __( 'Only when viewing single posts and pages.', 'featured-video-plus' ),
-					'home'   => __( "Just on the blog's index page.", 'featured-video-plus' ),
+					'none'   => esc_html__( 'Videos everywhere.', 'featured-video-plus' ),
+					'single' => esc_html__( 'Only when viewing single posts and pages.', 'featured-video-plus' ),
+					'home'   => esc_html__( "Just on the blog's index page.", 'featured-video-plus' ),
 				),
 				! empty( $options['condition'] ) ? $options['condition'] : 'none'
 			),
@@ -203,14 +203,14 @@ class FVP_Settings {
 
 		echo FVP_HTML::checkbox(
 			'fvp-settings[sizing][responsive]',
-			__( 'Responsive', 'featured-video-plus' ),
+			esc_html__( 'Responsive', 'featured-video-plus' ),
 			'1',
 			$responsive
 		);
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::labeled_input(
-				__( 'Width in pixels:', 'featured-video-plus' ),
+				esc_html__( 'Width in pixels:', 'featured-video-plus' ),
 				'fvp-settings[sizing][width]',
 				array(
 					'type' => 'number',
@@ -249,9 +249,9 @@ class FVP_Settings {
 		echo FVP_HTML::radios(
 			'fvp-settings[alignment]',
 			array(
-				'left'   => __( 'left', 'featured-video-plus' ),
-				'center' => __( 'center', 'featured-video-plus' ),
-				'right'  => __( 'right', 'featured-video-plus' ),
+				'left'   => esc_html__( 'left', 'featured-video-plus' ),
+				'center' => esc_html__( 'center', 'featured-video-plus' ),
+				'right'  => esc_html__( 'right', 'featured-video-plus' ),
 			),
 			! empty( $options['alignment'] ) ? $options['alignment'] : 'center'
 		);
@@ -276,8 +276,8 @@ class FVP_Settings {
 				FVP_HTML::checkboxes(
 					'fvp-settings[default_args][general]',
 					array(
-						'autoplay' => __( 'Autoplay', 'featured-video-plus' ),
-						'loop'     => __( 'Loop', 'featured-video-plus' )
+						'autoplay' => esc_html__( 'Autoplay', 'featured-video-plus' ),
+						'loop'     => esc_html__( 'Loop', 'featured-video-plus' )
 					),
 					! empty( $args['general'] ) ? $args['general'] : array()
 				),
@@ -294,15 +294,15 @@ class FVP_Settings {
 					array(
 						'portrait' => array(
 							'value' => '0',
-							'label' => __( "Hide user's portrait", 'featured-video-plus' )
+							'label' => esc_html__( "Hide user's portrait", 'featured-video-plus' )
 						),
 						'title' => array(
 							'value' => '0',
-							'label' => __( 'Hide video title', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide video title', 'featured-video-plus' )
 						),
 						'byline' => array(
 							'value' => '0',
-							'label' => __( 'Hide video byline', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide video byline', 'featured-video-plus' )
 						)
 					),
 					$vimeo
@@ -315,22 +315,22 @@ class FVP_Settings {
 					array(
 						'theme' => array(
 							'value' => 'light',
-							'label' => __( 'Light theme', 'featured-video-plus' )
+							'label' => esc_html__( 'Light theme', 'featured-video-plus' )
 						),
-						'modestbranding' => __( 'Hide YouTube logo', 'featured-video-plus' ),
+						'modestbranding' => esc_html__( 'Hide YouTube logo', 'featured-video-plus' ),
 						'rel' => array(
 							'value' => '0',
-							'label' => __( 'Hide related videos', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide related videos', 'featured-video-plus' )
 						),
 						'fs' => array(
 							'value' => '0',
-							'label' => __( 'Disallow fullscreen', 'featured-video-plus' )
+							'label' => esc_html__( 'Disallow fullscreen', 'featured-video-plus' )
 						),
 						'showinfo' => array(
 							'value' => '0',
-							'label' => __( 'Hide video info', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide video info', 'featured-video-plus' )
 						),
-						'enablejsapi' => __( 'Enable JavaScript API', 'featured-video-plus' ),
+						'enablejsapi' => esc_html__( 'Enable JavaScript API', 'featured-video-plus' ),
 					),
 					$youtube
 				),
@@ -375,19 +375,19 @@ class FVP_Settings {
 					array(
 						'logo' => array(
 							'value' => '0',
-							'label' => __( 'Hide DailyMotion logo', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide DailyMotion logo', 'featured-video-plus' )
 						),
 						'info' => array(
 							'value' => '0',
-							'label' => __( 'Hide video info', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide video info', 'featured-video-plus' )
 						),
 						'related' => array(
 							'value' => '0',
-							'label' => __( 'Hide related videos', 'featured-video-plus' )
+							'label' => esc_html__( 'Hide related videos', 'featured-video-plus' )
 						),
 						'quality' => array(
 							'value' => 1080,
-							'label' => __( 'Turn HD on by default', 'featured-video-plus' )
+							'label' => esc_html__( 'Turn HD on by default', 'featured-video-plus' )
 						),
 					),
 					$dailymotion
@@ -406,7 +406,7 @@ class FVP_Settings {
 		echo FVP_HTML::html(
 			'p',
 			sprintf(
-				__(
+				esc_html__(
 					'If you have found a bug or think a specific feature is missing, %slet me know%s in the support forum. Like this plugin? %sRate it%s or %sbuy me a cookie%s!',
 					'featured-video-plus'
 				),
@@ -531,7 +531,7 @@ class FVP_Settings {
 		// PHP FUNCTIONS HELP TAB
 		$screen->add_help_tab( array(
 			'id'      => 'fvp_help_functions',
-			'title'   => 'Featured Video Plus: '. __( 'PHP-Functions','featured-video-plus' ),
+			'title'   => 'Featured Video Plus: '. esc_html__( 'PHP-Functions','featured-video-plus' ),
 			'content' => implode( '', array(
 				FVP_HTML::unordered_list( array(
 					'<code>the_post_video( $size )</code>',
@@ -544,7 +544,7 @@ class FVP_Settings {
 				FVP_HTML::html(
 					'p',
 					sprintf(
-						__(
+						esc_html__(
 							'All parameters are optional. If %s the current post\'s id will be used. %s is either a string keyword (thumbnail, medium, large or full) or a 2-item array representing width and height in pixels, e.g. array(32,32).',
 							'featured-video-plus'
 						),
@@ -555,11 +555,11 @@ class FVP_Settings {
 				FVP_HTML::html(
 					'p',
 					sprintf(
-						__(
+						esc_html__(
 							'The functions are implemented corresponding to the original %sfunctions%s: They are intended to be used and to act the same way. Take a look into the WordPress Codex for further guidance:',
 							'featured-video-plus'
 						),
-						'<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank">' . __( 'Featured Image' ) . '&nbsp;',
+						'<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank">' . esc_html__( 'Featured Image' ) . '&nbsp;',
 						'</a>'
 					)
 				),
@@ -577,15 +577,15 @@ class FVP_Settings {
 			'content' => FVP_HTML::unordered_list( array(
 				'<code>[featured-video-plus]</code><br />' .
 					'<span>' .
-						__( 'Displays the video in its default size.', 'featured-video-plus' ) .
+						esc_html__( 'Displays the video in its default size.', 'featured-video-plus' ) .
 					'</span>',
 				'<code>[featured-video-plus width=560]</code><br />' .
 					'<span>' .
-						__( 'Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus' ) .
+						esc_html__( 'Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus' ) .
 					'</span>',
 				'<code>[featured-video-plus width=560 height=315]</code><br />' .
 					'<span>' .
-						__( 'Displays the video with an fixed width and height.', 'featured-video-plus' ) .
+						esc_html__( 'Displays the video with an fixed width and height.', 'featured-video-plus' ) .
 					'</span>',
 			) )
 		) );
