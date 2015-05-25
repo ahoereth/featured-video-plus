@@ -3,7 +3,7 @@
   /* global fvpdata */
 
 
-  var $loader = $('<div />').addClass('fvp_loader');
+  var $loader = $('<div />').addClass('fvp-loader');
   var playBg = 'url(\'' + fvpdata.playicon + '\')';
   var loadBg = 'url(\'' + fvpdata.loadicon + '\')';
   var bgState;
@@ -13,7 +13,7 @@
    * Remove the link wrapping featured images on index pages
    */
   function unwrap() {
-    $('.has-post-video a.post-thumbnail>.featured_video_plus,' +
+    $('.has-post-video a.post-thumbnail>.featured-video-plus,' +
       '.has-post-video a.post-thumbnail>.mejs-video,' +
       '.has-post-video a.post-thumbnail>.wp-video'
     ).unwrap();
@@ -25,7 +25,7 @@
    */
   function fitVids() {
     if (fvpdata.fitvids) {
-      $('.featured_video_plus.responsive').fitVids({
+      $('.featured-video-plus.responsive').fitVids({
         customSelector: ['iframe', 'object', 'embed']
       });
     }
@@ -56,7 +56,7 @@
     var $elem = $(event.currentTarget);
     var $img = $elem.children('img');
 
-    if (0 === $elem.find('.fvp_loader').length) {
+    if (0 === $elem.find('.fvp-loader').length) {
       $img.animate({ opacity: fvpdata.opacity });
       $elem
         .css({ position: 'relative' })
@@ -120,7 +120,7 @@
     $('#DOMWindow').css({ backgroundImage: loadBg });
 
     // Check if the result is already cached
-    if (0 === $('#fvp_' + id).html().length) {
+    if (0 === $('#fvp-' + id).html().length) {
       $.post(fvpdata.ajaxurl, {
           'action': 'fvp_get_embed',
           'nonce' : fvpdata.nonce,
@@ -128,7 +128,7 @@
       }, function(data) {
         if (data.success) {
           // cache the result to not reload when opened again
-          $('#fvp_' + id).html(data.html);
+          $('#fvp-' + id).html(data.html);
 
           $('#DOMWindow').html(data.html);
           $(window).trigger('scroll');
@@ -136,7 +136,7 @@
       });
     } else {
       // From cache
-      $('#DOMWindow').html( $('#fvp_' + id).html() );
+      $('#DOMWindow').html( $('#fvp-' + id).html() );
       $(window).trigger('scroll');
     }
   }
@@ -153,13 +153,13 @@
     fitVids();
 
     // add hover effect and preload icons
-    $('.fvp_overlay, .fvp_dynamic').hover(hover, hover);
+    $('.fvp-overlay, .fvp-dynamic').hover(hover, hover);
     triggerPlayLoad();
 
     // on-demand video insertion click handler
-    $('.fvp_dynamic').click(dynamicTrigger);
+    $('.fvp-dynamic').click(dynamicTrigger);
 
     // overlay click handler
-    $('.fvp_overlay').click(overlayTrigger);
+    $('.fvp-overlay').click(overlayTrigger);
   });
 })(jQuery);

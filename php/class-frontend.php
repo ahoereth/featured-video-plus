@@ -18,8 +18,6 @@ class FVP_Frontend extends Featured_Video_Plus {
 	 * Creates a new instace of this class, saves the featured_video_instance.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @param featured_video_plus_instance required, dies without
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -63,7 +61,10 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		// Is responsive video functionality required? Only when width is set to
 		// 'auto' and display mode is not set to overlay.
-		if ( $options['sizing']['responsive'] ) {
+		if (
+			! empty($options['sizing']['responsive']) &&
+			$options['sizing']['responsive']
+		) {
 			$deps[] = 'jquery.fitvids';
 		}
 
@@ -134,15 +135,15 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		} elseif ( 'dynamic' === $options['mode'] && ! is_single() ) {
 			return sprintf(
-				'<a href="#fvp_%1$s" id="fvp_%1$s" class="fvp_dynamic" data-id="%1$s">%2$s</a>',
+				'<a href="#fvp-%1$s" id="fvp-%1$s" class="fvp-dynamic" data-id="%1$s">%2$s</a>',
 				$post_id,
 				$html
 			);
 
 		} elseif ( 'overlay' === $options['mode'] && ! is_single() ) {
 			return sprintf(
-				'<a href="#fvp_%1$s" class="fvp_overlay" data-id="%1$s">%2$s</a>' .
-				'<div id="fvp_%1$s" style="display: none;"></div>',
+				'<a href="#fvp-%1$s" class="fvp-overlay" data-id="%1$s">%2$s</a>' .
+				'<div id="fvp-%1$s" style="display: none;"></div>',
 				$post_id,
 				$html
 			);

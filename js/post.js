@@ -21,7 +21,7 @@
     $.post( ajaxurl, {
       'action'         : 'fvp_save',
       'id'             : $( '#post_ID' ).val(),
-      'fvp_nonce'      : $( '#fvp_nonce' ).val(),
+      'fvp_nonce'      : $( '#fvp-nonce' ).val(),
       'fvp_video'      : $input.val(),
       'fvp_set_featimg': setFeatimg
     }, function( data ) {
@@ -30,27 +30,11 @@
 
       // removed video
       if( 'remove' === data.task ) {
-        $( '#fvp_current_video' ).html( '' ).animate( { height: 0 } );
+        $( '.fvp-current-video' ).html( '' ).animate( { height: 0 } );
 
       // new video data
       } else {
-        $( '#fvp_current_video' ).html( data.video ).animate( { height: 144 } );
-
-        // hide help notice
-        $( '#fvp_help_notice' ).slideUp( 'fast' );
-
-        // data is valid: Hide warnings etc
-        if ( data.valid ) {
-          $input
-            .css( { backgroundColor: '#00FF00' } )
-            .animate( { backgroundColor: '#fff' }, 500, function() {
-              $input.css( { backgroundColor: null } );
-            });
-
-        // data is invalid
-        } else {
-          $input.addClass('fvp_invalid');
-        }
+        $( '.fvp-current-video' ).html( data.video ).animate( { height: 144 } );
       }
 
       // update featured image
@@ -61,13 +45,12 @@
 
   $(document).ready(function() {
     // elements
-    $input = $('#fvp_video');
-    $media = $input.siblings('.fvp_video_choose').children('.fvp_media_icon');
+    $input = $('.fvp-video');
+    $media = $input.siblings('.fvp-video-choose').children('.fvp-media-icon');
     mediaicon = $media.css( 'backgroundImage' );
 
     var loadingicon = 'url(\'' + context.loading_gif + '\')';
     var currentUrl  = $input.val();
-
 
     // Automatically submit the video URL using AJAX when the input is blurred.
     // Update video and featured image with the returned data.
@@ -91,7 +74,6 @@
       submitVideo();
     });
 
-
     // Initialize autosizing the url input field, disable enter key and
     // auto select content on click.
     // @see http://www.jacklmoore.com/autosize
@@ -112,7 +94,7 @@
     // Button for quickly setting a featured image if none is set.
     //   Only works on initial page load, not if the post thumbnail is reloaded
     //   after an ajax request.
-    $('.fvp-set_featimg')
+    $('.fvp-set-featimg')
       .show()
       .click(function(event) {
         event.preventDefault();
@@ -154,12 +136,11 @@
         var selection = this.get('selection'),
           returnProperty = 'url';
 
-        $( $control.data('target') )
+        var target = $control.data('target');
+        $(target)
           .val( selection.pluck( returnProperty ) )
-          .trigger('autosize')
           .change()
-          .removeClass('defaultTextActive');
-        $('#fvp_video').blur();
+          .trigger('blur');
       },
 
       updateFrame: function() {
@@ -167,10 +148,10 @@
       },
 
       init: function() {
-        $('#wpbody').on('click', '.fvp_video_choose', function(e) {
+        $('#wpbody').on('click', '.fvp-video-choose', function(e) {
           e.preventDefault();
 
-          $control = $(this).closest('.fvp_input_wrapper');
+          $control = $(this).closest('.fvp-input-wrapper');
 
           mediaControl.frame().open();
         });

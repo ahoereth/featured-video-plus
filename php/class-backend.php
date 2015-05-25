@@ -114,7 +114,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 			// Register metabox.
 			add_meta_box(
-				'featured_video_plus-box',
+				'featured-video-plus-box',
 				__( 'Featured Video', 'featured-video-plus' ),
 				array( $this, 'metabox_content' ),
 				$post_type,
@@ -131,7 +131,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.0.0
 	 */
 	public function metabox_content() {
-		wp_nonce_field( FVP_NAME, 'fvp_nonce' );
+		wp_nonce_field( FVP_NAME, 'fvp-nonce' );
 
 		// Get current post's id.
 		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : $GLOBALS['post']->ID;
@@ -144,9 +144,9 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Current featured video.
 		$content .= sprintf(
-			'<div id="fvp_current_video"%s>%s</div>',
+			'<div class="fvp-current-video"%s>%s</div>',
 			$this->inline_styles( array(
-				'height: 0px' => (bool) $has_post_video,
+				'height: 0px' => ! $has_post_video,
 			), true, true ),
 			get_the_post_video( $post_id, array( 256, 144 ) )
 		);
@@ -156,21 +156,21 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Media gallery wrapper.
 		$content .= sprintf(
-			'<div class="fvp_input_wrapper" data-target="#fvp_video" data-title="%1$s" data-button="%1$s">',
+			'<div class="fvp-input-wrapper" data-target=".fvp-video" data-title="%1$s" data-button="%1$s">',
 			esc_attr__( 'Set Featured Video', 'featured-video-plus' )
 		);
 
 		// Video input.
 		$content .= sprintf(
-			'<textarea class="fvp_input" id="fvp_video" name="fvp_video" type="text" placeholder="%s">%s</textarea>',
+			'<textarea class="fvp-video" name="fvp_video" type="text" placeholder="%s">%s</textarea>',
 			esc_attr__( 'Video URL', 'featured-video-plus' ),
 			$full
 		);
 
 		// Media gallery button.
 		$content .= sprintf(
-			'<a href="#" class="fvp_video_choose">' .
-				'<span class="fvp_media_icon"%s></span>' .
+			'<a href="#" class="fvp-video-choose">' .
+				'<span class="fvp-media-icon"%s></span>' .
 			'</a>',
 			$this->inline_styles(array(
 				'background-image' => sprintf(
@@ -188,7 +188,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			! current_theme_supports( 'post-thumbnails' ) &&
 			'manual' !== $options['mode']
 		) {
-			$content .= '<p class="fvp_warning description">';
+			$content .= '<p class="fvp-warning description">';
 			$content .= sprintf(
 				'<span style="font-weight: bold;">%s</span>&nbsp;',
 				esc_html__(
@@ -524,7 +524,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			$response = json_encode( array(
 				'success' => 'true',
 				'html'    => $video,
-				'id'      => $meta['id'],
+				'id'      => ! empty( $meta['id'] ) ? $meta['id'] : null,
 			) );
 
 			// no video, return featured image
@@ -596,7 +596,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// REGISTER HELP TAB
 		$screen->add_help_tab( array(
-			'id'      => 'featured_video_plus',
+			'id'      => 'featured-video-plus',
 			'title'   => __( 'Featured Video Plus', 'featured-video-plus' ),
 			'content' => $help,
 		) );
@@ -608,7 +608,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.2
 	 */
-	function plugin_action_link( $links, $file ) {
+	public function plugin_action_link( $links, $file ) {
 		if ( $file == FVP_NAME . '/' . FVP_NAME . '.php' ) {
 			$settings_link = sprintf(
 				'<a href="%s/wp-admin/options-media.php">Media Settings</a>',
@@ -629,7 +629,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  {int}    $post_id
 	 * @return {string}
 	 */
-	function featured_image_notice( $content, $post_id ) {
+	public function featured_image_notice( $content, $post_id ) {
 		if ( has_post_thumbnail( $post_id ) || ! has_post_video( $post_id ) ) {
 			return $content;
 		}
@@ -639,7 +639,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			'Featured Videos require a Featured Image for automatic replacement.',
 			'featured-video-plus'
 		);
-		$notice .= '&nbsp;<a href="#" class="fvp-set_featimg hidden">' . __(
+		$notice .= '&nbsp;<a href="#" class="fvp-set-featimg hidden">' . __(
 			'Auto set',
 			'featured-video-plus'
 		) . '</a>';
@@ -685,7 +685,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  {string} $url which url to look for
 	 * @return {int}    retrieved post ID
 	 */
-	function get_post_by_url( $url ) {
+	protected function get_post_by_url( $url ) {
 		global $wpdb;
 
 		$id = $wpdb->get_var( $wpdb->prepare(

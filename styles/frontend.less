@@ -1,4 +1,4 @@
-.featured_video_plus.responsive {
+.featured-video-plus.responsive {
   .wp-video {
     width: auto !important;
     height: auto !important;
@@ -30,13 +30,21 @@
   }
 }
 
-.fvp_overlay,
-.fvp_dynamic {
+.featured-video-plus.fvp-center {
+  text-align: center;
+
+  .wp-video {
+    margin: 0 auto;
+  }
+}
+
+.fvp-overlay,
+.fvp-dynamic {
   position: relative;
   height: auto;
   width: auto;
 
-  .fvp_loader {
+  .fvp-loader {
     background: transparent no-repeat scroll center center;
     position: absolute;
     left: 50%;
@@ -53,21 +61,20 @@
   overflow: hidden;
 }
 
-
 // Hides the link displayed below local videos as generated using
 // wp_mediaelement_fallback
 // @see http://codex.wordpress.org/Function_Reference/wp_mediaelement_fallback
 // @see https://core.trac.wordpress.org/browser/tags/4.2.2/src/wp-includes/media.php#L1917
-.featured_video_plus .wp-video a:not(.post-thumbnail) {
+.featured-video-plus .wp-video a:not(.post-thumbnail) {
   display: none;
 }
 
-.no-js .featured_video_plus .wp-video a:not(.post-thumbnail) {
+.no-js .featured-video-plus .wp-video a:not(.post-thumbnail) {
   display: inline;
 }
 
 // Spotify fitvids fix.
 // TODO.
-.featured_video_plus.responsive.spotify .fluid-width-video-wrapper {
+.featured-video-plus.fvp-responsive.fvp-spotify .fluid-width-video-wrapper {
   padding-top: 100% !important;
 }

@@ -36,7 +36,9 @@ class Featured_Video_Plus {
 		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
 		$general['autoplay'] = ! empty( $general['autoplay'] ) && ! is_admin();
 
-		$responsive = $options['sizing']['responsive'] && ! is_admin();
+		$responsive = ! empty($options['sizing']['responsive']) &&
+		              $options['sizing']['responsive'] &&
+		              ! is_admin();
 		$alignment = ! empty($options['alignment']) ? $options['alignment'] : 'center';
 
 		$args = array(
@@ -91,18 +93,16 @@ class Featured_Video_Plus {
 		}
 
 		$classnames = array(
-			'featured_video_plus' => true,
-			'responsive' => $responsive,
+			'featured-video-plus' => true,
+			'fvp-responsive' => $responsive,
 		);
-		$classnames[ $provider ] = true;
+		$classnames[ 'fvp-' . $provider ] = true;
+		$classnames[ 'fvp-' . $alignment ] = true;
 
 		$embed = sprintf(
-			"<!-- Featured Video Plus v%s -->\n<div%s%s>%s</div>\n\n",
+			"<!-- Featured Video Plus v%s -->\n<div%s>%s</div>\n\n",
 			FVP_VERSION,
 			$this->class_names($classnames, true, true),
-			$this->inline_styles(array(
-				'text-align' => $alignment,
-			), true, true),
 			$embed
 		);
 
