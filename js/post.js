@@ -15,30 +15,37 @@
    *
    * @param {bool} setFeatimg
    */
-  function submitVideo( setFeatimg ) {
+  function submitVideo(setFeatimg) {
     setFeatimg = setFeatimg || false;
 
-    $.post( ajaxurl, {
+    $.post(ajaxurl, {
       'action'         : 'fvp_save',
       'id'             : $( '#post_ID' ).val(),
       'fvp_nonce'      : $( '#fvp-nonce' ).val(),
       'fvp_video'      : $input.val(),
       'fvp_set_featimg': setFeatimg
-    }, function( data ) {
+    }, function(data) {
+      var $container = $('.fvp-current-video');
+
       // reset loading icon
-      $media.css( { backgroundImage: mediaicon } );
+      $media.css({ backgroundImage: mediaicon });
 
       // removed video
-      if( 'remove' === data.task ) {
-        $( '.fvp-current-video' ).html( '' ).animate( { height: 0 } );
+      if('remove' === data.task) {
+        $container
+          .css({height: $container.height() })
+          .html('')
+          .animate({height: 0});
 
       // new video data
       } else {
-        $( '.fvp-current-video' ).html( data.video ).animate( { height: 144 } );
+        $container
+          .css({height: 'auto'})
+          .html(data.video);
       }
 
       // update featured image
-      $( '#postimagediv .inside' ).html( data.img );
+      $('#postimagediv .inside').html(data.img);
     }, 'json' );
   }
 
