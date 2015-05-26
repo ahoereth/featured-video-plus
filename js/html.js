@@ -10,44 +10,11 @@
    * @return {jQuery collection} Collection only containing elements with the
    *                             desired key value data pair.
    */
-  $.filterByData = function( $set, key, value ) {
-    return $set.filter(function( key, value ) {
-      return $( this ).data( key ) == value;
+  $.filterByData = function($set, key, value) {
+    return $set.filter(function(key, value) {
+      return $(this).data(key) === value;
     });
   };
-
-
-  // ****************************************
-  // COLORPICKERS / IRIS
-  // See http://automattic.github.io/Iris/
-
-  $(document).ready(function() {
-    var $colorpickers = $( prefix + '-colorpicker' );
-    $colorpickers
-      .iris({
-        // Update input background and text color live.
-        change: function(event, ui) {
-          var color = ui.color.toString().substr(1);
-
-          var r = parseInt(color.substr(0, 2), 16),
-              g = parseInt(color.substr(2, 2), 16),
-              b = parseInt(color.substr(4, 2), 16);
-          var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-
-          $(this).css({
-            backgroundColor: '#' + color,
-            color: ( yiq >= 128 ) ? '#000' : '#fff'
-          });
-        }
-      })
-      .click(function() {
-        var $this = $(this);
-
-        // hide all other colorpickers when a single instance is opened
-        $colorpickers.not( $this ).iris('hide');
-        $this.iris('show');
-      });
-  });
 
 
   // ****************************************
@@ -157,5 +124,129 @@
       $trigger.change(conditionalTriggered);
     }
   });
+
+
+  // ***************************************************************************
+  // COLORPICKERS / IRIS
+  // See http://automattic.github.io/Iris/
+  (function() {
+    var $colorpickers;
+
+
+    /**
+     * Returns either white (#ffffff) or black (#000000) depending on the
+     * contrast to the given background color.
+     *
+     * @param  {string} color
+     * @return {string}
+     */
+    function getContrastColor(color) {
+      color = ! color ? '#fffff' : color;
+      color = ('#' === color.charAt(0)) ? color.substr(1) : color;
+
+      var r = parseInt(color.substr(0, 2), 16),
+          g = parseInt(color.substr(2, 2), 16),
+          b = parseInt(color.substr(4, 2), 16);
+
+      var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+
+      return ( yiq >= 128 ) ? '#000' : '#fff';
+    }
+
+
+    /**
+     * Converts a 3 digit hex to a 6 digit hex including #.
+     * @param  {string} hex
+     * @return {string}
+     */
+    function cleanHex(hex) {
+      if (hex.length === 3 && '#' !== hex.charAt(0)) {
+        hex = '#' + hex;
+      }
+
+      if (hex.length === 4 && '#' === hex.charAt(0)) {
+        hex = '#' + hex.charAt(1) + hex.charAt(1) +
+                    hex.charAt(2) + hex.charAt(2) +
+                    hex.charAt(3) + hex.charAt(3);
+      }
+
+      return 7 === hex.length ? hex : false;
+    }
+
+
+    /**
+     * Adjust colorpicker input background and foreground color depending
+     * on its value.
+     */
+    function colorpickerChange(event, ui) {
+      var $this = $(this);
+      var color = ui && ui.color ? ui.color.toString() : $this.val();
+      color = cleanHex(color);
+
+      $this.css({
+        backgroundColor: color ? color : '#ffffff',
+        color: getContrastColor(color)
+      });
+
+      if (! color) { $this.siblings(prefix + '-reset').hide(); }
+      else         { $this.siblings(prefix + '-reset').show(); }
+    }
+
+
+    /**
+     * Hide all colorpickers upon opening a new one.
+     */
+    function colorpickerClick() {
+      var $this = $(this);
+      $colorpickers.not( $this ).iris('hide');
+      $this.iris('show');
+    }
+
+
+    /**
+     * Hide colorpicker reset button on blur.
+     */
+    function colorpickerBlur(event) {
+      if (event) { event.preventDefault(); }
+      var $this = $(this);
+      if ('' === $this.val()) {
+        $this.siblings(prefix + '-reset').hide();
+      }
+    }
+
+
+    /**
+     * Clear colorpicker input and hide colorpickers on reset click.
+     */
+    function colorpickerResetClick(event) {
+      if (event) { event.preventDefault(); }
+      $colorpickers.iris('hide');
+      $(this).siblings(prefix + '-colorpicker')
+        .val('')
+        .each(colorpickerChange);
+    }
+
+    // DOM is ready..
+    $(document).ready(function() {
+      // Get colorpickers.
+      $colorpickers = $(prefix + '-colorpicker');
+
+      // Change handlers.
+      $colorpickers.iris({ change: colorpickerChange });
+      $colorpickers.bind('input', colorpickerChange); // live change binding
+
+      // Click handler.
+      $colorpickers.click(colorpickerClick);
+
+      // Blur handler.
+      $colorpickers.blur(colorpickerBlur);
+
+      // Reset click handler.
+      $colorpickers.siblings(prefix + '-reset').click(colorpickerResetClick);
+
+      // Initial input coloring.
+      $colorpickers.each(colorpickerChange);
+    });
+  })(); // End colorpickers.
 
 })(jQuery);

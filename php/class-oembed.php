@@ -112,8 +112,9 @@ class FVP_oEmbed {
 
 				$parameters = add_query_arg( $args, '' );
 
-				$pattern     = "/src=([\"'])([^\"']*)[\"']/";
-				$replacement = 'src=$1$2' . $parameters . '$1';
+				$pattern = "/src=([\"'])([^\"']*)[\"']/";
+				preg_match( $pattern, $html, $match );
+				$replacement = sprintf('src=$1%s$1', add_query_arg( $args, $match[2] ) );
 				$html = preg_replace( $pattern, $replacement, $html );
 				break;
 		}
@@ -330,6 +331,7 @@ class FVP_oEmbed {
 				'startscreen',
 				'start',
 				't',
+				'syndication',
 			),
 		);
 
@@ -338,7 +340,7 @@ class FVP_oEmbed {
 		if ( ! empty( $legals[ $provider ] ) ) {
 			foreach ( $legals[ $provider ] as $key ) {
 				if ( array_key_exists( $key, $args ) ) { // ! empty( 0 ) workaround
-					$result[ $key ] = $args[ $key ];
+					$result[ $key ] = urlencode( $args[ $key ] );
 				}
 			}
 		}

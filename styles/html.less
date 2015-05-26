@@ -41,13 +41,22 @@ body.js {
 }
 
 .fvphtml-label {
+	position: relative;
 	clear: both;
 	display: block;
 
-	span {
+	.fvphtml-innerlabel {
 		display: block;
 		float: left;
 		width: 10em;
+		line-height: 27px;
+	}
+
+	.fvphtml-reset {
+		position: absolute;
+		top: 0;
+		left: 9em;
+		z-index: 1;
 		line-height: 27px;
 	}
 }

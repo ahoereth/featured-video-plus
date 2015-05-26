@@ -290,6 +290,12 @@ class FVP_Settings {
 
 		echo FVP_HTML::tabbed( array(
 			'general' => array(
+				FVP_HTML::description(
+					esc_html__(
+						'Not all of the following options might be supported by all providers.',
+						'featured-video-plus'
+					)
+				),
 				FVP_HTML::checkboxes(
 					'fvp-settings[default_args][general]',
 					array(
@@ -329,7 +335,7 @@ class FVP_Settings {
 			'youtube' => array(
 				FVP_HTML::description(
 					esc_html__(
-						'Note that YouTube caches requests and changes here might not be instantly visible.',
+						'Note that YouTube caches requests and changes here might not take effect right away.',
 						'featured-video-plus'
 					)
 				),

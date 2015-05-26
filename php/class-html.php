@@ -179,6 +179,7 @@ class FVP_HTML {
 
 		$span = self::html(
 			'span',
+			array( 'class' => self::$name . '-innerlabel' ),
 			$label
 		);
 
@@ -351,6 +352,7 @@ class FVP_HTML {
 	public static function colorpicker( $title, $name, $default = null ) {
 		$title = self::html(
 			'span',
+			array( 'class' => self::$name . '-innerlabel' ),
 			$title
 		);
 
@@ -364,10 +366,16 @@ class FVP_HTML {
 			)
 		);
 
+		$reset = self::html(
+			'span',
+			array( 'class' => self::$name . '-reset' ),
+			'&times;'
+		);
+
 		$html = self::html(
 			'label',
 			array( 'class' => self::$name . '-label' ),
-			$title . $input
+			$title . $input . $reset
 		);
 
 		return $html;
