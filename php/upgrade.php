@@ -102,11 +102,7 @@ switch ( $version ) {
 
 
 	case '1.9':
-		$options['issingle'] = false;
-
-
 	case '1.9.1':
-		$options['ishome'] = false;
 
 		$sizing = array(
 			'responsive' => ! empty( $options['sizing']['wmode'] ) ?
@@ -117,6 +113,10 @@ switch ( $version ) {
 		unset( $options['sizing'] );
 		$options['sizing'] = $sizing;
 
+		$options['conditions'] = array(
+			'home'   => ! empty( $options['ishome'] )  && $options['ishome'],
+			'single' => ! empty( $options['issingle'] ) && $options['issingle'],
+		);
 		$options['mode'] = $options['usage'];
 		$options['alignment'] = $options['align'];
 		$options['youtube']['showinfo']    = $options['youtube']['info'];
@@ -125,6 +125,8 @@ switch ( $version ) {
 			( $options['youtube']['logo'] + 1 ) % 2;
 
 		unset(
+			$options['ishome'],
+			$options['issingle'],
 			$options['usage'],
 			$options['align'],
 			$options['youtube']['info'],

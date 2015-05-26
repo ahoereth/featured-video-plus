@@ -1,3 +1,5 @@
+// *****************************************************************************
+// Responsive videos.
 .featured-video-plus.fvp-responsive {
   .wp-video {
     width: auto !important;
@@ -30,14 +32,25 @@
   }
 }
 
+// *****************************************************************************
+// Alignment
 .featured-video-plus.fvp-center {
   text-align: center;
-
-  .wp-video {
-    margin: 0 auto;
-  }
+  .wp-video { margin: 0 auto; }
 }
 
+.featured-video-plus.fvp-right {
+  text-align: right;
+  .wp-video { margin: 0 0 auto auto; }
+}
+
+.featured-video-plus.fvp-left {
+  text-align: left;
+  .wp-video { margin: 0 auto auto 0; }
+}
+
+// *****************************************************************************
+// Lazy mode overlay button and DOM Window
 .fvp-overlay,
 .fvp-dynamic {
   position: relative;
@@ -60,6 +73,9 @@
   margin: auto auto;
   overflow: hidden;
 }
+
+// *****************************************************************************
+// Hacks
 
 // Hides the link displayed below local videos as generated using
 // wp_mediaelement_fallback

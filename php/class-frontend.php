@@ -128,13 +128,24 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$size,
 		$attr
 	) {
-		$options = get_option( 'fvp-settings' );
-		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 		$size = $this->get_size();
 
-		if (
-			( isset( $options['issingle'] ) && $options['issingle'] && ! is_single() ) ||
-			( 'manual' === $options['mode'] || ! has_post_video( $post_id ) ) ) {
+		$options = get_option( 'fvp-settings' );
+		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
+		$conditions = ! empty( $options['conditions'] ) ?
+			$options['conditions'] : array();
+
+		$conditions_hold = true;
+		foreach ( $conditions AS $fun => $value ) {
+			if ( $value && function_exists( 'is_' . $fun ) ) {
+				$conditions_hold = $conditions_hold && call_user_func( 'is_' . $fun );
+			}
+		}
+
+		if ( ( 'manual' === $mode ) ||
+		     ( ! $conditions_hold ) ||
+		     ( ! has_post_video( $post_id ) )
+		) {
 			return $html;
 
 		} elseif ( 'dynamic' === $options['mode'] && ! is_single() ) {

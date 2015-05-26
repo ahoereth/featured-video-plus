@@ -2,8 +2,7 @@
 $options = array(
 	'mode'      => 'replace',
 	'alignment' => 'center',
-	'issingle'  => false,
-	'ishome'    => false,
+	'conditions' => array(),
 
 	'sizing' => array(
 		'responsive' => true,

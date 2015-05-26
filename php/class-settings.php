@@ -50,9 +50,9 @@ class FVP_Settings {
 			);
 
 			add_settings_field(
-				'fvp-condition',
-				esc_html__( 'Views', 'featured-video-plus' ),
-				array( $this, 'condition' ),
+				'fvp-conditions',
+				esc_html__( 'Display Conditions', 'featured-video-plus' ),
+				array( $this, 'conditions' ),
 				self::$page,
 				self::$section
 			);
@@ -156,10 +156,10 @@ class FVP_Settings {
 	 *
 	 * @since  2.0.0
 	 */
-	public function condition() {
+	public function conditions() {
 		$options  = get_option( 'fvp-settings' );
 
-		$auto = ! empty( $options['mode'] ) && $options['mode'] != 'manual' ? true : false;
+		$auto = ! empty( $options['mode'] ) && $options['mode'] != 'manual';
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::description(
@@ -172,14 +172,31 @@ class FVP_Settings {
 		);
 
 		echo FVP_HTML::conditional(
-			FVP_HTML::radios(
-				'fvp-settings[condition]',
+			FVP_HTML::checkboxes(
+				'fvp-settings[conditions]',
 				array(
-					'none'   => esc_html__( 'Videos everywhere.', 'featured-video-plus' ),
-					'single' => esc_html__( 'Only when viewing single posts and pages.', 'featured-video-plus' ),
-					'home'   => esc_html__( "Just on the blog's index page.", 'featured-video-plus' ),
+					'single' => sprintf(
+						esc_html__( 'Only when viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
+						'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
+						'</a>'
+					),
+					'home' => sprintf(
+						esc_html__( 'Only on the %spost index page%s.', 'featured-video-plus' ),
+						'<a href="http://codex.wordpress.org/Function_Reference/is_home" target="_blank">',
+						'</a>'
+					),
+					'main_query' => sprintf(
+						esc_html__( 'Only inside the %smain query%s of each page.', 'featured-video-plus' ),
+						'<a href="https://developer.wordpress.org/reference/functions/is_main_query/" target="_blank">',
+						'</a>'
+					),
+					'sticky' => sprintf(
+						esc_html__( 'Only for %ssticky%s posts.', 'featured-video-plus' ),
+						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
+						'</a>'
+					)
 				),
-				! empty( $options['condition'] ) ? $options['condition'] : 'none'
+				! empty( $options['conditions'] ) ? $options['conditions'] : array()
 			),
 			array(
 				'fvp-settings[mode]' => '!manual',
@@ -443,7 +460,12 @@ class FVP_Settings {
 
 		$datatypes = array(
 			'mode'      => '(replace|dynamic|overlay|manual)',
-			'condition' => '(single|home)',
+			'conditions' =>  array(
+				'single'     => $patterns['digit'],
+				'home'       => $patterns['digit'],
+				'main_query' => $patterns['digit'],
+				'sticky'     => $patterns['digit'],
+			),
 			'alignment' => '(left|center|right)',
 			'sizing' => array(
 				'responsive' => 'BOOLEAN',
