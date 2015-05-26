@@ -307,6 +307,12 @@ class FVP_Settings {
 			),
 
 			'vimeo' => array(
+				FVP_HTML::description(
+					esc_html__(
+						'If the owner of a video is a Plus member, some of these settings may be overridden by their preferences.',
+						'featured-video-plus'
+					)
+				),
 				FVP_HTML::colorpicker(
 					'Color',
 					'fvp-settings[default_args][vimeo][color]',
@@ -326,7 +332,7 @@ class FVP_Settings {
 						'byline' => array(
 							'value' => '0',
 							'label' => esc_html__( 'Hide video byline', 'featured-video-plus' )
-						)
+						),
 					),
 					$vimeo
 				),
