@@ -53,8 +53,8 @@ class Featured_Video_Plus {
 			case 'local':
 				$img_meta = wp_get_attachment_metadata( $meta['id'] );
 				$size = $this->get_size( $size, array(
-					'width'  => $img_meta['width'],
-					'height' => $img_meta['height'],
+					'width'  => ! empty($img_meta['width'] ) ? $img_meta['width']  : null,
+					'height' => ! empty($img_meta['height']) ? $img_meta['height'] : null,
 				) );
 
 				$atts = array(
