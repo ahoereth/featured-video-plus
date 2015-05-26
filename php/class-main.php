@@ -34,8 +34,9 @@ class Featured_Video_Plus {
 		$options = get_option( 'fvp-settings' );
 		$defaults = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
 		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
-		$general['autoplay'] = ! empty( $general['autoplay'] ) && ! is_admin() ?
-			'1' : '0';
+		$general['autoplay'] =
+			! is_admin() && ! empty( $general['autoplay'] ) && $general['autoplay'] ?
+			'1' : null;
 
 		$responsive = ! empty($options['sizing']['responsive']) &&
 		              $options['sizing']['responsive'] &&

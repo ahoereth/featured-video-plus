@@ -3,8 +3,9 @@
  * Class providing additional functionality to WordPress' native oEmbed
  * functionality.
  *
- * @link http://codex.wordpress.org/oEmbed oEmbed Codex Article
+ * @link http://codex.wordpress.org/oEmbed
  * @link http://oembed.com/ oEmbed Homepage
+ * @link https://github.com/WordPress/WordPress/tree/master/wp-includes/class-oembed.php
  *
  * @package Featured Video Plus
  * @subpackage oEmbed
@@ -68,13 +69,15 @@ class FVP_oEmbed {
 	 * @return {false/string} False on failure, other the embed HTML.
 	 */
 	public function get_html( $url, $args = array(), $provider = null ) {
+		if ( $provider ) {
+			$args = $this->filter_legal_args( $provider, $args );
+		}
+
 		$html = $this->oembed->get_html( $url, $args );
 
 		if ( empty( $provider ) ) {
 			return $html;
 		}
-
-		$args = $this->filter_legal_args( $provider, $args );
 
 		// Some providers do not provide it's player API to oEmbed requests,
 		// therefore the plugin needs to manually interfere with their iframe's
@@ -333,14 +336,26 @@ class FVP_oEmbed {
 				't',
 				'syndication',
 			),
+
+			// SoundCloud.com
+			// https://developers.soundcloud.com/docs/oembed
+			'soundcloud' => array(
+				'auto_play',
+				'auto_play' => 'autoplay', // map autoplay to auto_play
+				'color',
+				'show_comments',
+			),
 		);
 
 		$result = array();
 
 		if ( ! empty( $legals[ $provider ] ) ) {
-			foreach ( $legals[ $provider ] as $key ) {
-				if ( array_key_exists( $key, $args ) ) { // ! empty( 0 ) workaround
-					$result[ $key ] = urlencode( $args[ $key ] );
+			foreach ( $legals[ $provider ] AS $key => $value ) {
+				if ( array_key_exists( $value, $args ) &&
+				     ! is_null( $args[ $value ] )
+				) {
+					$key = is_numeric( $key ) ? $value : $key;
+					$result[ $key ] = urlencode( $args[ $value ] );
 				}
 			}
 		}
