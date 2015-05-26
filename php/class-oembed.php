@@ -18,7 +18,7 @@ class FVP_oEmbed {
 		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
 		$this->oembed = _wp_oembed_get_object();
 
-		add_filter( 
+		add_filter(
 			'oembed_fetch_url', array( $this, 'additional_arguments' ), 10, 3
 		);
 	}
@@ -83,8 +83,26 @@ class FVP_oEmbed {
 
 			// YouTube.com
 			case 'youtube':
+				// Add `origin` paramter.
+				$args['origin'] = urlencode( get_bloginfo( 'url' ) );
+
+				// The loop parameter does not work with single videos if there is no
+				// playlist defined. Workaround: Set playlist to video itself.
+				// @see https://developers.google.com/youtube/player_parameters#loop-supported-players
+				if ( ! empty( $args['loop'] ) && $args['loop'] ) {
+					$args['playlist'] = $this->get_youtube_video_id( $url );
+				}
+
+				// Remove fullscreen button manually because the YouTube API
+				//  does not care about `&fs=0`.
+				if ( array_key_exists( 'fs', $args ) && $args['fs'] == 0 ) {
+					$html = str_replace( 'allowfullscreen', '', $html );
+				}
+
+				// We strip the 'feature=oembed' from the parameters because it breaks
+				// some parameters.
 				$hook = '?feature=oembed';
-				$parameters = add_query_arg( $args, $hook );
+				$parameters = add_query_arg( $args, '' );
 				$html = str_replace( $hook, $parameters, $html );
 				break;
 
@@ -319,7 +337,7 @@ class FVP_oEmbed {
 
 		if ( ! empty( $legals[ $provider ] ) ) {
 			foreach ( $legals[ $provider ] as $key ) {
-				if ( ! empty( $args[ $key ] ) ) {
+				if ( array_key_exists( $key, $args ) ) { // ! empty( 0 ) workaround
 					$result[ $key ] = $args[ $key ];
 				}
 			}
@@ -420,5 +438,26 @@ class FVP_oEmbed {
 		}
 
 		return $args;
+	}
+
+
+	/**
+	 * Extract the YouTube Video ID from an URL.
+	 *
+	 * @see http://stackoverflow.com/a/6382259/1447384
+	 *
+	 * @param  {string} $url
+	 * @return {string} YouTube ID
+	 */
+	private function get_youtube_video_id( $url ) {
+		$pattern =
+		 	'/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)'.
+			'|youtu\.be\/)([^"&?\/ ]{11})/i';
+
+		if ( preg_match( $pattern, $url, $match ) ) {
+			return $match[1];
+		}
+
+		return false;
 	}
 }

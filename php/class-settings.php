@@ -327,6 +327,12 @@ class FVP_Settings {
 			),
 
 			'youtube' => array(
+				FVP_HTML::description(
+					esc_html__(
+						'Note that YouTube caches requests and changes here might not be instantly visible.',
+						'featured-video-plus'
+					)
+				),
 				FVP_HTML::checkboxes(
 					'fvp-settings[default_args][youtube]',
 					array(
@@ -363,7 +369,7 @@ class FVP_Settings {
 						'transparent' => 'transparent',
 					),
 					! empty( $youtube['wmode'] ) ? $youtube['wmode'] : null
-				),
+				)
 			),
 
 			'dailymotion' => array(
