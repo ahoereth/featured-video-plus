@@ -103,7 +103,6 @@ switch ( $version ) {
 
 	case '1.9':
 	case '1.9.1':
-
 		$sizing = array(
 			'responsive' => ! empty( $options['sizing']['wmode'] ) ?
 				(bool)  $options['sizing']['wmode']   : true,
@@ -165,7 +164,6 @@ switch ( $version ) {
 					'rel'   => 1,
 					'fs'    => 1,
 					'logo'  => 1,
-					'wmode' => 'auto',
 					'jsapi' => 0,
 					'showinfo' => 1,
 					'enablejsapi' => 0,

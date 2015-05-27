@@ -119,7 +119,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				array( $this, 'metabox_content' ),
 				$post_type,
 				'side',
-				'core'
+				'high'
 			);
 		}
 	}

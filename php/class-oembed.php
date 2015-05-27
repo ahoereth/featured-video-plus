@@ -105,21 +105,22 @@ class FVP_oEmbed {
 				// We strip the 'feature=oembed' from the parameters because it breaks
 				// some parameters.
 				$hook = '?feature=oembed';
-				$parameters = add_query_arg( $args, '' );
-				$html = str_replace( $hook, $parameters, $html );
+				$html = str_replace( $hook, '', $html );
 				break;
 
 			// DailyMotion.com
 			case 'dailymotion':
 				$args = $this->translate_time_arg( $args );
-
-				$parameters = add_query_arg( $args, '' );
-
-				$pattern = "/src=([\"'])([^\"']*)[\"']/";
-				preg_match( $pattern, $html, $match );
-				$replacement = sprintf('src=$1%s$1', add_query_arg( $args, $match[2] ) );
-				$html = preg_replace( $pattern, $replacement, $html );
 				break;
+		}
+
+		if ( ! empty( $args ) ) {
+			$pattern = "/src=([\"'])([^\"']*)[\"']/";
+			preg_match( $pattern, $html, $match );
+			if ( ! empty( $match[1] ) && ! empty( $match[2] ) ) {
+				$replace = sprintf('src=$1%s$1', add_query_arg( $args, $match[2] ) );
+				$html = preg_replace( $pattern, $replace, $html );
+			}
 		}
 
 		return $html;

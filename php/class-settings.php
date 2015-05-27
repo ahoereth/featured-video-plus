@@ -256,7 +256,7 @@ class FVP_Settings {
 
 	/**
 	 * How should the videos be aligned?
-	 * Only interesting when wmode is set to fixed.
+	 * Only interesting when a fixed size is used.
 	 *
 	 * @since 1.4
 	 */
@@ -352,6 +352,10 @@ class FVP_Settings {
 							'value' => 'light',
 							'label' => esc_html__( 'Light theme', 'featured-video-plus' )
 						),
+						'color' => array(
+							'value' => 'white',
+							'label' => esc_html__( 'White highlight color', 'featured-video-plus' )
+						),
 						'modestbranding' => esc_html__( 'Hide YouTube logo', 'featured-video-plus' ),
 						'rel' => array(
 							'value' => '0',
@@ -369,19 +373,6 @@ class FVP_Settings {
 					),
 					$youtube
 				),
-				FVP_HTML::html(
-					'strong',
-					'wmode:'
-				),
-				FVP_HTML::radios(
-					'fvp-settings[default_args][youtube][wmode]',
-					array(
-						'auto' => 'auto',
-						'opaque' => 'opaque',
-						'transparent' => 'transparent',
-					),
-					! empty( $youtube['wmode'] ) ? $youtube['wmode'] : null
-				)
 			),
 
 			'dailymotion' => array(
@@ -502,12 +493,12 @@ class FVP_Settings {
 				),
 				'youtube' => array(
 					'theme'          => $patterns['word'],
+					'color'          => $patterns['word'],
 					'modestbranding' => $patterns['digit'],
 					'fs'             => $patterns['digit'],
 					'rel'            => $patterns['digit'],
 					'showinfo'       => $patterns['digit'],
 					'enablejsapi'    => $patterns['digit'],
-					'wmode'          => '(auto|opaque|transparent)',
 				),
 				'dailymotion' => array(
 					'syndication' => $patterns['number'],
