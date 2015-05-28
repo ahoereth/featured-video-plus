@@ -108,8 +108,8 @@ class Featured_Video_Plus {
 			'post-thumbnail' => true,
 			'fvp-responsive' => $responsive,
 		);
-		$classnames[ 'fvp-' . $provider ] = true;
-		$classnames[ 'fvp-' . $align ] = true;
+		$classnames[ 'fvp-' . $provider ] = ! empty( $provider );
+		$classnames[ 'fvp-' . $align ] = ! empty( $align );
 
 		$embed = sprintf(
 			"<!-- Featured Video Plus v%s -->\n<div%s>%s</div>\n\n",
