@@ -32,16 +32,25 @@ class Featured_Video_Plus {
 
 		$meta    = get_post_meta( $post_id, '_fvp_video', true );
 		$options = get_option( 'fvp-settings' );
-		$defaults = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
-		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
-		$general['autoplay'] =
-			! is_admin() && ! empty( $general['autoplay'] ) && $general['autoplay'] ?
-			'1' : null;
 
-		$responsive = ! empty($options['sizing']['responsive']) &&
-		              $options['sizing']['responsive'] &&
-		              ! is_admin();
-		$alignment = ! empty($options['alignment']) ? $options['alignment'] : 'center';
+		// Extract default and default->general options for easy access.
+		$defaults = ! empty( $options['default_args'] ) ?
+			$options['default_args'] : array();
+		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
+
+		// Autoplay option. Suppressed when viewing admin.
+		$general['autoplay'] =
+			( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) &&
+			! empty( $general['autoplay'] ) && $general['autoplay'] ? '1' : null;
+
+		// Responsive scaling option. Not used when viewing the admin screen.
+		$responsive =
+			! empty($options['sizing']['responsive']) &&
+			$options['sizing']['responsive'] &&
+			( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() );
+
+		// Alignment option
+		$align = ! empty($options['alignment']) ? $options['alignment'] : 'center';
 
 		$args = array(
 			'id' => ! empty( $meta['id'] ) ? $meta['id'] : null,
@@ -96,10 +105,11 @@ class Featured_Video_Plus {
 
 		$classnames = array(
 			'featured-video-plus' => true,
+			'post-thumbnail' => true,
 			'fvp-responsive' => $responsive,
 		);
 		$classnames[ 'fvp-' . $provider ] = true;
-		$classnames[ 'fvp-' . $alignment ] = true;
+		$classnames[ 'fvp-' . $align ] = true;
 
 		$embed = sprintf(
 			"<!-- Featured Video Plus v%s -->\n<div%s>%s</div>\n\n",

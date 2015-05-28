@@ -57,7 +57,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			return;
 		}
 
-		$min = SCRIPT_DEBUG ? '' : '.min';
+		$min = defined( SCRIPT_DEBUG ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// jQuery script for automatically resizing <textarea>s.
 		wp_register_script(
@@ -75,6 +75,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			array(
 				'jquery',
 				'jquery.autosize',
+				'wp-mediaelement',
 			),
 			FVP_VERSION
 		);
@@ -90,7 +91,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		wp_enqueue_style(
 			'fvp-backend',
 			FVP_URL . 'styles/backend.css',
-			array(),
+			array( 'wp-mediaelement' ),
 			FVP_VERSION,
 			'all'
 		);

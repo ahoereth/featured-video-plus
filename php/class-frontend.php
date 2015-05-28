@@ -40,6 +40,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$min = SCRIPT_DEBUG ? '' : '.min';
 
 		$options = get_option( 'fvp-settings' );
+		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 
 		wp_register_script(
 			'jquery.fitvids',
@@ -57,7 +58,16 @@ class FVP_Frontend extends Featured_Video_Plus {
 		);
 
 		// Basic dependencies. Is extended in the following.
-		$deps = array( 'jquery' );
+		$jsdeps = array( 'jquery' );
+		$cssdeps = array();
+
+		// If the video loading is performed in a lazy fashion we cannot know onload
+		// if there is a local (html5) video - we need to require mediaelement.js
+		// just for the possibility that one will be loaded.
+		if ( 'overlay' === $mode || 'dynamic' === $mode ) {
+			$jsdeps[] = 'wp-mediaelement';
+			$cssdeps[] = 'wp-mediaelement';
+		}
 
 		// Is responsive video functionality required? Only when width is set to
 		// 'auto' and display mode is not set to overlay.
@@ -65,23 +75,21 @@ class FVP_Frontend extends Featured_Video_Plus {
 			! empty($options['sizing']['responsive']) &&
 			$options['sizing']['responsive']
 		) {
-			$deps[] = 'jquery.fitvids';
+			$jsdeps[] = 'jquery.fitvids';
 		}
 
 		// Is modal functionality required?
 		if ( 'overlay' === $options['mode'] ) {
-			$deps[] = 'jquery.domwindow';
+			$jsdeps[] = 'jquery.domwindow';
 		}
 
 		// general frontend script
 		wp_enqueue_script(
 			'fvp-frontend',
 			FVP_URL . "js/frontend$min.js",
-			$deps,
+			$jsdeps,
 			FVP_VERSION
 		);
-
-		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 
 		// some context for JS
 		wp_localize_script( 'fvp-frontend', 'fvpdata', array(
@@ -103,7 +111,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		wp_enqueue_style(
 			'fvp-frontend',
 			FVP_URL . 'styles/frontend.css',
-			array(),
+			$cssdeps,
 			FVP_VERSION
 		);
 	}
@@ -150,15 +158,15 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		} elseif ( 'dynamic' === $options['mode'] && ! is_single() ) {
 			return sprintf(
-				'<a href="#fvp-%1$s" id="fvp-%1$s" class="fvp-dynamic" data-id="%1$s">%2$s</a>',
+				'<a href="#" data-id="%1$s" class="fvp-dynamic post-thumbnail">%2$s</a>',
 				$post_id,
 				$html
 			);
 
 		} elseif ( 'overlay' === $options['mode'] && ! is_single() ) {
 			return sprintf(
-				'<a href="#fvp-%1$s" class="fvp-overlay" data-id="%1$s">%2$s</a>' .
-				'<div id="fvp-%1$s" style="display: none;"></div>',
+				'<a href="#" data-id="%1$s" class="fvp-overlay post-thumbnail">%2$s</a>' .
+				'<div id="fvp-cache-%1$s" style="display: none;"></div>',
 				$post_id,
 				$html
 			);

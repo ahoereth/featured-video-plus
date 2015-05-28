@@ -111,7 +111,11 @@
     }, function(data){
       if (data.success) {
         $self.replaceWith(data.html);
-        unwrap();
+
+        // Initialize mediaelement.js player for the new videos.
+        $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer();
+
+        // Autosize them if required.
         fitVids();
       }
 
@@ -124,6 +128,7 @@
    * Show the overlay on-click.
    */
   function overlayTrigger(event) {
+    event.preventDefault();
     var $self = $(event.currentTarget);
     var id = parseInt($self.attr('data-id'), 10);
 
@@ -139,8 +144,10 @@
 
     $('#DOMWindow').css({ backgroundImage: loadBg });
 
+    var $cache = $('#fvp-cache-' + id);
+
     // Check if the result is already cached
-    if (0 === $('#fvp-' + id).html().length) {
+    if (0 === $cache.html().length) {
       $.post(fvpdata.ajaxurl, {
           'action': 'fvp_get_embed',
           'nonce' : fvpdata.nonce,
@@ -148,7 +155,7 @@
       }, function(data) {
         if (data.success) {
           // cache the result to not reload when opened again
-          $('#fvp-' + id).html(data.html);
+          $cache.html(data.html);
 
           $('#DOMWindow').html(data.html);
           sizeLocal();
@@ -157,7 +164,7 @@
       });
     } else {
       // From cache
-      $('#DOMWindow').html( $('#fvp-' + id).html() );
+      $('#DOMWindow').html( $cache.html() );
       $(window).trigger('scroll');
     }
   }
