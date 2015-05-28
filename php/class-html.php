@@ -37,7 +37,9 @@ class FVP_HTML {
 		wp_enqueue_style(
 			'fvphtml',
 			FVP_URL . 'styles/html.css',
-			array(),
+			array(
+				'wp-pointer',
+			),
 			FVP_VERSION
 		);
 
@@ -50,8 +52,18 @@ class FVP_HTML {
 			array(
 				'jquery',
 				'iris',
+				'wp-pointer',
 			),
 			FVP_VERSION
+		);
+
+
+		wp_localize_script(
+			'fvphtml', // hook
+			'fvphtml', // variable name
+			array(
+				'pointers' => self::get_pointers( $hook ),
+			)
 		);
 	}
 
@@ -475,6 +487,56 @@ class FVP_HTML {
 		);
 
 		return $html;
+	}
+
+
+	/**
+	 * Generates the list of pointers using the 'fvphtml_pointers' filter.
+	 *
+	 * @param  {string} $hook Current page hook for prefiltering pointers using
+	 *                        the filter.
+	 * @return {array}  Array of pointers ready to throw into wp_localize_script.
+	 */
+	public static function get_pointers( $hook = null ) {
+		/**
+		 * 'fvphtml_pointers' filter
+		 *
+		 * Expects:
+		 * array(
+		 *   'identifier' {string} => assoc(
+		 *     'target' => {string} (jQuery selector) [required],
+		 *     'title' => {string} [optional, default: ''],
+		 *     'content' => {string} [optional, default: ''],
+		 *     'position' => array(
+		 *       'edge' => {string} [optional, default: 'right'],
+		 *       'align' => {string} [optional, default: 'middle'],
+		 *     )
+		 *   )
+		 * )
+		 */
+		$unfiltered_pointers = apply_filters( 'fvphtml_pointers', array(), $hook );
+
+		// Get already dismissed pointers from database.
+		$dismissed_pointers = explode(',', (string) get_user_meta(
+			get_current_user_id(),
+			'dismissed_wp_pointers',
+			true
+		));
+
+		// Filter out already dismissed pointers.
+		$filtered_pointers = array_diff(
+			array_keys( $unfiltered_pointers ),
+			$dismissed_pointers
+		);
+
+		// Create nice array of not yet dismissed pointers.
+		$pointers = array();
+		foreach ( $filtered_pointers AS $pointer ) {
+			$unfiltered_pointers[ $pointer ][ 'identifier' ] = $pointer;
+			$pointers[] = $unfiltered_pointers[ $pointer ];
+		}
+
+		return $pointers;
 	}
 
 }

@@ -21,6 +21,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	public function __construct() {
 		parent::__construct();
+		FVP_HTML::add_screens( array( 'post.php', 'post-new.php' ) );
 
 		add_action( 'admin_init',            array( $this, 'upgrade' ) );
 
@@ -29,6 +30,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'save_post',             array( $this, 'metabox_save' ) );
 		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
+		add_filter( 'fvphtml_pointers', array( $this, 'pointers' ), 10, 2 );
 		add_filter( 'plugin_action_links',
 		            array( $this, 'plugin_action_link' ),
 		            10, 2 );
@@ -91,7 +93,9 @@ class FVP_Backend extends Featured_Video_Plus {
 		wp_enqueue_style(
 			'fvp-backend',
 			FVP_URL . 'styles/backend.css',
-			array( 'wp-mediaelement' ),
+			array(
+				'wp-mediaelement',
+			),
 			FVP_VERSION,
 			'all'
 		);
@@ -601,6 +605,50 @@ class FVP_Backend extends Featured_Video_Plus {
 			'title'   => __( 'Featured Video Plus', 'featured-video-plus' ),
 			'content' => $help,
 		) );
+	}
+
+
+	/**
+	 * Add a pointer to the Featured Video Plus box on the post edit screen for
+	 * initial explanation.
+	 *
+	 * @param  {array}  $pointers
+	 * @param  {string} $hook
+	 * @return {array}
+	 */
+	public function pointers( $pointers, $hook ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
+			return $pointers;
+		}
+
+		$pointers['fvp-post-box-abcd'] = array(
+			'target' => '#featured-video-plus-box',
+			'title' => esc_html__( 'Featured Videos', 'featured-video-plus' ),
+			'content' => sprintf(
+				esc_html__(
+					'Simply paste a URL into this input to add a bit extra life to your posts. %1$sTry an example%2$s.',
+					'featured-video-plus'
+				),
+				'<a href="#" onclick="jQuery(\'.fvp-video\').val(\'http://youtu.be/CfNHleTEpTI\').trigger(\'blur\'); return false;">',
+				'</a>'
+			) . '</p><p>' . sprintf(
+				esc_html__(
+					'To adjust how featured videos are displayed on the frontend checkout the %smedia settings%s.',
+					'featured-video-plus'
+				),
+				sprintf(
+					'<a href="%s/wp-admin/options-media.php#fvp-section">',
+					esc_attr( get_bloginfo( 'wpurl' ) )
+				),
+				'</a>'
+			),
+			'position' => array(
+				'align' => 'middle',
+				'edge' => 'right'
+			)
+		);
+
+		return $pointers;
 	}
 
 

@@ -1,4 +1,6 @@
 (function($) {
+  /* global ajaxurl, fvphtml */
+
   var prefix = '.fvphtml';
 
   /**
@@ -19,7 +21,6 @@
 
   // ****************************************
   // TABBED OPTIONS
-
   $(document).ready(function() {
     // get tabs
     var $tabs = $(prefix + '-tabs');
@@ -66,8 +67,6 @@
 
   // ****************************************
   // CONDITIONALS
-  // TODO: needs rewrite
-
   var triggers = {};
   function conditionalTriggered() {
     var $trigger = $(this);
@@ -249,4 +248,53 @@
     });
   })(); // End colorpickers.
 
+
+  // ***************************************************************************
+  // TUTORIAL POINTERS
+  (function() {
+    /**
+     * Used when dissmissing a pointer to fire an AJAX request to save the
+     * closed state to the database.
+     */
+    function closePointer() {
+      var identifier = $(this).data('wpPointer').options.pointer_id;
+      $.post(ajaxurl, {
+        pointer: identifier,
+        action: 'dismiss-wp-pointer'
+      });
+    }
+
+
+    /**
+     * Initializes and opens a pointer given the required pointer data.
+     *
+     * @param  {object} pointer
+     *   {
+     *     target: {string} jQuery selector,
+     *     identifier: {string},
+     *     title: {string},
+     *     content: {string}
+     *     position: {edge: {string}, align: {string}},
+     *   }
+     */
+    function openPointer(pointer) {
+      var title = pointer.title || '';
+      var content = pointer.content || '';
+      var position = pointer.position || {edge: 'right', align: 'middle'};
+
+      $(pointer.target).pointer({
+        pointer_id: pointer.identifier,
+        content: '<h3>' + title + '</h3><p>' + content + '</p>',
+        position: position,
+        close: closePointer
+      }).pointer('open');
+    }
+
+    $(document).ready(function() {
+      var pointers = fvphtml.pointers || [];
+      for (var i = 0; i < pointers.length; i++) {
+        openPointer(fvphtml.pointers[i]);
+      }
+    });
+  })();
 })(jQuery);

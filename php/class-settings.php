@@ -33,7 +33,11 @@ class FVP_Settings {
 		// the featured video settings section on the media settings page
 		add_settings_section(
 			self::$section,
-			esc_html__( 'Featured Videos', 'featured-video-plus' ),
+			sprintf(
+				'<span id="%s">%s</span>',
+				self::$section,
+				esc_html__( 'Featured Videos', 'featured-video-plus' )
+			),
 			array( $this, 'section' ),
 			self::$page
 		);
@@ -108,6 +112,7 @@ class FVP_Settings {
 	public function section() {
 		echo FVP_HTML::html(
 			'p',
+			array( 'class' => 'fvp-settings-section' ),
 			sprintf( esc_html__( 'To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus' ), '<code>[featured-video-plus]</code>-Shortcode' ) .
 			sprintf( esc_html__( 'For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus' ), '<a href="#contextual-help" id="fvp_help_toggle">', '</a>' )
 		);
