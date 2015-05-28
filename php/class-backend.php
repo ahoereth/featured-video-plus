@@ -331,7 +331,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// Do we have a screen capture to pull?
 		if ( empty( $data['img_url'] ) ) {
-			$data['img_url'] = FVP_URL . 'img/playicon.png';
+			$data['img_url'] = FVP_URL . 'img/placeholder.png';
 			$data['filename'] = 'Featured Video Plus Placeholder';
 		}
 
