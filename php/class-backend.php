@@ -204,9 +204,11 @@ class FVP_Backend extends Featured_Video_Plus {
 
 			$content .= sprintf(
 				esc_html__(
-					'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>. To hide this notice deactivate &quot;<em>Replace Featured Images</em>&quot; in the %sMedia Settings%s.',
+					'To display Featured Videos you need to use the %1$sShortcode%2$s or %1$sPHP functions%2$s. To hide this notice deactivate %3$sReplace Featured Images%4$s in the %5$sMedia Settings%6$s.',
 					'featured-video-plus'
 				),
+				'<code>', '</code>',
+				'&quot;<em>', '</em>&quot;',
 				'<a href="' . esc_attr( get_admin_url( null, '/options-media.php' ) ) . '">',
 				'</a>'
 			);
@@ -622,12 +624,12 @@ class FVP_Backend extends Featured_Video_Plus {
 			return $pointers;
 		}
 
-		$pointers['fvp-post-box-abcd'] = array(
+		$pointers['fvp-post-box'] = array(
 			'target' => '#featured-video-plus-box',
 			'title' => esc_html__( 'Featured Videos', 'featured-video-plus' ),
 			'content' => sprintf(
 				esc_html__(
-					'Simply paste a URL into this input to add a bit extra life to your posts. %1$sTry an example%2$s.',
+					'Simply paste a URL into this input to add a bit extra life to your posts. %sTry an example%s.',
 					'featured-video-plus'
 				),
 				'<a href="#" onclick="jQuery(\'.fvp-video\').val(\'http://youtu.be/CfNHleTEpTI\').trigger(\'blur\'); return false;">',

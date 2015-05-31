@@ -124,7 +124,13 @@ class FVP_Settings {
 					array( 'class' => 'bold' ),
 					esc_html__( 'The current theme does not support featured images.', 'featured-video-plus' )
 				) .
-				esc_html__( 'To display Featured Videos you need to use the <code>Shortcode</code> or <code>PHP functions</code>.', 'featured-video-plus' ),
+				sprintf(
+					esc_html__(
+						'To display Featured Videos you need to use the %1$sShortcode%2$s or %1$sPHP functions%2$s.',
+						'featured-video-plus'
+					),
+					'<code>', '</code>'
+				),
 				array( 'fvp_warning' )
 			);
 		}
@@ -344,12 +350,6 @@ class FVP_Settings {
 			),
 
 			'youtube' => array(
-				FVP_HTML::description(
-					esc_html__(
-						'Note that YouTube caches requests and changes here might not take effect right away.',
-						'featured-video-plus'
-					)
-				),
 				FVP_HTML::checkboxes(
 					'fvp-settings[default_args][youtube]',
 					array(
