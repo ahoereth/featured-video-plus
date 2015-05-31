@@ -196,7 +196,10 @@ class Featured_Video_Plus {
 	 * @param string $meta_key which meta_key to look for
 	 * @param string $meta_value which meta_value to look for
 	 */
-	protected function get_post_by_custom_meta($meta_key, $meta_value = null) {
+	protected static function get_post_by_custom_meta(
+		$meta_key,
+		$meta_value = null
+	) {
 		global $wpdb;
 		if ( $meta_value !== null ) {
 			$prepared = $wpdb->prepare(

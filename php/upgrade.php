@@ -191,27 +191,13 @@ switch ( $version ) {
 		);
 
 		// check all featured video post metas
-		global $featured_video_plus;
-		$ids = $featured_video_plus->get_post_by_custom_meta( '_fvp_video' );
+		$ids = self::get_post_by_custom_meta( '_fvp_video' );
 		foreach ( $ids as $id ) {
-			$meta = $meta_old = maybe_unserialize( get_post_meta( $id, '_fvp_video', true ) );
-			if ( isset( $meta['attr'] ) ) {
-				$meta['time'] = $meta['attr'];
-			}
+			$meta = maybe_unserialize( get_post_meta( $id, '_fvp_video', true ) );
 
-			if ( isset( $meta['prov'] ) ) {
-				$meta['provider'] = $meta['prov'];
-			}
-
-			unset(
-				$meta['sec_id'],
-				$meta['attr'],
-				$meta['prov']
-			);
-
-			if ( $meta != $meta_old ) {
-				update_post_meta( $id, '_fvp_video', $meta );
-			}
+			// Remove and re-add video.
+			$this->save( array( 'id' => $id, 'fvp_video' => '' ) );
+			$this->save( array( 'id' => $id, 'fvp_video' => $meta['full'] ) );
 		}
 
 	default:

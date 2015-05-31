@@ -20,8 +20,8 @@
 
     $.post(ajaxurl, {
       'action'         : 'fvp_save',
-      'id'             : $( '#post_ID' ).val(),
-      'fvp_nonce'      : $( '#fvp-nonce' ).val(),
+      'id'             : $('#post_ID').val(),
+      'fvp_nonce'      : $('#fvp_nonce').val(),
       'fvp_video'      : $input.val(),
       'fvp_set_featimg': setFeatimg
     }, function(data) {

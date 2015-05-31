@@ -136,7 +136,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.0.0
 	 */
 	public function metabox_content() {
-		wp_nonce_field( FVP_NAME, 'fvp-nonce' );
+		wp_nonce_field( FVP_NAME . FVP_VERSION, 'fvp_nonce' );
 
 		// Get current post's id.
 		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : $GLOBALS['post']->ID;
@@ -228,6 +228,10 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param {int} $post_id
 	 */
 	public function metabox_save( $post_id ){
+		if ( ! $this->has_valid_nonce( $_POST ) ) {
+			return false;
+		}
+
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
 		     ( defined( 'DOING_AJAX' )     && DOING_AJAX )     ||
 		     ( ! current_user_can( 'edit_post', $post_id ) )   ||
@@ -255,6 +259,10 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @uses $this->save()
 	 */
 	public function metabox_save_ajax() {
+		if ( ! $this->has_valid_nonce( $_POST ) ) {
+			return false;
+		}
+
 		$post = array(
 			'id' => $_POST['id'],
 			'fvp_nonce' => ! empty( $_POST['fvp_nonce'] ) ? $_POST['fvp_nonce'] : '',
@@ -301,13 +309,6 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @return {assoc/bool} video meta data on success, false on failure
 	 */
 	private function save( $post ) {
-		if (
-			! isset( $post['fvp_nonce'] ) ||
-			! wp_verify_nonce( $post['fvp_nonce'], FVP_NAME )
-		) {
-			return false;
-		}
-
 		// get fvp_video post meta data
 		$meta = get_post_meta( $post['id'], '_fvp_video', true );
 
@@ -434,7 +435,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	private function set_featured_image( $post_id, $data ) {
 		// Is this screen capture already existing in our media library?
-		$img = $this->get_post_by_custom_meta( '_fvp_image_url', $data['img_url'] );
+		$img = self::get_post_by_custom_meta( '_fvp_image_url', $data['img_url'] );
 
 		if ( empty( $img ) ) {
 			$file = array(
@@ -486,7 +487,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
 
 		// Check if other posts use the image, if not we can delete it completely
-		$other = $this->get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
+		$other = self::get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
 		if ( empty( $other ) && ! empty( $meta['img_url'] ) ) {
 			wp_delete_attachment( $meta['img'] );
 			delete_post_meta( $meta['img'], '_fvp_image_url', $meta['img_url'] );
@@ -744,4 +745,25 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		return $id;
 	}
+
+
+	/**
+	 * Check the given assoc array for a 'fvp_nonce' field and check if this
+	 * field contains a valid nonce.
+	 *
+	 * @param  {assoc}  $post_data
+	 * @return boolean
+	 */
+	private function has_valid_nonce( $post_data ) {
+		if (
+			! isset( $post_data['fvp_nonce'] ) ||
+			! wp_verify_nonce( $post_data['fvp_nonce'], FVP_NAME . FVP_VERSION )
+		) {
+			return false;
+		}
+
+		return true;
+	}
+
+
 }
