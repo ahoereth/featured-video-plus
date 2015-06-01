@@ -5,10 +5,12 @@
  * video screen captures and options.
  */
 function featured_video_plus_uninstall() {
+	global $wpdb;
+
 	// Get posts with featured videos.
 	$ids = $wpdb->get_col( $wpdb->prepare(
 		"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key=%s",
-		$meta_key
+		'_fvp_video'
 	) );
 
 	// For each post remove FVP data.
