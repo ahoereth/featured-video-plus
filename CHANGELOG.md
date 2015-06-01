@@ -1,10 +1,10 @@
 # Changelog #
 
-
-## 2.0.0: 2015-01-xx ##
-* __Requires WordPress 3.6 or higher now!__
-* Major refactor
-* Support for raw embed codes and [all core providers sources](https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F)
+## 2.0.0: 2015-06-01 ##
+* __Requires WordPress 3.7 or higher now!__ This reflects versions of WordPress which are "officially" [supported](https://codex.wordpress.org/Supported_Versions). The plugin will from now on try to stick to supporting all versions listed there.
+* Major code refactor which results in many bugs scrubbed.
+* Support for raw embed codes and [all WordPress core media providers](https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F).
+* Updated wp.org icon and cover.
 
 
 ## 1.9.1: 2014-09-06 ##
