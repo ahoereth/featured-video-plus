@@ -79,7 +79,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		}
 
 		// Is modal functionality required?
-		if ( 'overlay' === $options['mode'] ) {
+		if ( 'overlay' === $mode ) {
 			$jsdeps[] = 'jquery.domwindow';
 		}
 
@@ -156,14 +156,14 @@ class FVP_Frontend extends Featured_Video_Plus {
 		) {
 			return $html;
 
-		} elseif ( 'dynamic' === $options['mode'] && ! is_single() ) {
+		} elseif ( 'dynamic' === $mode && ! is_single() ) {
 			return sprintf(
 				'<a href="#" data-id="%1$s" class="fvp-dynamic post-thumbnail">%2$s</a>',
 				$post_id,
 				$html
 			);
 
-		} elseif ( 'overlay' === $options['mode'] && ! is_single() ) {
+		} elseif ( 'overlay' === $mode && ! is_single() ) {
 			return sprintf(
 				'<a href="#" data-id="%1$s" class="fvp-overlay post-thumbnail">%2$s</a>' .
 				'<div id="fvp-cache-%1$s" style="display: none;"></div>',

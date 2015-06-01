@@ -316,7 +316,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		// has featured image AND url did not change or is and was empty
 		if (
-			! $post['fvp_set_featimg'] && (
+			( empty ( $post['fvp_set_featimg'] ) || ! $post['fvp_set_featimg'] ) && (
 				( ! empty( $meta['full'] ) && $url == $meta['full'] ) ||
 				(   empty( $meta['full'] ) && empty( $url ) )
 			)

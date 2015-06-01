@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
 Tested up to: 4.2.2
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -106,14 +106,14 @@ Yes, please! Check out the public [Featured Video Plus Translation Project](http
 
 == Upgrade Notice ==
 
-= 2.0.0 =
+= 2.0.2 =
 Only upgrade when using WordPress 3.7 or higher! Big refactor with support for more video providers.
 
 
 
 == Changelog ==
 
-= 2.0.0: 2015-06-01 =
+= 2.0.0, 2.0.1, 2.0.2: 2015-06-01 =
 * __Requires WordPress 3.7 or higher now!__ This reflects versions of WordPress which are "officially" [supported](https://codex.wordpress.org/Supported_Versions). The plugin will from now on try to stick to supporting all versions listed there.
 * Major code refactor which results in many bugs scrubbed.
 * Support for raw embed codes and [all WordPress core media providers](https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F).
