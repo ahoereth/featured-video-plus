@@ -62,6 +62,7 @@ class FVP_HTML {
 			'fvphtml', // hook
 			'fvphtml', // variable name
 			array(
+				'prefix' => '.fvphtml'
 				'pointers' => self::get_pointers( $hook ),
 			)
 		);

@@ -19,7 +19,6 @@ class FVP_Settings {
 		FVP_HTML::add_screens( self::$hook );
 
 		add_action( 'admin_init',             array( $this, 'settings_init' ) );
-		add_action( 'load-options-media.php', array( $this, 'help' ), 20 );
 	}
 
 
@@ -114,7 +113,7 @@ class FVP_Settings {
 			'p',
 			array( 'class' => 'fvp-settings-section' ),
 			sprintf( esc_html__( 'To display your featured videos you can either make use of the automatic replacement, use the %s or manually edit your theme\'s source files to make use of the plugins PHP-functions.', 'featured-video-plus' ), '<code>[featured-video-plus]</code>-Shortcode' ) .
-			sprintf( esc_html__( 'For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus' ), '<a href="#contextual-help" id="fvp_help_toggle">', '</a>' )
+			sprintf( esc_html__( 'For more information about Shortcode and PHP functions see the %sContextual Help%s.', 'featured-video-plus' ), '<a href="#contextual-help" class="help-link">', '</a>' )
 		);
 
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
@@ -548,81 +547,5 @@ class FVP_Settings {
 		return $validated;
 	}
 
-
-	/**
-	 * Adds help tabs to contextual help. WordPress 3.3+
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @since 1.3
-	 */
-	public function help() {
-		$screen = get_current_screen();
-		if ( 'options-media' !== $screen->id ) {
-			return;
-		}
-
-		// PHP FUNCTIONS HELP TAB
-		$screen->add_help_tab( array(
-			'id'      => 'fvp_help_functions',
-			'title'   => 'Featured Video Plus: '. esc_html__( 'PHP-Functions','featured-video-plus' ),
-			'content' => implode( '', array(
-				FVP_HTML::unordered_list( array(
-					'<code>the_post_video( $size )</code>',
-					'<code>has_post_video( $post_id )</code>',
-					'<code>get_the_post_video( $post_id, $size )</code>',
-					'<code>get_the_post_video_url( $post_id )</code>',
-					'<code>get_the_post_video_image_url( $post_id )</code>',
-					'<code>get_the_post_video_image( $post_id )</code>',
-				) ),
-				FVP_HTML::html(
-					'p',
-					sprintf(
-						esc_html__(
-							'All parameters are optional. If %s the current post\'s id will be used. %s is either a string keyword (thumbnail, medium, large or full) or a 2-item array representing width and height in pixels, e.g. array(32,32).',
-							'featured-video-plus'
-						),
-						'<code>post_id == null</code>',
-						'<code>$size</code>'
-					)
-				),
-				FVP_HTML::html(
-					'p',
-					sprintf(
-						esc_html__(
-							'The functions are implemented corresponding to the original %sfunctions%s: They are intended to be used and to act the same way. Take a look into the WordPress Codex for further guidance:',
-							'featured-video-plus'
-						),
-						'<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank">' . esc_html__( 'Featured Image' ) . '&nbsp;',
-						'</a>'
-					)
-				),
-				FVP_HTML::unordered_list( array(
-					'<code><a href="https://developer.wordpress.org/reference/functions/the_post_thumbnail/" target="_blank">get_the_post_thumbnail</a></code>',
-					'<code><a href="https://developer.wordpress.org/reference/functions/wp_get_attachment_image/" target="_blank">wp_get_attachment_image</a></code>',
-				) ),
-			) )
-		) );
-
-		// SHORTCODE HELP TAB
-		$screen->add_help_tab( array(
-			'id'      => 'fvp_help_shortcode',
-			'title'   => 'Featured Video Plus: Shortcode',
-			'content' => FVP_HTML::unordered_list( array(
-				'<code>[featured-video-plus]</code><br />' .
-					'<span>' .
-						esc_html__( 'Displays the video in its default size.', 'featured-video-plus' ) .
-					'</span>',
-				'<code>[featured-video-plus width=560]</code><br />' .
-					'<span>' .
-						esc_html__( 'Displays the video with an width of 300 pixel. Height will be fitted to the aspect ratio.', 'featured-video-plus' ) .
-					'</span>',
-				'<code>[featured-video-plus width=560 height=315]</code><br />' .
-					'<span>' .
-						esc_html__( 'Displays the video with an fixed width and height.', 'featured-video-plus' ) .
-					'</span>',
-			) )
-		) );
-	}
 
 }

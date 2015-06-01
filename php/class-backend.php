@@ -8,9 +8,7 @@ require_once( FVP_DIR . 'php/class-main.php' );
  * Class containing plugin specific WordPress administration panels
  * functionality.
  *
- * Specifically a metabox on post/page edit views and a new options section
- * under settings->media. Additionally the ajax request handlers and
- * help tabs.
+ * Specifically the metabox on post/page edit views.
  *
  * @since 1.0.0
  */
@@ -28,7 +26,6 @@ class FVP_Backend extends Featured_Video_Plus {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'admin_menu',            array( $this, 'metabox_register' ) );
 		add_action( 'save_post',             array( $this, 'metabox_save' ) );
-		add_action( 'load-post.php',         array( $this, 'tabs' ), 20 );
 
 		add_filter( 'fvphtml_pointers', array( $this, 'pointers' ), 10, 2 );
 		add_filter( 'plugin_action_links',
@@ -546,68 +543,6 @@ class FVP_Backend extends Featured_Video_Plus {
 		}
 
 		exit( $response );
-	}
-
-
-	/**
-	 * Adds help tabs to contextual help. WordPress 3.3+
-	 *
-	 * @see http://codex.wordpress.org/Function_Reference/add_help_tab
-	 *
-	 * @since 1.3.0
-	 */
-	public function tabs() {
-		$screen = get_current_screen();
-		if ( 'post' !== $screen->id || get_bloginfo( 'version' ) < 3.3 ) {
-			return;
-		}
-
-		// Tab Headline
-		$help = sprintf(
-			'<h3>%s</h3>',
-			esc_html__( 'Featured Video Plus', 'featured-video-plus' )
-		);
-
-		// oEmbed
-		$help .= '<p>' . sprintf(
-			esc_html__( 'Take a video url from one of the %ssupported oembed providers%s and paste it into the Featured Video input field.', 'featured-video-plus' ),
-			'<a href="https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F">',
-			'</a>'
-		) . '</p>';
-
-		// Local
-		$help .= '<p>' . sprintf(
-			esc_html__( 'Alternatively you can select one of the videos from your media library using the small media icon to the right in the URL input vield. The plugin makes use of %sWordPress\' native functionality%s - no gurantee for compatibility with all formats.', 'featured-video-plus' ),
-			'<a href="http://mediaelementjs.com/">',
-			'</a>'
-		) . '</p>';
-
-		// Converting
-		$help .= sprintf(
-			'<h4 style="margin-bottom: 0;">%s</h4>',
-			esc_html__( 'Converting your videos', 'featured-video-plus' )
-		);
-
-		$help .= '<p style="margin-top: 0;">' . sprintf(
-			esc_html__( 'Take a look at the %sMiro Video Converter%s. It is open source, lightweight and compatible with Windows, Mac and Linux.', 'featured-video-plus' ),
-			'<a href="http://www.mirovideoconverter.com/" target="_blank">',
-			'</a>'
-		) . '</p>';
-
-		// Uploading
-		$help .= '<h4 style="margin-bottom: 0;">' . esc_html__( 'Fixing upload errors', 'featured-video-plus' ) . ':</h4>';
-		$help .= '<p style="margin-top: 0;">' . sprintf(
-			esc_html__( 'Read %sthis%s on how to increase the maximum file upload size.', 'featured-video-plus' ),
-			'<a href="http://goo.gl/yxov27" target="_blank">',
-			'</a>'
-		) . '</p>';
-
-		// REGISTER HELP TAB
-		$screen->add_help_tab( array(
-			'id'      => 'featured-video-plus',
-			'title'   => __( 'Featured Video Plus', 'featured-video-plus' ),
-			'content' => $help,
-		) );
 	}
 
 

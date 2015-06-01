@@ -58,6 +58,10 @@ if ( is_admin() ) {
 	// SETTINGS
 	require_once( FVP_DIR . 'php/class-settings.php' );
 	new FVP_Settings();
+
+	// HELP TABS
+	require_once( FVP_DIR . 'php/class-help.php' );
+	new FVP_Help();
 }
 
 
