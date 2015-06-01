@@ -710,20 +710,11 @@ class FVP_Backend extends Featured_Video_Plus {
 		$version = get_option( 'fvp-version' );
 		$options = $options_org = get_option( 'fvp-settings' );
 
-		// determine current version
-		if ( empty( $version ) ) {
-			if ( ! isset( $options['overwrite'] ) && ! isset( $options['mode'] ) ) {
-				$version = '0';
-			} else {
-				$version = ! empty( $options['version'] ) ? $options['version'] : '1.1';
-			}
-		}
-
 		// either execute install or upgrade logic
-		if ( '0' === $version ) {
-			include_once( FVP_DIR . 'php/install.php' );
-		} elseif ( $version != FVP_VERSION ) {
-			include_once( FVP_DIR . 'php/upgrade.php' );
+		if ( empty( $version ) || empty( $options ) ) {
+			include_once( FVP_DIR . 'php/inc-install.php' );
+		} elseif ( $version !== FVP_VERSION ) {
+			include_once( FVP_DIR . 'php/inc-upgrade.php' );
 		}
 	}
 
