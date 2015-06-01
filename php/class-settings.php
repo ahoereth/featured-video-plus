@@ -170,7 +170,7 @@ class FVP_Settings {
 	public function conditions() {
 		$options  = get_option( 'fvp-settings' );
 
-		$auto = ! empty( $options['mode'] ) && $options['mode'] != 'manual';
+		$auto = ! empty( $options['mode'] ) && 'manual' !== $options['mode'];
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::description(
@@ -226,8 +226,7 @@ class FVP_Settings {
 		$options = get_option( 'fvp-settings' );
 		$responsive =
 			! empty( $options['sizing']['responsive'] ) &&
-			$options['sizing']['responsive'] &&
-			$options['mode'] !== 'overlay';
+			$options['sizing']['responsive'];
 
 		echo FVP_HTML::checkbox(
 			'fvp-settings[sizing][responsive]',
@@ -249,7 +248,6 @@ class FVP_Settings {
 			),
 			array(
 				'fvp-settings[sizing][responsive]' => '!1',
-				'fvp-settings[mode]' => 'overlay',
 				'hidden' => $responsive,
 			)
 		);
