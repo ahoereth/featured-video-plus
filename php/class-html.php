@@ -397,7 +397,7 @@ class FVP_HTML {
 
 	public static function tabbed( $tabs ) {
 		// render each tab
-		$rendered = [];
+		$rendered = array();
 		foreach ( $tabs as $title => $content ) {
 			$hook = sanitize_file_name( $title );
 
