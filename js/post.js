@@ -3,11 +3,33 @@
   /* global fvp_post, ajaxurl */
 
   var context = fvp_post;
-
   var $input;
   var $media;
-
   var mediaicon;
+
+
+  /**
+   * Set the featured video with 'setfeatimg' parameter in order to force set
+   * the featured image to the video thumbnail if possible.
+   *
+   * @param {event} event jQuery click event.
+   */
+  function setFeatimg(event) {
+    event.preventDefault();
+    submitVideo(true);
+  }
+
+
+  /**
+   *
+   * When the featured image is removed it might take some time for the HTTP
+   * request to return before we can enable the 'quick set featimg' link. It
+   * is not too bad if the link is not available (won't be displayed), but its
+   * nice to have.
+   */
+  function removeFeatimg() {
+    setTimeout(refreshHandlers, 2000); // Arbritrarily wait 2 seconds.
+  }
 
 
   /**
@@ -46,7 +68,21 @@
 
       // update featured image
       $('#postimagediv .inside').html(data.img);
+      refreshHandlers();
     }, 'json' );
+  }
+
+
+  /**
+   * Sets the set and remove featured image handlers.
+   * @return {[type]} [description]
+   */
+  function refreshHandlers() {
+    // Button for quickly setting a featured image if none is set.
+    $('.fvp-set-featimg').show().click(setFeatimg);
+
+    // Show setFeatimg link after removing a featured image.
+    $('#remove-post-thumbnail').click(removeFeatimg);
   }
 
 
@@ -98,15 +134,8 @@
       });
 
 
-    // Button for quickly setting a featured image if none is set.
-    //   Only works on initial page load, not if the post thumbnail is reloaded
-    //   after an ajax request.
-    $('.fvp-set-featimg')
-      .show()
-      .click(function(event) {
-        event.preventDefault();
-        submitVideo( true );
-      });
+    // Initialize set & remove featured image handlers.
+    refreshHandlers();
 
 
     // WordPress 3.5 Media Manager
