@@ -3,7 +3,7 @@
 Plugin Name: Featured Video Plus
 Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
-Version: 1.9.1
+Version: 2.0.0
 Author: Alexander Höreth
 Author URI: http://yrnxt.com
 Text Domain: featured-video-plus

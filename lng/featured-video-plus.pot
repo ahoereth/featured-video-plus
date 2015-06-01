@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the Featured Video Plus package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Featured Video Plus 1.9.2\n"
+"Project-Id-Version: Featured Video Plus 2.0.0\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/featured-video-"
-"plus\n"
-"POT-Creation-Date: 2015-05-31 09:24:45+00:00\n"
+"plus-n\n"
+"POT-Creation-Date: 2015-06-01 14:09:17+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,314 +13,315 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: php/class-backend.php:123
+#: php/class-backend.php:120
 msgid "Featured Video"
 msgstr ""
 
-#: php/class-backend.php:165
+#: php/class-backend.php:162
 msgid "Set Featured Video"
 msgstr ""
 
-#: php/class-backend.php:171
+#: php/class-backend.php:168
 msgid "Video URL"
 msgstr ""
 
-#: php/class-backend.php:199
+#: php/class-backend.php:196
 msgid "The current theme does not support Featured Images"
 msgstr ""
 
-#: php/class-backend.php:206
+#: php/class-backend.php:203
 msgid ""
 "To display Featured Videos you need to use the %1$sShortcode%2$s or %1$sPHP "
 "functions%2$s. To hide this notice deactivate %3$sReplace Featured Images"
 "%4$s in the %5$sMedia Settings%6$s."
 msgstr ""
 
-#. #-#-#-#-#  featured-video-plus.pot (Featured Video Plus 1.9.2)  #-#-#-#-#
-#. Plugin Name of the plugin/theme
-#: php/class-backend.php:568 php/class-backend.php:608
-msgid "Featured Video Plus"
-msgstr ""
-
-#: php/class-backend.php:573
-msgid ""
-"Take a video url from one of the %ssupported oembed providers%s and paste it "
-"into the Featured Video input field."
-msgstr ""
-
-#: php/class-backend.php:580
-msgid ""
-"Alternatively you can select one of the videos from your media library using "
-"the small media icon to the right in the URL input vield. The plugin makes "
-"use of %sWordPress' native functionality%s - no gurantee for compatibility "
-"with all formats."
-msgstr ""
-
-#: php/class-backend.php:588
-msgid "Converting your videos"
-msgstr ""
-
-#: php/class-backend.php:592
-msgid ""
-"Take a look at the %sMiro Video Converter%s. It is open source, lightweight "
-"and compatible with Windows, Mac and Linux."
-msgstr ""
-
-#: php/class-backend.php:598
-msgid "Fixing upload errors"
-msgstr ""
-
-#: php/class-backend.php:600
-msgid "Read %sthis%s on how to increase the maximum file upload size."
-msgstr ""
-
-#: php/class-backend.php:629 php/class-settings.php:39
+#: php/class-backend.php:564 php/class-settings.php:38
 msgid "Featured Videos"
 msgstr ""
 
-#: php/class-backend.php:631
+#: php/class-backend.php:566
 msgid ""
 "Simply paste a URL into this input to add a bit extra life to your posts. "
 "%sTry an example%s."
 msgstr ""
 
-#: php/class-backend.php:638
+#: php/class-backend.php:573
 msgid ""
 "To adjust how featured videos are displayed on the frontend checkout the "
 "%smedia settings%s."
 msgstr ""
 
-#: php/class-backend.php:690
+#: php/class-backend.php:625
 msgid "Featured Videos require a Featured Image for automatic replacement."
 msgstr ""
 
-#: php/class-backend.php:694
+#: php/class-backend.php:629
 msgid "Auto set"
 msgstr ""
 
-#: php/class-settings.php:50
-msgid "Display mode"
+#. #-#-#-#-#  featured-video-plus.pot (Featured Video Plus 2.0.0)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: php/class-help.php:23
+msgid "Featured Video Plus"
 msgstr ""
 
-#: php/class-settings.php:58
-msgid "Display Conditions"
-msgstr ""
-
-#: php/class-settings.php:68
-msgid "Video Sizing"
-msgstr ""
-
-#: php/class-settings.php:77
-msgid "Video Align"
-msgstr ""
-
-#: php/class-settings.php:86
-msgid "Default Arguments"
-msgstr ""
-
-#: php/class-settings.php:95
-msgid "Support"
-msgstr ""
-
-#: php/class-settings.php:116
+#: php/class-help.php:31
 msgid ""
-"To display your featured videos you can either make use of the automatic "
-"replacement, use the %s or manually edit your theme's source files to make "
-"use of the plugins PHP-functions."
+"Take a video url from one of the %ssupported oembed providers%s and paste it "
+"into the Featured Video input field."
 msgstr ""
 
-#: php/class-settings.php:117
+#: php/class-help.php:41
 msgid ""
-"For more information about Shortcode and PHP functions see the %sContextual "
-"Help%s."
+"Alternatively you can select one of the videos from your media library using "
+"the small media icon to the right in the URL input field. The plugin makes "
+"use of %sWordPress' native HTML5 video functionality%s - no gurantee for "
+"compatibility with all formats."
 msgstr ""
 
-#: php/class-settings.php:125
-msgid "The current theme does not support featured images."
+#: php/class-help.php:52
+msgid "Fixing upload errors"
 msgstr ""
 
-#: php/class-settings.php:128
-msgid ""
-"To display Featured Videos you need to use the %1$sShortcode%2$s or %1$sPHP "
-"functions%2$s."
+#: php/class-help.php:58
+msgid "Read %sthis%s on how to increase the maximum file upload size."
 msgstr ""
 
-#: php/class-settings.php:151
-msgid "Replace featured image automatically."
-msgstr ""
-
-#: php/class-settings.php:152
-msgid "Replace featured image on click."
-msgstr ""
-
-#: php/class-settings.php:153
-msgid "Open video overlay when featured image is clicked."
-msgstr ""
-
-#: php/class-settings.php:154
-msgid "Manual: PHP-functions or shortcodes."
-msgstr ""
-
-#: php/class-settings.php:160
-msgid ""
-"Automatic integration (options 1-3) requires your theme to make use of "
-"WordPress' native %sfeatured image%s functionality."
-msgstr ""
-
-#: php/class-settings.php:177
-msgid "View options are not available in manual mode."
-msgstr ""
-
-#: php/class-settings.php:190
-msgid "Only when viewing %ssingle%s posts and pages."
-msgstr ""
-
-#: php/class-settings.php:195
-msgid "Only on the %spost index page%s."
-msgstr ""
-
-#: php/class-settings.php:200
-msgid "Only inside the %smain query%s of each page."
-msgstr ""
-
-#: php/class-settings.php:205
-msgid "Only for %ssticky%s posts."
-msgstr ""
-
-#: php/class-settings.php:234
-msgid "Responsive"
-msgstr ""
-
-#: php/class-settings.php:241
-msgid "Width in pixels:"
-msgstr ""
-
-#: php/class-settings.php:259
-msgid ""
-"The %1$sresponsive%2$s setting does not work when using the %1$soverlay%2$s "
-"display mode and might break completly in some themes - in such cases you "
-"should use a fixed width instead."
-msgstr ""
-
-#: php/class-settings.php:280
-msgid "left"
-msgstr ""
-
-#: php/class-settings.php:281
-msgid "center"
-msgstr ""
-
-#: php/class-settings.php:282
-msgid "right"
-msgstr ""
-
-#: php/class-settings.php:305
-msgid "Not all of the following options might be supported by all providers."
-msgstr ""
-
-#: php/class-settings.php:313
-msgid "Autoplay"
-msgstr ""
-
-#: php/class-settings.php:314
-msgid "Loop"
-msgstr ""
-
-#: php/class-settings.php:322
-msgid ""
-"If the owner of a video is a Plus member, some of these settings may be "
-"overridden by their preferences."
-msgstr ""
-
-#: php/class-settings.php:337
-msgid "Hide user's portrait"
-msgstr ""
-
-#: php/class-settings.php:341
-msgid "Hide video title"
-msgstr ""
-
-#: php/class-settings.php:345
-msgid "Hide video byline"
-msgstr ""
-
-#: php/class-settings.php:358
-msgid "Light theme"
-msgstr ""
-
-#: php/class-settings.php:362
-msgid "White highlight color"
-msgstr ""
-
-#: php/class-settings.php:364
-msgid "Hide YouTube logo"
-msgstr ""
-
-#: php/class-settings.php:367 php/class-settings.php:417
-msgid "Hide related videos"
-msgstr ""
-
-#: php/class-settings.php:371
-msgid "Disallow fullscreen"
-msgstr ""
-
-#: php/class-settings.php:375 php/class-settings.php:413
-msgid "Hide video info"
-msgstr ""
-
-#: php/class-settings.php:377
-msgid "Enable JavaScript API"
-msgstr ""
-
-#: php/class-settings.php:409
-msgid "Hide DailyMotion logo"
-msgstr ""
-
-#: php/class-settings.php:421
-msgid "Turn HD on by default"
-msgstr ""
-
-#: php/class-settings.php:440
-msgid ""
-"If you have found a bug or think a specific feature is missing, %slet me know"
-"%s in the support forum. Like this plugin? %sRate it%s or %sbuy me a cookie"
-"%s!"
-msgstr ""
-
-#: php/class-settings.php:570
+#: php/class-help.php:82
 msgid "PHP-Functions"
 msgstr ""
 
-#: php/class-settings.php:583
+#: php/class-help.php:104
+msgctxt ""
+"%1$s is a boolean condition, \\\"post_id == null\\\", %2$s is a PHP "
+"variable, %2$s is a list of strings in paranthesis."
 msgid ""
-"All parameters are optional. If %s the current post's id will be used. %s is "
-"either a string keyword (thumbnail, medium, large or full) or a 2-item array "
-"representing width and height in pixels, e.g. array(32,32)."
+"All parameters are optional. If %1$s the current post's id will be used. "
+"%2$s is either a string %2$s or a 2-item array representing width and height "
+"in pixels, e.g. array(32,32)."
 msgstr ""
 
-#: php/class-settings.php:594
+#: php/class-help.php:111
+msgid "or"
+msgstr ""
+
+#: php/class-help.php:115
 msgid ""
 "The functions are implemented corresponding to the original %sfunctions%s: "
 "They are intended to be used and to act the same way. Take a look into the "
 "WordPress Codex for further guidance:"
 msgstr ""
 
-#: php/class-settings.php:598
+#: php/class-help.php:119
 msgid "Featured Image"
 msgstr ""
 
-#: php/class-settings.php:616
+#: php/class-help.php:143
+msgid "Featured Video Plus: Shortcode"
+msgstr ""
+
+#: php/class-help.php:156
 msgid "Displays the video in its default size."
 msgstr ""
 
-#: php/class-settings.php:620
+#: php/class-help.php:160
 msgid ""
-"Displays the video with an width of 300 pixel. Height will be fitted to the "
-"aspect ratio."
+"Displays the video with a width of 300 pixel. Height will be fitted such "
+"that the aspect ratio is preserved."
 msgstr ""
 
-#: php/class-settings.php:624
-msgid "Displays the video with an fixed width and height."
+#: php/class-help.php:164
+msgid "Displays the video with a fixed width and height."
+msgstr ""
+
+#: php/class-settings.php:49
+msgid "Display mode"
+msgstr ""
+
+#: php/class-settings.php:57
+msgid "Display Conditions"
+msgstr ""
+
+#: php/class-settings.php:67
+msgid "Video Sizing"
+msgstr ""
+
+#: php/class-settings.php:76
+msgid "Video Align"
+msgstr ""
+
+#: php/class-settings.php:85
+msgid "Default Arguments"
+msgstr ""
+
+#: php/class-settings.php:94
+msgid "Support"
+msgstr ""
+
+#: php/class-settings.php:115
+msgid ""
+"To display your featured videos you can either make use of the automatic "
+"replacement, use the %s or manually edit your theme's source files to make "
+"use of the plugins PHP-functions."
+msgstr ""
+
+#: php/class-settings.php:116
+msgid ""
+"For more information about Shortcode and PHP functions see the %sContextual "
+"Help%s."
+msgstr ""
+
+#: php/class-settings.php:124
+msgid "The current theme does not support featured images."
+msgstr ""
+
+#: php/class-settings.php:127
+msgid ""
+"To display Featured Videos you need to use the %1$sShortcode%2$s or %1$sPHP "
+"functions%2$s."
+msgstr ""
+
+#: php/class-settings.php:150
+msgid "Replace featured image automatically."
+msgstr ""
+
+#: php/class-settings.php:151
+msgid "Replace featured image on click."
+msgstr ""
+
+#: php/class-settings.php:152
+msgid "Open video overlay when featured image is clicked."
+msgstr ""
+
+#: php/class-settings.php:153
+msgid "Manual: PHP-functions or shortcodes."
+msgstr ""
+
+#: php/class-settings.php:159
+msgid ""
+"Automatic integration (options 1-3) requires your theme to make use of "
+"WordPress' native %sfeatured image%s functionality."
+msgstr ""
+
+#: php/class-settings.php:176
+msgid "View options are not available in manual mode."
+msgstr ""
+
+#: php/class-settings.php:189
+msgid "Only when viewing %ssingle%s posts and pages."
+msgstr ""
+
+#: php/class-settings.php:194
+msgid "Only on the %spost index page%s."
+msgstr ""
+
+#: php/class-settings.php:199
+msgid "Only inside the %smain query%s of each page."
+msgstr ""
+
+#: php/class-settings.php:204
+msgid "Only for %ssticky%s posts."
+msgstr ""
+
+#: php/class-settings.php:232
+msgid "Responsive"
+msgstr ""
+
+#: php/class-settings.php:239
+msgid "Width in pixels:"
+msgstr ""
+
+#: php/class-settings.php:256
+msgid ""
+"The %1$sresponsive%2$s setting does not work when using the %1$soverlay%2$s "
+"display mode and might break completly in some themes - in such cases you "
+"should use a fixed width instead."
+msgstr ""
+
+#: php/class-settings.php:277
+msgid "left"
+msgstr ""
+
+#: php/class-settings.php:278
+msgid "center"
+msgstr ""
+
+#: php/class-settings.php:279
+msgid "right"
+msgstr ""
+
+#: php/class-settings.php:302
+msgid "Not all of the following options might be supported by all providers."
+msgstr ""
+
+#: php/class-settings.php:310
+msgid "Autoplay"
+msgstr ""
+
+#: php/class-settings.php:311
+msgid "Loop"
+msgstr ""
+
+#: php/class-settings.php:319
+msgid ""
+"If the owner of a video is a Plus member, some of these settings may be "
+"overridden by their preferences."
+msgstr ""
+
+#: php/class-settings.php:334
+msgid "Hide user's portrait"
+msgstr ""
+
+#: php/class-settings.php:338
+msgid "Hide video title"
+msgstr ""
+
+#: php/class-settings.php:342
+msgid "Hide video byline"
+msgstr ""
+
+#: php/class-settings.php:355
+msgid "Light theme"
+msgstr ""
+
+#: php/class-settings.php:359
+msgid "White highlight color"
+msgstr ""
+
+#: php/class-settings.php:361
+msgid "Hide YouTube logo"
+msgstr ""
+
+#: php/class-settings.php:364 php/class-settings.php:414
+msgid "Hide related videos"
+msgstr ""
+
+#: php/class-settings.php:368
+msgid "Disallow fullscreen"
+msgstr ""
+
+#: php/class-settings.php:372 php/class-settings.php:410
+msgid "Hide video info"
+msgstr ""
+
+#: php/class-settings.php:374
+msgid "Enable JavaScript API"
+msgstr ""
+
+#: php/class-settings.php:406
+msgid "Hide DailyMotion logo"
+msgstr ""
+
+#: php/class-settings.php:418
+msgid "Turn HD on by default"
+msgstr ""
+
+#: php/class-settings.php:437
+msgid ""
+"If you have found a bug or think a specific feature is missing, %slet me know"
+"%s in the support forum. Like this plugin? %sRate it%s or %sbuy me a cookie"
+"%s!"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
