@@ -230,7 +230,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param {int} $post_id
 	 */
 	public function metabox_save( $post_id ){
-		if ( ! $this->has_valid_nonce( $_POST ) ) {
+		if ( ! self::has_valid_nonce( $_POST ) ) {
 			return false;
 		}
 
@@ -261,7 +261,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @uses $this->save()
 	 */
 	public function metabox_save_ajax() {
-		if ( ! $this->has_valid_nonce( $_POST ) ) {
+		if ( ! self::has_valid_nonce( $_POST ) ) {
 			return false;
 		}
 
@@ -416,7 +416,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 				$data = array(
 					'provider' => 'local',
-					'id'  => $this->get_post_by_url( $url ),
+					'id'  => self::get_post_by_url( $url ),
 					'url' => $url,
 				);
 				break;
@@ -728,7 +728,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  {string} $url which url to look for
 	 * @return {int}    retrieved post ID
 	 */
-	protected function get_post_by_url( $url ) {
+	protected static function get_post_by_url( $url ) {
 		global $wpdb;
 
 		$id = $wpdb->get_var( $wpdb->prepare(
@@ -747,7 +747,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  {assoc}  $post_data
 	 * @return boolean
 	 */
-	private function has_valid_nonce( $post_data ) {
+	private static function has_valid_nonce( $post_data ) {
 		if (
 			! isset( $post_data['fvp_nonce'] ) ||
 			! wp_verify_nonce( $post_data['fvp_nonce'], FVP_NAME . FVP_VERSION )
