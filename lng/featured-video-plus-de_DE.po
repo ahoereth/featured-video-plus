@@ -167,7 +167,7 @@ msgstr "Breite in Pixeln:"
 
 #: php/class-settings.php:259
 msgid "The %1$sresponsive%2$s setting does not work when using the %1$soverlay%2$s display mode and might break completly in some themes - in such cases you should use a fixed width instead."
-msgstr "Die %1$sresponsive%1$s Einstellung"
+msgstr "Die %1$dynamisch%2$s Einstellung funktioniert nicht in allen Themes und speziell auch nicht im %1$sOverlay%2$s-Modus. In dem Fall muss eine absolute Breite angegeben werden."
 
 #: php/class-settings.php:280
 msgid "left"
