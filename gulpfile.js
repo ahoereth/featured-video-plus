@@ -1,3 +1,5 @@
+/* global require */
+
 var gulp   = require('gulp');
 var less   = require('gulp-less');
 var uglify = require('gulp-uglify');
@@ -7,9 +9,10 @@ var del    = require('del');
 
 
 // run everything, then watch for changes
-gulp.task('default', ['clean', 'less', 'js'], function() {
+gulp.task('default', ['less', 'js', 'readme'], function() {
   gulp.watch(['./js/*.js', '!./js/*.min.js'], ['js']);
   gulp.watch('./styles/*.less', ['less']);
+  gulp.watch('./readme.txt', ['readme']);
 });
 
 
@@ -21,7 +24,7 @@ gulp.task('clean', function(cb) {
 
 // all *.less files in ./styles are compiled and minified and saved as *.css
 gulp.task('less', function () {
-  gulp.src(['./styles/*.less', '!**/_*.less'])
+  return gulp.src(['./styles/*.less', '!**/_*.less'])
     .pipe(less({
       cleancss: true
     }))
@@ -31,7 +34,7 @@ gulp.task('less', function () {
 
 // all *.js files in ./js are minified and saved as *.min.js
 gulp.task('js', function() {
-  gulp.src([ './js/*.js', '!./js/*.min.js' ])
+  return gulp.src([ './js/*.js', '!./js/*.min.js' ])
     .pipe(uglify())
     .pipe(rename({
       suffix: '.min'
@@ -40,10 +43,10 @@ gulp.task('js', function() {
 });
 
 gulp.task('readme', function() {
-  gulp.src([ 'readme.txt' ])
+  return gulp.src([ 'readme.txt' ])
     .pipe(readme({
       details: false,
-      screenshot_ext: ['jpg', 'jpg', 'png'],
+      screenshot_ext: 'jpg',
       extract: {
         'changelog': 'CHANGELOG',
         'Frequently Asked Questions': 'FAQ'
