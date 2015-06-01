@@ -56,7 +56,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			return;
 		}
 
-		$min = defined( SCRIPT_DEBUG ) && SCRIPT_DEBUG ? '' : '.min';
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// jQuery script for automatically resizing <textarea>s.
 		wp_register_script(

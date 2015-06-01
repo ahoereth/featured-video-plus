@@ -32,7 +32,7 @@ class FVP_HTML {
 		}
 
 		// development or production?
-		$min = SCRIPT_DEBUG ? '' : '.min';
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_style(
 			'fvphtml',

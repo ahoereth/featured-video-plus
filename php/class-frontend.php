@@ -37,7 +37,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 	 * @since 1.0.0
 	 */
 	public function enqueue() {
-		$min = SCRIPT_DEBUG ? '' : '.min';
+		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		$options = get_option( 'fvp-settings' );
 		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
