@@ -145,10 +145,10 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$single_replace = is_single() &&
 			! empty( $options['single_replace'] ) && $options['single_replace'];
 
-		$conditions_hold = true;
+		$conditions_hold = empty( $conditions ) ? true : false;
 		foreach ( $conditions AS $fun => $value ) {
 			if ( $value && function_exists( 'is_' . $fun ) ) {
-				$conditions_hold = $conditions_hold && call_user_func( 'is_' . $fun );
+				$conditions_hold = $conditions_hold || call_user_func( 'is_' . $fun );
 			}
 		}
 

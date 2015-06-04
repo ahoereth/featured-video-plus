@@ -192,6 +192,10 @@ class FVP_Settings {
 		$options  = get_option( 'fvp-settings' );
 
 		$auto = ! empty( $options['mode'] ) && 'manual' !== $options['mode'];
+		$or = sprintf(
+			'<em>%s</em>',
+			strtoupper( esc_html__( 'or', 'featured-video-plus' ) )
+		);
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::description(
@@ -204,32 +208,42 @@ class FVP_Settings {
 		);
 
 		echo FVP_HTML::conditional(
+			FVP_HTML::description(
+				'Apply display mode when...'
+			) .
 			FVP_HTML::checkboxes(
 				'fvp-settings[conditions]',
 				array(
 					'single' => sprintf(
-						esc_html__( 'Only when viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
+						esc_html__( 'viewing %ssingle%s posts and pages %s', 'featured-video-plus' ),
 						'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
-						'</a>'
+						'</a>',
+						$or
 					),
 					'home' => sprintf(
-						esc_html__( 'Only on the %spost index page%s.', 'featured-video-plus' ),
+						esc_html__( 'when on the %spost index page%s %s', 'featured-video-plus' ),
 						'<a href="http://codex.wordpress.org/Function_Reference/is_home" target="_blank">',
-						'</a>'
+						'</a>',
+						$or
 					),
 					'main_query' => sprintf(
-						esc_html__( 'Only inside the %smain query%s of each page.', 'featured-video-plus' ),
+						esc_html__( 'when inside the %smain query%s of each page %s', 'featured-video-plus' ),
 						'<a href="https://developer.wordpress.org/reference/functions/is_main_query/" target="_blank">',
-						'</a>'
+						'</a>',
+						$or
 					),
 					'sticky' => sprintf(
-						esc_html__( 'Only for %ssticky%s posts.', 'featured-video-plus' ),
+						esc_html__( 'when displaying %ssticky%s posts.', 'featured-video-plus' ),
 						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
 						'</a>'
 					)
 				),
 				! empty( $options['conditions'] ) ? $options['conditions'] : array()
-			),
+			) .
+			FVP_HTML::description( esc_html__(
+				'If none of the above options is selected the display mode will be applied whenever possible.',
+				'featured-video-plus'
+			) ),
 			array(
 				'fvp-settings[mode]' => '!manual',
 				'hidden' => ! $auto,
@@ -492,8 +506,9 @@ class FVP_Settings {
 		);
 
 		$datatypes = array(
-			'mode'      => '(replace|dynamic|overlay|manual)',
-			'conditions' =>  array(
+			'mode' => '(replace|dynamic|overlay|manual)',
+			'single_replace' => 'BOOLEAN',
+			'conditions' => array(
 				'single'     => $patterns['digit'],
 				'home'       => $patterns['digit'],
 				'main_query' => $patterns['digit'],
