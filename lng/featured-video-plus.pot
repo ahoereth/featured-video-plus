@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the Featured Video Plus package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Featured Video Plus 2.0.0\n"
+"Project-Id-Version: Featured Video Plus 2.0.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/featured-video-"
-"plus-n\n"
-"POT-Creation-Date: 2015-06-01 14:09:17+00:00\n"
+"plus\n"
+"POT-Creation-Date: 2015-06-04 11:39:44+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -60,7 +60,7 @@ msgstr ""
 msgid "Auto set"
 msgstr ""
 
-#. #-#-#-#-#  featured-video-plus.pot (Featured Video Plus 2.0.0)  #-#-#-#-#
+#. #-#-#-#-#  featured-video-plus.pot (Featured Video Plus 2.0.4)  #-#-#-#-#
 #. Plugin Name of the plugin/theme
 #: php/class-help.php:23
 msgid "Featured Video Plus"
@@ -102,7 +102,7 @@ msgid ""
 "in pixels, e.g. array(32,32)."
 msgstr ""
 
-#: php/class-help.php:111
+#: php/class-help.php:111 php/class-settings.php:197
 msgid "or"
 msgstr ""
 
@@ -204,120 +204,130 @@ msgid ""
 "WordPress' native %sfeatured image%s functionality."
 msgstr ""
 
-#: php/class-settings.php:176
+#: php/class-settings.php:168
+msgid "Always use replace mode when viewing %ssingle%s posts and pages."
+msgstr ""
+
+#: php/class-settings.php:202
 msgid "View options are not available in manual mode."
 msgstr ""
 
-#: php/class-settings.php:189
-msgid "Only when viewing %ssingle%s posts and pages."
+#: php/class-settings.php:218
+msgid "viewing %ssingle%s posts and pages %s"
 msgstr ""
 
-#: php/class-settings.php:194
-msgid "Only on the %spost index page%s."
+#: php/class-settings.php:224
+msgid "when on the %spost index page%s %s"
 msgstr ""
 
-#: php/class-settings.php:199
-msgid "Only inside the %smain query%s of each page."
+#: php/class-settings.php:230
+msgid "when inside the %smain query%s of each page %s"
 msgstr ""
 
-#: php/class-settings.php:204
-msgid "Only for %ssticky%s posts."
+#: php/class-settings.php:236
+msgid "when displaying %ssticky%s posts."
 msgstr ""
 
-#: php/class-settings.php:232
+#: php/class-settings.php:243
+msgid ""
+"If none of the above options is selected the display mode will be applied "
+"whenever possible."
+msgstr ""
+
+#: php/class-settings.php:268
 msgid "Responsive"
 msgstr ""
 
-#: php/class-settings.php:239
+#: php/class-settings.php:275
 msgid "Width in pixels:"
 msgstr ""
 
-#: php/class-settings.php:256
+#: php/class-settings.php:292
 msgid ""
 "The %1$sresponsive%2$s setting does not work when using the %1$soverlay%2$s "
 "display mode and might break completly in some themes - in such cases you "
 "should use a fixed width instead."
 msgstr ""
 
-#: php/class-settings.php:277
+#: php/class-settings.php:313
 msgid "left"
 msgstr ""
 
-#: php/class-settings.php:278
+#: php/class-settings.php:314
 msgid "center"
 msgstr ""
 
-#: php/class-settings.php:279
+#: php/class-settings.php:315
 msgid "right"
 msgstr ""
 
-#: php/class-settings.php:302
+#: php/class-settings.php:338
 msgid "Not all of the following options might be supported by all providers."
 msgstr ""
 
-#: php/class-settings.php:310
+#: php/class-settings.php:346
 msgid "Autoplay"
 msgstr ""
 
-#: php/class-settings.php:311
+#: php/class-settings.php:347
 msgid "Loop"
 msgstr ""
 
-#: php/class-settings.php:319
+#: php/class-settings.php:355
 msgid ""
 "If the owner of a video is a Plus member, some of these settings may be "
 "overridden by their preferences."
 msgstr ""
 
-#: php/class-settings.php:334
+#: php/class-settings.php:370
 msgid "Hide user's portrait"
 msgstr ""
 
-#: php/class-settings.php:338
+#: php/class-settings.php:374
 msgid "Hide video title"
 msgstr ""
 
-#: php/class-settings.php:342
+#: php/class-settings.php:378
 msgid "Hide video byline"
 msgstr ""
 
-#: php/class-settings.php:355
+#: php/class-settings.php:391
 msgid "Light theme"
 msgstr ""
 
-#: php/class-settings.php:359
+#: php/class-settings.php:395
 msgid "White highlight color"
 msgstr ""
 
-#: php/class-settings.php:361
+#: php/class-settings.php:397
 msgid "Hide YouTube logo"
 msgstr ""
 
-#: php/class-settings.php:364 php/class-settings.php:414
+#: php/class-settings.php:400 php/class-settings.php:450
 msgid "Hide related videos"
 msgstr ""
 
-#: php/class-settings.php:368
+#: php/class-settings.php:404
 msgid "Disallow fullscreen"
 msgstr ""
 
-#: php/class-settings.php:372 php/class-settings.php:410
+#: php/class-settings.php:408 php/class-settings.php:446
 msgid "Hide video info"
 msgstr ""
 
-#: php/class-settings.php:374
+#: php/class-settings.php:410
 msgid "Enable JavaScript API"
 msgstr ""
 
-#: php/class-settings.php:406
+#: php/class-settings.php:442
 msgid "Hide DailyMotion logo"
 msgstr ""
 
-#: php/class-settings.php:418
+#: php/class-settings.php:454
 msgid "Turn HD on by default"
 msgstr ""
 
-#: php/class-settings.php:437
+#: php/class-settings.php:473
 msgid ""
 "If you have found a bug or think a specific feature is missing, %slet me know"
 "%s in the support forum. Like this plugin? %sRate it%s or %sbuy me a cookie"
