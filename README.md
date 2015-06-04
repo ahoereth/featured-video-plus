@@ -79,8 +79,10 @@ When editing your theme's sourcecode keep in mind that a future update through W
 
 ## Upgrade Notice ##
 
-### 2.0.3 ###
-Only upgrade when using WordPress 3.7 or higher! Big refactor with support for more video providers.
+### 2.0.4 ###
+Only upgrade when using WordPress 3.7 or higher! Check your media settings after upgrading.
 
+### 2.0.3 ###
+Only upgrade when using WordPress 3.7 or higher!
 
 
