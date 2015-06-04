@@ -10,15 +10,21 @@
 
 
   /**
-   * Remove the link wrapping featured images on index pages
+   * Remove the link wrapping featured images on index pages and the
+   * possibile repetition of .post-thumbnail-classes.
    */
   function unwrap() {
-    $('.has-post-video a.post-thumbnail>.featured-video-plus,' +
-      '.has-post-video a.post-thumbnail>.fvp-dynamic,' +
-      '.has-post-video a.post-thumbnail>.fvp-overlay,' +
-      '.has-post-video a.post-thumbnail>.mejs-video,' +
-      '.has-post-video a.post-thumbnail>.wp-video'
+    // Remove links around videos.
+    $('.has-post-video a>.featured-video-plus,' +
+      '.has-post-video a>.fvp-dynamic,' +
+      '.has-post-video a>.fvp-overlay,' +
+      '.has-post-video a>.wp-video,' +
+      '.has-post-video a>.wp-video-shortcode'
     ).unwrap();
+
+    // Remove wrapped .post-thumbnail-classes
+    $('.has-post-video .post-thumbnail>.post-thumbnail')
+      .removeClass('post-thumbnail');
   }
 
 
