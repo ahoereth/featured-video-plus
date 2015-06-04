@@ -509,10 +509,10 @@ class FVP_Settings {
 			'mode' => '(replace|dynamic|overlay|manual)',
 			'single_replace' => 'BOOLEAN',
 			'conditions' => array(
-				'single'     => $patterns['digit'],
-				'home'       => $patterns['digit'],
-				'main_query' => $patterns['digit'],
-				'sticky'     => $patterns['digit'],
+				'single'     => 'BOOLEAN',
+				'home'       => 'BOOLEAN',
+				'main_query' => 'BOOLEAN',
+				'sticky'     => 'BOOLEAN',
 			),
 			'alignment' => '(left|center|right)',
 			'sizing' => array(

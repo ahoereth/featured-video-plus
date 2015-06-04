@@ -203,6 +203,9 @@ switch ( $version ) {
 
 	case '2.0.3':
 		$options['single_replace'] = true;
+		foreach( $options['conditions'] AS $key => $value ) {
+			$options['conditions'][ $key ] = (bool) $value;
+		}
 
 
 	default:
