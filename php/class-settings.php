@@ -209,13 +209,13 @@ class FVP_Settings {
 
 		echo FVP_HTML::conditional(
 			FVP_HTML::description(
-				'Apply display mode when...'
+				esc_html__( 'Apply display mode...', 'featured-video-plus' )
 			) .
 			FVP_HTML::checkboxes(
 				'fvp-settings[conditions]',
 				array(
 					'single' => sprintf(
-						esc_html__( 'viewing %ssingle%s posts and pages %s', 'featured-video-plus' ),
+						esc_html__( 'when viewing %ssingle%s posts and pages %s', 'featured-video-plus' ),
 						'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
 						'</a>',
 						$or

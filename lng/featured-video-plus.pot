@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Featured Video Plus 2.0.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/featured-video-"
 "plus\n"
-"POT-Creation-Date: 2015-06-04 11:39:44+00:00\n"
+"POT-Creation-Date: 2015-06-04 11:55:57+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -212,8 +212,12 @@ msgstr ""
 msgid "View options are not available in manual mode."
 msgstr ""
 
+#: php/class-settings.php:212
+msgid "Apply display mode..."
+msgstr ""
+
 #: php/class-settings.php:218
-msgid "viewing %ssingle%s posts and pages %s"
+msgid "when viewing %ssingle%s posts and pages %s"
 msgstr ""
 
 #: php/class-settings.php:224
