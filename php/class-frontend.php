@@ -142,6 +142,8 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 		$conditions = ! empty( $options['conditions'] ) ?
 			$options['conditions'] : array();
+		$single_replace = is_single() &&
+			! empty( $options['single_replace'] ) && $options['single_replace'];
 
 		$conditions_hold = true;
 		foreach ( $conditions AS $fun => $value ) {
@@ -156,14 +158,14 @@ class FVP_Frontend extends Featured_Video_Plus {
 		) {
 			return $html;
 
-		} elseif ( 'dynamic' === $mode && ! is_single() ) {
+		} elseif ( 'dynamic' === $mode && ! $single_replace ) {
 			return sprintf(
 				'<a href="#" data-id="%1$s" class="fvp-dynamic post-thumbnail">%2$s</a>',
 				$post_id,
 				$html
 			);
 
-		} elseif ( 'overlay' === $mode && ! is_single() ) {
+		} elseif ( 'overlay' === $mode && ! $single_replace ) {
 			return sprintf(
 				'<a href="#" data-id="%1$s" class="fvp-overlay post-thumbnail">%2$s</a>' .
 				'<div id="fvp-cache-%1$s" style="display: none;"></div>',

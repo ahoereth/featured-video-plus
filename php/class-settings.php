@@ -158,6 +158,28 @@ class FVP_Settings {
 		echo FVP_HTML::description(
 			sprintf( esc_html__( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">', '</a>' )
 		);
+
+		// Always replace on is_single() ?
+		echo FVP_HTML::conditional(
+			'<br />' .
+			FVP_HTML::checkbox(
+				'fvp-settings[single_replace]',
+				sprintf(
+					esc_html__(
+						'Always use replace mode when viewing %ssingle%s posts and pages.',
+						'featured-video-plus'
+					),
+					'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
+					'</a>'
+				),
+				'1',
+				! empty( $options['single_replace'] ) && $options['single_replace']
+			),
+			array(
+				'fvp-settings[mode]' => '!manual',
+				'hidden' => ! empty( $options['mode'] ) && 'manual' === $options['mode']
+			)
+		);
 	}
 
 
