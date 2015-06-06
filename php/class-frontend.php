@@ -141,19 +141,12 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$options = get_option( 'fvp-settings' );
 		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 		$conditions = ! empty( $options['conditions'] ) ?
-			$options['conditions'] : array();
+			$options['conditions'] : null;
 		$single_replace = is_single() &&
 			! empty( $options['single_replace'] ) && $options['single_replace'];
 
-		$conditions_hold = empty( $conditions ) ? true : false;
-		foreach ( $conditions AS $fun => $value ) {
-			if ( $value && function_exists( 'is_' . $fun ) ) {
-				$conditions_hold = $conditions_hold || call_user_func( 'is_' . $fun );
-			}
-		}
-
 		if ( ( 'manual' === $mode ) ||
-		     ( ! $conditions_hold ) ||
+		     ( ! self::check_conditions( $conditions ) ) ||
 		     ( ! has_post_video( $post_id ) )
 		) {
 			return $html;
@@ -210,5 +203,35 @@ class FVP_Frontend extends Featured_Video_Plus {
 		if ( has_post_video() ) {
 			return get_the_post_video( null, array( $w, $h ) );
 		}
+	}
+
+
+	/**
+	 * Check a given set of display conditions if one or more of them hold. If
+	 * an empty set is given, return true.
+	 *
+	 * @param {assoc} $conditions
+	 * @return {bool}
+	 */
+	private static function check_conditions( $conditions ) {
+		if ( empty( $conditions ) ) {
+			return true;
+		}
+
+		$conditions_hold = false;
+		foreach ( $conditions AS $fun => $value ) {
+			$negate = false;
+			if ( '!' === $fun[0] ) {
+				$negate = true;
+				$fun = substr( $fun, 1 );
+			}
+
+			if ( $value && function_exists( 'is_' . $fun ) ) {
+				$call = call_user_func( 'is_' . $fun );
+				$conditions_hold = $conditions_hold || ( $negate ? ! $call : $call );
+			}
+		}
+
+		return $conditions_hold;
 	}
 }

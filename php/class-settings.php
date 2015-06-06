@@ -15,10 +15,11 @@ class FVP_Settings {
 
 	private static $page = 'media';
 
+
 	public function __construct() {
 		FVP_HTML::add_screens( self::$hook );
 
-		add_action( 'admin_init',             array( $this, 'settings_init' ) );
+		add_action( 'admin_init', array( $this, 'settings_init' ) );
 	}
 
 
@@ -234,6 +235,11 @@ class FVP_Settings {
 					),
 					'sticky' => sprintf(
 						esc_html__( 'when displaying %ssticky%s posts.', 'featured-video-plus' ),
+						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
+						'</a>'
+					),
+					'!sticky' => sprintf(
+						esc_html__( 'when displaying not %ssticky%s posts.', 'featured-video-plus' ),
 						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
 						'</a>'
 					)
@@ -513,6 +519,7 @@ class FVP_Settings {
 				'home'       => 'BOOLEAN',
 				'main_query' => 'BOOLEAN',
 				'sticky'     => 'BOOLEAN',
+				'!sticky'    => 'BOOLEAN',
 			),
 			'alignment' => '(left|center|right)',
 			'sizing' => array(
@@ -568,7 +575,7 @@ class FVP_Settings {
 				if ( ! empty( $nextleaf ) ) {
 					$validated[ $key ] = $nextleaf;
 				}
-			} elseif ( 'BOOLEAN' == $value ) {
+			} elseif ( 'BOOLEAN' === $value ) {
 				$validated[ $key ] = (bool) $src[ $key ];
 			} else {
 				preg_match( '/' . $value . '/i', $src[ $key ], $match );
