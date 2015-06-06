@@ -5,22 +5,14 @@ class FVP_HTML {
 	private static $name = 'fvphtml';
 
 
-	public  static $screens;
-
-
-	public static function static_init() {
-		static $initiated;
-		if ( $initiated ) {
-			return;
-		}
-
-		add_action( 'admin_enqueue_scripts', array( get_class(), 'enqueue' ) );
-
-		$initiated = true;
-	}
+	public static $screens;
 
 
 	public static function add_screens( $screens = array() ) {
+		if ( empty( self::$screens ) && ! empty( $screens ) ) {
+			add_action( 'admin_enqueue_scripts', array( get_class(), 'enqueue' ) );
+		}
+
 		self::$screens = array_merge( (array) self::$screens, (array) $screens );
 	}
 
@@ -62,7 +54,7 @@ class FVP_HTML {
 			'fvphtml', // hook
 			'fvphtml', // variable name
 			array(
-				'prefix' => '.fvphtml',
+				'prefix' => '.fvphtml-',
 				'pointers' => self::get_pointers( $hook ),
 			)
 		);
@@ -627,5 +619,3 @@ class FVP_HTML {
 
 
 }
-
-FVP_HTML::static_init();

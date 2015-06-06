@@ -1,49 +1,55 @@
 // *****************************************************************************
 // TABBED OPTIONS
-jQuery(document).ready(function($) {
+(function($) {
   /* global fvphtml */
+  'use strict';
 
-  // get tabs
-  var $tabs = $(fvphtml.prefix + '-tabs');
+  var clicker = function() {
+    var $title = $(this);
+    var $body  = $title.siblings('[data-hook=\'' + $title.data('hook') + '\']');
 
-  // initialize every instance's functionality
-  for ( var i = $tabs.length - 1; i >= 0; i-- ) {
-    var $tab = $( $tabs[i] );
+    // current active title is not clickable
+    if ($title.hasClass('active') && $body.hasClass('active')) {
+      return;
+    }
 
-    // get titles and bodys
-    var $titles = $tab.children(fvphtml.prefix + '-tab-title');
-    var $bodys  = $tab.children(fvphtml.prefix + '-tab-body');
+    // no longer active
+    $title.siblings(fvphtml.prefix + 'tab-title').removeClass('active');
+    $title.siblings(fvphtml.prefix + 'tab-body').slideUp();
 
-    // first title/body pair is active on initiation
-    $titles.first().addClass('active');
-    $bodys.first().addClass('active');
+    // newly active
+    $title.addClass('active');
+    $body.addClass('active').slideDown();
+  };
 
-    // pull titles to top
-    $tab.prepend( $titles );
 
-    // hide all but the initially active content
-    $bodys.filter(':not(.active)').hide();
+  $(document).ready(function() {
+    // get tabs
+    var $tabs = $(fvphtml.prefix + 'tabs');
 
-    // initialize title click event
-    $tab.children(fvphtml.prefix + '-tab-title').click(function() {
-      var $title = $(this);
-      var $body  = $bodys.filter('[data-hook=\'' + $title.data('hook') + '\']');
+    // initialize every instance's functionality
+    for ( var i = $tabs.length - 1; i >= 0; i-- ) {
+      var $tab = $( $tabs[i] );
 
-      // current active title is not clickable
-      if ($title.hasClass('active') && $body.hasClass('active')) {
-        return;
-      }
+      // get titles and bodys
+      var $titles = $tab.children(fvphtml.prefix + 'tab-title');
+      var $bodys  = $tab.children(fvphtml.prefix + 'tab-body');
 
-      // no longer active
-      $titles.removeClass('active');
-      $bodys.removeClass('active').slideUp();
+      // first title/body pair is active on initiation
+      $titles.first().addClass('active');
+      $bodys.first().addClass('active');
 
-      // newly active
-      $title.addClass('active');
-      $body.addClass('active').slideDown();
-    });
-  }
-});
+      // pull titles to top
+      $tab.prepend( $titles );
+
+      // hide all but the initially active content
+      $bodys.filter(':not(.active)').hide();
+
+      // initialize title click event
+      $tab.children(fvphtml.prefix + 'tab-title').click(clicker);
+    }
+  });
+})(jQuery);
 
 
 
@@ -52,9 +58,10 @@ jQuery(document).ready(function($) {
 // CONDITIONALS
 (function($) {
   /* global fvphtml */
+  'use strict';
 
   var triggers = {};
-  function conditionalTriggered() {
+  var conditionalTriggered = function() {
     var $trigger = $(this);
     var targets = triggers[ $trigger.attr('name') ];
     for (var i = 0; i < targets.length; i++) {
@@ -88,10 +95,11 @@ jQuery(document).ready(function($) {
         $target.removeClass('hidden');
       }
     }
-  }
+  };
+
 
   $(document).ready(function() {
-    var $conditionals = $(fvphtml.prefix + '-conditional');
+    var $conditionals = $(fvphtml.prefix + 'conditional');
     for (var i = 0; i < $conditionals.length; i++) {
       var $target = $( $conditionals[i] );
       var names = $target.data('names').split('|');
@@ -118,6 +126,8 @@ jQuery(document).ready(function($) {
 // COLORPICKERS / IRIS
 // See http://automattic.github.io/Iris/
 (function($) {
+  'use strict';
+
   var $colorpickers;
 
 
@@ -166,7 +176,7 @@ jQuery(document).ready(function($) {
    * Adjust colorpicker input background and foreground color depending
    * on its value.
    */
-  function colorpickerChange(event, ui) {
+  var colorpickerChange = function(event, ui) {
     var $this = $(this);
     var color = ui && ui.color ? ui.color.toString() : $this.val();
     color = cleanHex(color);
@@ -176,49 +186,49 @@ jQuery(document).ready(function($) {
       color: getContrastColor(color)
     });
 
-    if (! color) { $this.siblings(fvphtml.prefix + '-reset').hide(); }
-    else         { $this.siblings(fvphtml.prefix + '-reset').show(); }
-  }
+    if (! color) { $this.siblings(fvphtml.prefix + 'reset').hide(); }
+    else         { $this.siblings(fvphtml.prefix + 'reset').show(); }
+  };
 
 
   /**
    * Hide all colorpickers upon opening a new one.
    */
-  function colorpickerClick() {
+  var colorpickerClick = function() {
     var $this = $(this);
     $colorpickers.not( $this ).iris('hide');
     $this.iris('show');
-  }
+  };
 
 
   /**
    * Hide colorpicker reset button on blur.
    */
-  function colorpickerBlur(event) {
+  var colorpickerBlur = function(event) {
     if (event) { event.preventDefault(); }
     var $this = $(this);
     if ('' === $this.val()) {
-      $this.siblings(fvphtml.prefix + '-reset').hide();
+      $this.siblings(fvphtml.prefix + 'reset').hide();
     }
-  }
+  };
 
 
   /**
    * Clear colorpicker input and hide colorpickers on reset click.
    */
-  function colorpickerResetClick(event) {
+  var colorpickerResetClick = function(event) {
     if (event) { event.preventDefault(); }
     $colorpickers.iris('hide');
-    $(this).siblings(fvphtml.prefix + '-colorpicker')
+    $(this).siblings(fvphtml.prefix + 'colorpicker')
       .val('')
       .each(colorpickerChange);
-  }
+  };
 
 
   // DOM is ready..
   $(document).ready(function() {
     // Get colorpickers.
-    $colorpickers = $(fvphtml.prefix + '-colorpicker');
+    $colorpickers = $(fvphtml.prefix + 'colorpicker');
 
     // Change handlers.
     $colorpickers.iris({ change: colorpickerChange });
@@ -231,7 +241,7 @@ jQuery(document).ready(function($) {
     $colorpickers.blur(colorpickerBlur);
 
     // Reset click handler.
-    $colorpickers.siblings(fvphtml.prefix + '-reset').click(colorpickerResetClick);
+    $colorpickers.siblings(fvphtml.prefix + 'reset').click(colorpickerResetClick);
 
     // Initial input coloring.
     $colorpickers.each(colorpickerChange);
@@ -245,18 +255,19 @@ jQuery(document).ready(function($) {
 // TUTORIAL POINTERS
 (function($) {
   /* global fvphtml, ajaxurl */
+  'use strict';
 
   /**
    * Used when dissmissing a pointer to fire an AJAX request to save the
    * closed state to the database.
    */
-  function closePointer() {
+  var closePointer = function() {
     var identifier = $(this).data('wpPointer').options.pointer_id;
     $.post(ajaxurl, {
       pointer: identifier,
       action: 'dismiss-wp-pointer'
     });
-  }
+  };
 
 
   /**
@@ -299,7 +310,10 @@ jQuery(document).ready(function($) {
 // *****************************************************************************
 // Contextual Help Links
 jQuery(document).ready(function($) {
-  $(fvphtml.prefix + '-help-link, .help-link').click(function() {
+  /* global fvphtml */
+  'use strict';
+
+  $(fvphtml.prefix + 'help-link, .help-link').click(function() {
     $('#contextual-help-link').trigger('click');
   });
 });
