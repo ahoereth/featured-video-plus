@@ -147,7 +147,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Current featured video.
 		$content .= sprintf(
 			'<div class="fvp-current-video"%s>%s</div>',
-			$this->inline_styles( array(
+			FVP_HTML::inline_styles( array(
 				'height: 0px' => ! $has_post_video,
 			), true, true ),
 			get_the_post_video( $post_id, array( 256, 144 ) )
@@ -174,7 +174,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			'<a href="#" class="fvp-video-choose">' .
 				'<span class="fvp-media-icon"%s></span>' .
 			'</a>',
-			$this->inline_styles(array(
+			FVP_HTML::inline_styles( array(
 				'background-image' => sprintf(
 					'url(%s/wp-admin/images/media-button.png)',
 					get_bloginfo( 'wpurl' )

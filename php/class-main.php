@@ -1,4 +1,8 @@
 <?php
+
+// dependencies
+require_once( FVP_DIR . 'php/class-html.php' );
+
 /**
  * Class containing all functions needed on front- AND backend. Functions only needed on one of those are found in distinct classes.
  *
@@ -114,7 +118,7 @@ class Featured_Video_Plus {
 		$embed = sprintf(
 			"<!-- Featured Video Plus v%s -->\n<div%s>%s</div>\n\n",
 			FVP_VERSION,
-			$this->class_names($classnames, true, true),
+			FVP_HTML::class_names($classnames, true, true),
 			$embed
 		);
 
@@ -229,76 +233,5 @@ class Featured_Video_Plus {
 			FVP_DIR . 'lng/',
 			FVP_NAME . '/lng/'
 		);
-	}
-
-
-	/**
-	 *
-	 * @param  {assoc}   $assoc
-	 * @param  {boolean} $attribute
-	 * @param  {boolean} $leadingspace
-	 * @param  {boolean} $trailingspace
-	 * @return {string}
-	 */
-	protected function class_names(
-		$assoc,
-		$attribute = false,
-		$leadingspace = false,
-		$trailingspace = false
-	) {
-		// Attribute opening and leading space.
-		$string  = $leadingspace ? ' ' : '';
-		$string .= $attribute ? 'class="' : '';
-
-		// Class list.
-		$classes = array();
-		foreach ( $assoc AS $key => $val ) {
-			if ( $val ) {
-				$classes[] = $key;
-			}
-		}
-		$string .= implode( ' ', $classes );
-
-		// Closing the attribute and trailing space.
-		$string .= $attribute ? '"' : '';
-		$string .= $trailingspace ? ' ' : '';
-
-		return $string;
-	}
-
-	/**
-	 *
-	 * @param  {assoc}   $assoc
-	 * @param  {boolean} $attribute
-	 * @param  {boolean} $leadingspace
-	 * @param  {boolean} $trailingspace
-	 * @return {string}
-	 */
-	protected function inline_styles(
-		$assoc,
-		$attribute = false,
-		$leadingspace = false,
-		$trailingspace = false
-	) {
-		// Attribute opening and leading space.
-		$string  = $leadingspace ? ' ' : '';
-		$string .= $attribute ? 'style="' : '';
-
-		// Style body.
-		foreach ( $assoc AS $key => $val ) {
-			if ( is_bool( $val ) && true === $val ) {
-				// $key is a property: value pair and $val a boolean condition
-				$string .= esc_attr( $key ) . '; ';
-			} else {
-				// $key is a property and $val a value
-				$string .= sprintf( '%s: %s; ', esc_attr( $key ), esc_attr( $val ) );
-			}
-		}
-
-		// Closing the attribute and trailing space.
-		$string .= $attribute ? '"' : '';
-		$string .= $trailingspace ? ' ' : '';
-
-		return $string;
 	}
 }
