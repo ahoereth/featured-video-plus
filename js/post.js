@@ -29,6 +29,14 @@
    */
   function removeFeatimg() {
     setTimeout(refreshHandlers, 2000); // Arbritrarily wait 2 seconds.
+
+    $.post(ajaxurl, {
+      'action'    : 'fvp_nofeatimg',
+      'id'        : $('#post_ID').val(),
+      'fvp_nonce' : $('#fvp_nonce').val()
+    }, function(data) {
+      $('#postimagediv .inside').html(data.img);
+    }, 'json' );
   }
 
 

@@ -37,6 +37,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			add_action( 'wp_ajax_fvp_save', array( $this, 'metabox_save_ajax' ) );
+			add_action( 'wp_ajax_fvp_nofeatimg', array( $this, 'ajax_nofeatimg' ) );
 			add_action( 'wp_ajax_fvp_get_embed', array( $this, 'ajax_get_embed' ) );
 			add_action( 'wp_ajax_nopriv_fvp_get_embed',
 			            array( $this, 'ajax_get_embed' ) );
@@ -314,13 +315,15 @@ class FVP_Backend extends Featured_Video_Plus {
 		// parse video url
 		$url = ! empty( $post['fvp_video'] ) ? trim( $post['fvp_video'] ) : '';
 
-		// has featured image AND url did not change or is and was empty
-		if (
-			( empty ( $post['fvp_set_featimg'] ) || ! $post['fvp_set_featimg'] ) && (
-				( ! empty( $meta['full'] ) && $url == $meta['full'] ) ||
-				(   empty( $meta['full'] ) && empty( $url ) )
-			)
-		) {
+		// Was this a force-auto-set featimg action?
+		$setimg = ! empty ( $post['fvp_set_featimg'] ) && $post['fvp_set_featimg'];
+
+		// Don't do anything if we are not setting the featured image AND the
+		// URL is empty AND did not change.
+		if ( ! $setimg && (
+			( ! empty( $meta['full'] ) && $url == $meta['full'] ) ||
+			(   empty( $meta['full'] ) && empty( $url ) )
+		) ) {
 			return false;
 		}
 
@@ -339,8 +342,16 @@ class FVP_Backend extends Featured_Video_Plus {
 			$data['filename'] = 'Featured Video Plus Placeholder';
 		}
 
-		$img = $this->set_featured_image( $post['id'], $data );
+		// Should we set the featured image?
+		if ( $setimg || (
+			! has_post_thumbnail( $post['id'] ) &&
+			( empty( $meta['noimg'] ) || $meta['noimg'] )
+		) ) {
+			$img = $this->set_featured_image( $post['id'], $data );
+			$data['noimg'] = false;
+		}
 
+		// Create the final _fvp_video meta data.
 		$meta = array_merge(
 			array(
 				'full'     => $url,
@@ -542,6 +553,51 @@ class FVP_Backend extends Featured_Video_Plus {
 			));
 		}
 
+		exit( $response );
+	}
+
+
+	/**
+	 * Some people might not want to have a featured image because of whatever
+	 * reason. We notify them about the probable incompatibility and offer the
+	 * 'auto set' link to set the featured image using the plugin (video
+	 * thumbnail or placeholder) but do not want to auto set it on every post
+	 * save automatically if they explicitly removed it before. This function
+	 * therefor is triggered by an AJAX request when removing a featured image
+	 * which was previously set by the plugin.
+	 */
+	public function ajax_nofeatimg() {
+		header( 'Content-Type: application/json' );
+
+		if ( ! self::has_valid_nonce( $_POST ) || empty( $_POST['id'] ) ) {
+			return false;
+		}
+
+		// Retrieve post id and the video meta data connected to it.
+		$id = (int) $_POST['id'];
+		$img = (int) $_POST['img'];
+		$meta = get_post_meta( $id, '_fvp_video', true );
+
+		// Delete the image from database if feasible. This also again tries to
+		// remove the link of the featured image to the post although it will
+		// probably already be unlinked by WordPress internal functionality.
+		$this->delete_featured_image( $id, $meta );
+
+		// Remember that we do not want to set a featured image automatically for
+		// this post.
+		$meta['noimg'] = true;
+
+		// Remove now unnecessary image information from the video meta.
+		$meta['img'] = null;
+
+		// Save meta.
+		update_post_meta( $id, '_fvp_video', $meta );
+
+		// Respond to the client.
+		$response = json_encode( array(
+			'success' => true,
+			'img' => _wp_post_thumbnail_html( get_post_thumbnail_id( $id ), $id ),
+		) );
 		exit( $response );
 	}
 
