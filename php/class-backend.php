@@ -526,7 +526,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		header( 'Content-Type: application/json' );
 
 		// bad request
-		if ( ! wp_verify_nonce( $_POST['nonce'], 'featured-video-plus-nonce' ) ) {
+		if ( ! has_valid_nonce( $_POST ) ) {
 			$response = json_encode( array(
 				'success' => false,
 				'html'    => 'invalid nonce',
