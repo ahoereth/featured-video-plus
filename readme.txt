@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
 Tested up to: 4.2.2
-Stable tag: 2.0.3
+Stable tag: 2.1.0
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -106,7 +106,7 @@ Yes, please! Check out the public [Featured Video Plus Translation Project](http
 
 == Upgrade Notice ==
 
-= 2.0.4 =
+= 2.1.0 =
 Only upgrade when using WordPress 3.7 or higher! Check your media settings after upgrading.
 
 = 2.0.3 =
@@ -115,11 +115,12 @@ Only upgrade when using WordPress 3.7 or higher!
 
 == Changelog ==
 
-= 2.0.4: 2015-06-04 =
+= 2.1.0: 2015-06-11 =
 * Display options are now chained using OR - if one of them holds, the replace mode is used.
 * Added `always use replace mode when viewing single posts and pages` option, was implicitly true since 2.0.0. ([*](https://wordpress.org/support/topic/featured-video-overrides-featured-image)).
-* Fixed undefined warning when using `WP_DEBUG` ([*](https://wordpress.org/support/topic/debug-error-16)).
-* Fixed falsely double-wrapped .post-thumbnails ([*](https://wordpress.org/support/topic/video-no-longer-appearing)).
+* Fixed undefined warnings when using `WP_DEBUG` ([*](https://wordpress.org/support/topic/debug-error-16)).
+* Fixed double-wrapped .post-thumbnails ([*](https://wordpress.org/support/topic/video-no-longer-appearing)).
+* Lazy loading a video no longer breaks other videos. ([*](https://wordpress.org/support/topic/blank-screen-after-the-video-is-played))
 
 = 2.0.3: 2015-06-01 =
 * Remove usage of PHP short array syntax in order to support PHP versions lower than 5.4 ([*](https://wordpress.org/support/topic/bug-on-version-201))
