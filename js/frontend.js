@@ -25,6 +25,9 @@
     // Remove wrapped .post-thumbnail-classes
     $('.has-post-video .post-thumbnail>.post-thumbnail')
       .removeClass('post-thumbnail');
+
+    // There might still be some empty .post-thumbnail links to be removed.
+    $('a.post-thumbnail').not('.fvp-dynamic, .fvp-overlay').remove();
   }
 
 
@@ -77,22 +80,19 @@
    * Handle mouseover and mouseout events.
    */
   function hover(event) {
-    var $elem = $(event.currentTarget);
-    var $img = $elem.children('img');
+    var $img = $(event.currentTarget).children('img');
 
-    if (0 === $elem.find('.fvp-loader').length) {
-      $img.animate({ opacity: fvpdata.opacity });
-      $elem
-        .css({ position: 'relative' })
-        .prepend(
-          $loader
-            .css({
-              height    :  $img.height(),
-              width     :  $img.width(),
-              marginTop : -$img.height()/2,
-              marginLeft: -$img.width()/2
-            })
-        );
+    // Is the overlay displayed currently?
+    if (0 === $img.siblings('.fvp-loader').length) {
+      // Copy classes and css styles onto the play icon overlay.
+      $loader.addClass($img.attr('class')).css({
+        height: $img.height(),
+        width: $img.width(),
+        margin: $img.css('margin')
+      });
+
+      // Fade out image and insert overlay.
+      $img.animate({ opacity: fvpdata.opacity }).before($loader);
     } else if (bgState !== loadBg) {
       $img.animate({ opacity: 1 });
       $loader.remove();

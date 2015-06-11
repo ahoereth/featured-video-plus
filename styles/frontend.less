@@ -54,15 +54,16 @@
 .fvp-overlay,
 .fvp-dynamic {
   position: relative;
+  display: block;
   height: auto;
   width: auto;
 
   .fvp-loader {
     background: transparent no-repeat scroll center center;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 10;
+    top: 0;
+    left: 0;
+    z-index: 999;
     pointer-events: none;
   }
 }

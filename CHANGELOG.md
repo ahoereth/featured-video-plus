@@ -1,5 +1,8 @@
 # Changelog #
 
+## 2.1.1: 2015-06-xx ##
+* Fix play and loading featured image overlay for some themes ([*](https://wordpress.org/support/topic/play-icon-missing)).
+
 ## 2.1.0: 2015-06-11 ##
 * Display options are now chained using OR - if one of them holds, the replace mode is used.
 * Added `always use replace mode when viewing single posts and pages` option, was implicitly true since 2.0.0. ([*](https://wordpress.org/support/topic/featured-video-overrides-featured-image)).
