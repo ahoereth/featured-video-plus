@@ -116,10 +116,12 @@
       'id'        : id
     }, function(response){
       if (response.success) {
+        var $parent = $self.parent();
         $self.replaceWith(response.data);
 
         // Initialize mediaelement.js, autosize and unwrap the new videos.
-        $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer();
+        $parent.find('.wp-audio-shortcode, .wp-video-shortcode')
+          .mediaelementplayer();
         fitVids();
         unwrap();
       }
