@@ -111,18 +111,17 @@
     triggerPlayLoad();
 
     $.post(fvpdata.ajaxurl, {
-      'action': 'fvp_get_embed',
-      'nonce' : fvpdata.nonce,
-      'id'    : id
-    }, function(data){
-      if (data.success) {
-        $self.replaceWith(data.html);
+      'action'    : 'fvp_get_embed',
+      'fvp_nonce' : fvpdata.nonce,
+      'id'        : id
+    }, function(response){
+      if (response.success) {
+        $self.replaceWith(response.data);
 
-        // Initialize mediaelement.js player for the new videos.
+        // Initialize mediaelement.js, autosize and unwrap the new videos.
         $('.wp-audio-shortcode, .wp-video-shortcode').mediaelementplayer();
-
-        // Autosize them if required.
         fitVids();
+        unwrap();
       }
 
       triggerPlayLoad();
@@ -155,15 +154,15 @@
     // Check if the result is already cached
     if (0 === $cache.html().length) {
       $.post(fvpdata.ajaxurl, {
-          'action': 'fvp_get_embed',
-          'nonce' : fvpdata.nonce,
-          'id'    : id
-      }, function(data) {
-        if (data.success) {
+          'action'    : 'fvp_get_embed',
+          'fvp_nonce' : fvpdata.nonce,
+          'id'        : id
+      }, function(response) {
+        if (response.success) {
           // cache the result to not reload when opened again
-          $cache.html(data.html);
+          $cache.html(response.data);
 
-          $('#DOMWindow').html(data.html);
+          $('#DOMWindow').html(response.data);
           sizeLocal();
           $(window).trigger('scroll');
         }

@@ -1,11 +1,13 @@
 (function($) {
   'use strict';
-  /* global fvp_post, ajaxurl */
+  /* global fvpPost, ajaxurl */
 
-  var context = fvp_post;
+  var context = fvpPost;
   var $input;
   var $media;
+  var currentUrl;
   var mediaicon;
+  var loadingicon = 'url(' + context.loading_gif + ')';
 
 
   /**
@@ -15,8 +17,7 @@
    * @param {event} event jQuery click event.
    */
   function setFeatimg(event) {
-    event.preventDefault();
-    submitVideo(true);
+    submitVideo(event, true);
   }
 
 
@@ -27,15 +28,19 @@
    * is not too bad if the link is not available (won't be displayed), but its
    * nice to have.
    */
-  function removeFeatimg() {
-    setTimeout(refreshHandlers, 2000); // Arbritrarily wait 2 seconds.
+  function removeFeatimg(event) {
+    event.preventDefault();
 
+    $media.css({ backgroundImage: loadingicon }); // Show loading gif.
     $.post(ajaxurl, {
-      'action'    : 'fvp_nofeatimg',
+      'action'    : 'fvp_remove_img',
       'id'        : $('#post_ID').val(),
       'fvp_nonce' : $('#fvp_nonce').val()
-    }, function(data) {
-      $('#postimagediv .inside').html(data.img);
+    }, function(response) {
+      if (response.success) {
+        $('#postimagediv .inside').html(response.data);
+        $media.css({ backgroundImage: mediaicon }); // Hide loading gif.
+      }
     }, 'json' );
   }
 
@@ -45,16 +50,32 @@
    *
    * @param {bool} setFeatimg
    */
-  function submitVideo(setFeatimg) {
+  function submitVideo(event, setFeatimg) {
+    event.preventDefault();
     setFeatimg = setFeatimg || false;
+    $input.val($.trim($input.val())).trigger('autosize'); // Remove whitespace.
 
-    $.post(ajaxurl, {
+    // Don't do anything if value didn't change and we are not force-setting
+    // the featured image.
+    if (currentUrl === $input.val() && ! setFeatimg) { return; }
+
+    $media.css({ backgroundImage: loadingicon }); // Show loading gif.
+    currentUrl = $input.val(); // Remember new url.
+
+    var data = {
       'action'         : 'fvp_save',
       'id'             : $('#post_ID').val(),
       'fvp_nonce'      : $('#fvp_nonce').val(),
       'fvp_video'      : $input.val(),
       'fvp_set_featimg': setFeatimg
-    }, function(data) {
+    };
+
+    $.post(ajaxurl, data, function(response) {
+      if (! response.success) {
+        return false;
+      }
+
+      var data = response.data;
       var $container = $('.fvp-current-video');
 
       // reset loading icon
@@ -76,54 +97,19 @@
 
       // update featured image
       $('#postimagediv .inside').html(data.img);
-      refreshHandlers();
     }, 'json' );
   }
 
 
-  /**
-   * Sets the set and remove featured image handlers.
-   * @return {[type]} [description]
-   */
-  function refreshHandlers() {
-    // Button for quickly setting a featured image if none is set.
-    $('.fvp-set-featimg').show().click(setFeatimg);
-
-    // Show setFeatimg link after removing a featured image.
-    $('#remove-post-thumbnail').click(removeFeatimg);
-  }
-
-
   $(document).ready(function() {
-    // elements
     $input = $('.fvp-video');
     $media = $input.siblings('.fvp-video-choose').children('.fvp-media-icon');
-    mediaicon = $media.css( 'backgroundImage' );
-
-    var loadingicon = 'url(\'' + context.loading_gif + '\')';
-    var currentUrl  = $input.val();
+    currentUrl  = $input.val();
+    mediaicon = $media.css('backgroundImage');
 
     // Automatically submit the video URL using AJAX when the input is blurred.
     // Update video and featured image with the returned data.
-    $input.blur(function() {
-      $input.val( $.trim( $input.val() ) );
-
-      // don't do anything if input didn't change
-      if (currentUrl === $input.val()) {
-        return;
-      }
-
-      // remember new url
-      currentUrl = $input.val();
-
-      // autosize input field
-      $input.trigger('autosize');
-
-      // display loading gif in input
-      $media.css({ backgroundImage: loadingicon });
-
-      submitVideo();
-    });
+    $input.blur(submitVideo);
 
     // Initialize autosizing the url input field, disable enter key and
     // auto select content on click.
@@ -141,10 +127,12 @@
         $(this).select();
       });
 
-
-    // Initialize set & remove featured image handlers.
-    refreshHandlers();
-
+    // Click handlers for quickly setting a featured image from the video and
+    // removing the existing featured image the FVP way. Additionally hiding
+    // the WordPress remove featured image link.
+    $('#postimagediv')
+      .on('click', '.fvp-set-image', setFeatimg)
+      .on('click', '.fvp-remove-image', removeFeatimg);
 
     // WordPress 3.5 Media Manager
     // @see http://www.blazersix.com/blog/wordpress-image-widget/
