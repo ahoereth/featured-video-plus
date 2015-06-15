@@ -11,6 +11,24 @@
 
 
   /**
+   * Update the featured image box content with fresh html and show/hide the
+   * required remove post thumbnail links accordingly.
+   *
+   * @param  {string} html
+   */
+  function updateImageDiv(html) {
+    var $container = $('#postimagediv .inside');
+    html = html || $container.html();
+    $container.html(html);
+
+    if (0 < $container.find('.fvp-remove-image').length) {
+      $container.find('#remove-post-thumbnail').parent('p').hide();
+      $container.find('.fvp-remove-image').parent('p').show();
+    }
+  }
+
+
+  /**
    * Set the featured video with 'setfeatimg' parameter in order to force set
    * the featured image to the video thumbnail if possible.
    *
@@ -38,7 +56,7 @@
       'fvp_nonce' : $('#fvp_nonce').val()
     }, function(response) {
       if (response.success) {
-        $('#postimagediv .inside').html(response.data);
+        updateImageDiv(response.data);
         $media.css({ backgroundImage: mediaicon }); // Hide loading gif.
       }
     }, 'json' );
@@ -96,7 +114,7 @@
       }
 
       // update featured image
-      $('#postimagediv .inside').html(data.img);
+      updateImageDiv(data.img);
     }, 'json' );
   }
 
@@ -133,6 +151,7 @@
     $('#postimagediv')
       .on('click', '.fvp-set-image', setFeatimg)
       .on('click', '.fvp-remove-image', removeFeatimg);
+    updateImageDiv();
 
     // WordPress 3.5 Media Manager
     // @see http://www.blazersix.com/blog/wordpress-image-widget/

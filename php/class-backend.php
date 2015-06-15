@@ -656,27 +656,28 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @return {string}
 	 */
 	public function featured_image_box( $content, $post_id ) {
-		if ( has_post_thumbnail( $post_id ) ) {
-			$link = sprintf(
-				'<p class="hide-if-no-js"><a href="#" class="fvp-remove-image">%s</a></p>',
-				esc_html__( 'Remove featured image' )
-			);
-
-			return $content . $link;
-		} elseif ( has_post_video( $post_id ) ) {
-			$notice = sprintf(
-				'<p class="fvp-notice">%s <a href="#" class="fvp-set-image hide-if-no-js">%s</a></p>',
-				esc_html__(
-					'Featured Videos require a Featured Image for automatic replacement.',
-					'featured-video-plus'
-				),
-				esc_html__( 'Auto set', 'featured-video-plus' )
-			);
-
-			return $notice . $content;
+		if ( ! has_post_video( $post_id ) ) {
+			// Has no featured video so the plugin does not interfere.
+			return $content;
 		}
 
-		return $content;
+		if ( has_post_thumbnail( $post_id ) ) {
+			// Has featured video and featured image.
+			return $content . sprintf(
+				'<p class="hidden"><a href="#" class="fvp-remove-image">%s</a></p>',
+				esc_html__( 'Remove featured image' )
+			);
+		}
+
+		// Has featured video but not featured image.
+		return sprintf(
+			'<p class="fvp-notice">%s <a href="#" class="fvp-set-image hide-if-no-js">%s</a></p>',
+			esc_html__(
+				'Featured Videos require a Featured Image for automatic replacement.',
+				'featured-video-plus'
+			),
+			esc_html__( 'Auto set', 'featured-video-plus' )
+		) . $content;
 	}
 
 
