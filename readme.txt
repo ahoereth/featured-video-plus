@@ -10,7 +10,7 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
 Tested up to: 4.2.2
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -117,6 +117,7 @@ Only upgrade when using WordPress 3.7 or higher!
 
 = 2.1.1: 2015-06-xx =
 * Fix play and loading featured image overlay for some themes ([*](https://wordpress.org/support/topic/play-icon-missing)).
+* Fix broken `remove featured image` link. ([*](https://wordpress.org/support/topic/cant-remove-featured-image-2),  [*](https://wordpress.org/support/topic/version-210-conflict-with-wp-featured-image), [*](https://wordpress.org/support/topic/fvp-not-working-after-210-update))
 
 = 2.1.0: 2015-06-11 =
 * Display options are now chained using OR - if one of them holds, the replace mode is used.
