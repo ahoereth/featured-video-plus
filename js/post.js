@@ -109,7 +109,7 @@
       // new video data
       } else {
         $container
-          .css({height: 'auto'})
+          .css({height: ''})
           .html(data.video);
       }
 
