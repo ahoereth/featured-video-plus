@@ -15,7 +15,8 @@ There are three ways to get the videos onto your page:
 2. insert the `[featured-video-plus]`-__Shortcode__ in your posts or
 3. manually make use of the __PHP-functions__ in your theme's source files.
 
-> Sadly many themes do not follow the WordPress standards and implement their own fancy functions for displaying featured images - check out the [FAQ](https://wordpress.org/plugins/featured-video-plus/faq/). Another common problem are sliders - in general: Videos do not like sliders at all.
+> <strong>Theme compatibility</strong><br>
+> Sadly many themes do not follow the WordPress standards and implement their own fancy functions for displaying featured images - those very likely break this plugin. Check out the [FAQ](https://wordpress.org/plugins/featured-video-plus/faq/). Another common problem are sliders: Videos, in general, do not like sliders at all.
 
 See the plugin in action on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus/). There is a button in the sidebar to switch between the different featured video display modes: [Automatic](http://yrnxt.com/wordpress/featured-video-plus/?setfvpmode=replace), [lazy](http://yrnxt.com/wordpress/featured-video-plus/?setfvpmode=dynamic) and [overlay](http://yrnxt.com/wordpress/featured-video-plus/?setfvpmode=overlay).
 
@@ -23,8 +24,8 @@ Besides **Local Videos** you can use videos from a whole lot of external provide
 
 After installing the plugin check your site's *Media Settings* (`Settings -> Media` in the administration interface): The plugin adds quite some little helper options there. Change to lazy or overlay mode, tweak video sizing, individualize the look of the most prominent providers' video players and turn on autoplay or video looping. By default videos try to dynamically fit their parent containers width and adjust their size responsively.
 
-### Support ###
-I do read all support questions in the [forums](https://wordpress.org/support/plugin/featured-video-plus) but cannot reply to all of them. The plugin is an unpaid side project and full support would require more time than I can invest for free for over 10k active installs. If you really need help, consider [buying me a cookie](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6) - best way to attract my attention and to support future enhancements.
+> <strong>Support</strong><br>
+> I do read all support questions in the [forums](https://wordpress.org/support/plugin/featured-video-plus) but cannot reply to all of them. The plugin is an unpaid side project and full support would require more time than I can invest for free for over 10k active installs. If you really need help, consider [buying me a cookie](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6) - best way to attract my attention and to support future enhancements.
 
 
 
