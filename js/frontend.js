@@ -27,7 +27,7 @@
       .removeClass('post-thumbnail');
 
     // There might still be some empty .post-thumbnail links to be removed.
-    $('a.post-thumbnail').not('.fvp-dynamic, .fvp-overlay').remove();
+    $('a.post-thumbnail:empty').not('.fvp-dynamic, .fvp-overlay').remove();
   }
 
 

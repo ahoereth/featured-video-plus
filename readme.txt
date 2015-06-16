@@ -104,18 +104,12 @@ Yes, please! Check out the public [Featured Video Plus Translation Project](http
 
 
 
-== Upgrade Notice ==
-
-= 2.1.0 =
-Only upgrade when using WordPress 3.7 or higher! Check your media settings after upgrading.
-
-= 2.0.3 =
-Only upgrade when using WordPress 3.7 or higher!
-
-
 == Changelog ==
 
-= 2.1.1: 2015-06-xx =
+= 2.1.2: 2015-06-16 =
+* Fix bug which resulted in missing featured images when a post did not have a featured video. ([*](https://wordpress.org/support/topic/cookie-send-to-you-and-video-yes-image-no), [*](https://wordpress.org/support/topic/version-221-featured-image-not-diplayed))
+
+= 2.1.1: 2015-06-15 =
 * Fix play and loading featured image overlay for some themes ([*](https://wordpress.org/support/topic/play-icon-missing)).
 * Fix broken `remove featured image` link. ([*](https://wordpress.org/support/topic/cant-remove-featured-image-2),  [*](https://wordpress.org/support/topic/version-210-conflict-with-wp-featured-image), [*](https://wordpress.org/support/topic/fvp-not-working-after-210-update))
 
