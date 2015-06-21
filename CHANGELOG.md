@@ -1,5 +1,8 @@
 # Changelog #
 
+## 2.2.0: 2015-06-xx ##
+* Shortcodes can now be used as featured content (e.g. `[gallery]`).
+
 ## 2.1.2: 2015-06-16 ##
 * Fix bug which resulted in missing featured images when a post did not have a featured video. ([*](https://wordpress.org/support/topic/cookie-send-to-you-and-video-yes-image-no), [*](https://wordpress.org/support/topic/version-221-featured-image-not-diplayed))
 

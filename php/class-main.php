@@ -86,7 +86,7 @@ class Featured_Video_Plus {
 				break;
 
 			case 'raw':
-				$embed = $meta['full'];
+				$embed = do_shortcode( $meta['full'] );
 				break;
 
 			default:
