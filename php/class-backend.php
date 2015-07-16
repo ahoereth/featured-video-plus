@@ -459,7 +459,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 			// Insert into media library
 			$url_type = image_type_to_extension(
-				exif_imagetype( $file['tmp_name'] ),
+				self::get_image_type( $file['tmp_name'] ),
 				false
 			);
 			$file['name'] = basename( $data['img_url'] . '.' . $url_type );
@@ -738,6 +738,25 @@ class FVP_Backend extends Featured_Video_Plus {
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * exif_imagetype function is not available on all systems - fallback wrapper.
+	 *
+	 * @param  {string} $filename
+	 * @return Image mime type.
+	 */
+	private static function get_image_type( $filename ) {
+		if ( function_exists( 'exif_imagetype' ) ) {
+			return exif_imagetype( $filename );
+		} else {
+			$img = getimagesize( $filename );
+			if ( !empty( $img[2] ) ) {
+				return image_type_to_mime_type( $img[2] );
+			}
+		}
+		return false;
 	}
 
 
