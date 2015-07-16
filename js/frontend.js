@@ -179,6 +179,14 @@
 
   // Initialization after DOM is completly loaded.
   $(document).ready(function() {
+    // Wordaround for chrome bug
+    // See https://code.google.com/p/chromium/issues/detail?id=395791
+    if (!! window.chrome) {
+      $('.featured-video-plus iframe').each(function() {
+        this.src = this.src;
+      });
+    }
+
     // remove wrapping anchors
     // doing this twice with a 1 second delay to fix wrapped local video posters
     unwrap();
