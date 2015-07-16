@@ -349,10 +349,30 @@ class FVP_Settings {
 				FVP_HTML::checkboxes(
 					'fvp-settings[default_args][general]',
 					array(
+						'loop'     => esc_html__( 'Loop', 'featured-video-plus' ),
 						'autoplay' => esc_html__( 'Autoplay', 'featured-video-plus' ),
-						'loop'     => esc_html__( 'Loop', 'featured-video-plus' )
 					),
 					! empty( $args['general'] ) ? $args['general'] : array()
+				),
+				FVP_HTML::conditional(
+					FVP_HTML::checkbox(
+						'fvp-settings[single_autoplay]',
+						sprintf(
+							esc_html__(
+								'Only autoplay when viewing %ssingle%s posts and pages.',
+								'featured-video-plus'
+							),
+							'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
+							'</a>'
+						),
+						'1',
+						! empty( $options['single_autoplay'] ) && $options['single_autoplay']
+					),
+					array(
+						'fvp-settings[default_args][general][autoplay]' => '1',
+						'hidden' => empty( $args['general']['autoplay'] ) ||
+						            ! $args['general']['autoplay']
+					)
 				),
 			),
 
@@ -518,6 +538,7 @@ class FVP_Settings {
 		$datatypes = array(
 			'mode' => '(replace|dynamic|overlay|manual)',
 			'single_replace' => 'BOOLEAN',
+			'single_autoplay' => 'BOOLEAN',
 			'conditions' => array(
 				'single'     => 'BOOLEAN',
 				'home'       => 'BOOLEAN',

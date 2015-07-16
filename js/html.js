@@ -68,7 +68,7 @@
       var $target = $( targets[i] );
 
       var targetNames = $target.data('names').split('|');
-      var targetValues = $target.data('values').split('|');
+      var targetValues = ("" + $target.data('values')).split('|');
 
       var index = $.inArray($trigger.attr('name'), targetNames);
       if (-1 === index) {

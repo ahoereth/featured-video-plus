@@ -43,9 +43,12 @@ class Featured_Video_Plus {
 		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
 
 		// Autoplay option. Suppressed when viewing admin.
+		$autoplay = ! empty( $general['autoplay'] ) && $general['autoplay'];
+		$single_autoplay =
+			! empty( $options['single_autoplay'] ) && $options['single_autoplay'];
 		$general['autoplay'] =
 			( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) &&
-			! empty( $general['autoplay'] ) && $general['autoplay'] ? '1' : null;
+			( $autoplay && ( ! $single_autoplay || is_single() ) ) ? '1' : null;
 
 		// Responsive scaling option. Not used when viewing the admin screen.
 		$responsive =
