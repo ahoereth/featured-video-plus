@@ -401,6 +401,10 @@ class FVP_Settings {
 							'label' => esc_html__( 'White highlight color', 'featured-video-plus' )
 						),
 						'modestbranding' => esc_html__( 'Hide YouTube logo', 'featured-video-plus' ),
+						'iv_load_policy' => array(
+							'value' => '3',
+							'label' => esc_html__( 'Hide annotations', 'featured-video-plus' )
+						),
 						'rel' => array(
 							'value' => '0',
 							'label' => esc_html__( 'Hide related videos', 'featured-video-plus' )
@@ -541,6 +545,7 @@ class FVP_Settings {
 					'theme'          => $patterns['word'],
 					'color'          => $patterns['word'],
 					'modestbranding' => $patterns['digit'],
+					'iv_load_policy' => $patterns['digit'],
 					'fs'             => $patterns['digit'],
 					'rel'            => $patterns['digit'],
 					'showinfo'       => $patterns['digit'],
