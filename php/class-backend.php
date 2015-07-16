@@ -488,12 +488,14 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *                         the FVP image attachment ID.
 	 */
 	private function delete_featured_image( $post_id, $meta ) {
+		// Remove featured image.
+		delete_post_meta( $post_id, '_thumbnail_id' );
+
+		// If the image is from the current video we do some more fancy stuff
+		// about removing it.
 		if ( empty( $meta['img'] ) ) {
 			return false;
 		}
-
-		// Unset featured image if it is from this video
-		delete_post_meta( $post_id, '_thumbnail_id', $meta['img'] );
 
 		// Check if other posts use the image, if not we can delete it completely
 		$other = self::get_post_by_custom_meta( '_thumbnail_id', $meta['img'] );
