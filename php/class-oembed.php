@@ -260,6 +260,64 @@ class FVP_oEmbed {
 
 
 	/**
+	 * Get video id from url.
+	 *
+	 * @param  {string} $url
+	 * @return {string/bool} Video ID or false on error.
+	 */
+	public function get_video_id( $url ) {
+		if ( empty( $url ) ) {
+			return false;
+		}
+
+		$provider = $this->get_provider_name( $url );
+		if ( empty( $provider ) ) {
+			return false;
+		}
+
+		switch ( $provider ) {
+			case 'dailymotion':
+				return strtok( basename( $url ), '_' );
+				break;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Get video thumbnail url by provider and video id.
+	 *
+	 * @param  {string} $provider
+	 * @param  {string} $id
+	 * @return {string/bool} Video URL or false on error.
+	 */
+	public function get_thumbnail_url( $provider, $id ) {
+		static $thumbnail_apis = array(
+			'dailymotion' =>
+				'https://api.dailymotion.com/video/%s?fields=thumbnail_url,poster_url',
+		);
+
+		if ( empty( $provider ) || empty( $id ) ) {
+			return false;
+		}
+
+		$result = @file_get_contents( sprintf( $thumbnail_apis[$provider], $id ) );
+		if ( ! empty( $result ) ) {
+			switch ( $provider ) {
+				case 'dailymotion':
+					$data = json_decode( $result, true );
+					return ! empty( $data['thumbnail_url'] ) ?
+						$data['thumbnail_url'] : $data['poster_url'];
+					break;
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
 	 * Only keeps key value pairs of the source $array if their keys are listed
 	 * in the $filter array.
 	 *

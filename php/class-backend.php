@@ -402,8 +402,18 @@ class FVP_Backend extends Featured_Video_Plus {
 				'author'      => ! empty( $raw->author_name )   ? $raw->author_name : null,
 				'description' => ! empty( $raw->description )   ? $raw->description : null,
 				'img_url'     => ! empty( $raw->thumbnail_url ) ? $raw->thumbnail_url : null,
-				'filename'    => ! empty( $raw->title ) ? sanitize_file_name( $raw->title ) : null,
+				'filename'    => ! empty( $raw->title ) ? $raw->title : null,
 			);
+
+			switch ( $provider ) {
+				case 'dailymotion':
+					$data['id'] = $this->oembed->get_video_id( $url );
+					$img_url = $this->oembed->get_thumbnail_url( $provider, $data['id'] );
+					if ( false !== $img_url ) {
+						$data['img_url'] = $img_url;
+					}
+					break;
+			}
 		}
 
 		$data['parameters'] = $this->oembed->get_args( $url, $provider );
@@ -447,22 +457,33 @@ class FVP_Backend extends Featured_Video_Plus {
 		$img = self::get_post_by_custom_meta( '_fvp_image_url', $data['img_url'] );
 
 		if ( empty( $img ) ) {
-			$file = array(
-			  'name' => basename( $data['img_url'] ),
-			);
+			$file = array();
 
-			// Get external image
-			$file['tmp_name'] = download_url( $data['img_url'] );
-			if ( is_wp_error( $file['tmp_name'] ) ) {
-				return false;
+			// Handle YouTube max res image
+			if ( false !== strpos( $data['img_url'], 'hqdefault' ) ) {
+				$file['tmp_name'] = download_url( str_replace(
+					'hqdefault',
+					'maxresdefault',
+					$data['img_url']
+				) );
+			}
+
+			// Handle all others or try normal youtube thumb again on error.
+			if ( ! isset($file['tmp_name'] ) || is_wp_error( $file['tmp_name'] ) ) {
+				$file['tmp_name'] = download_url( $data['img_url'] );
+				if ( is_wp_error( $file['tmp_name'] ) ) {
+					return false;
+				}
 			}
 
 			// Insert into media library
-			$url_type = image_type_to_extension(
+			$type = image_type_to_extension(
 				self::get_image_type( $file['tmp_name'] ),
 				false
 			);
-			$file['name'] = basename( $data['img_url'] . '.' . $url_type );
+			$title = ! empty( $data['title'] ) ?
+				$data['title'] : basename( $data['img_url'], $type );
+			$file['name'] = sanitize_file_name( $title . '.' . $type );
 			$img = media_handle_sideload( $file, $post_id );
 
 			// save picture source url in post meta
