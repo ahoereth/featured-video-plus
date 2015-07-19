@@ -9,6 +9,7 @@ var initFeaturedVideoPlus;
   var playBg = 'url(\'' + fvpdata.playicon + '\')';
   var loadBg = 'url(\'' + fvpdata.loadicon + '\')';
   var bgState;
+  var cache = {};
 
 
   /**
@@ -153,18 +154,16 @@ var initFeaturedVideoPlus;
 
     $('#DOMWindow').css({ backgroundImage: loadBg });
 
-    var $cache = $('#fvp-cache-' + id);
-
     // Check if the result is already cached
-    if (0 === $cache.html().length) {
+    if (! cache[id]) {
       $.post(fvpdata.ajaxurl, {
-          'action'    : 'fvp_get_embed',
-          'fvp_nonce' : fvpdata.nonce,
-          'id'        : id
+        'action'    : 'fvp_get_embed',
+        'fvp_nonce' : fvpdata.nonce,
+        'id'        : id
       }, function(response) {
         if (response.success) {
           // cache the result to not reload when opened again
-          $cache.html(response.data);
+          cache[id] = response.data;
 
           $('#DOMWindow').html(response.data);
           sizeLocal();
@@ -173,7 +172,7 @@ var initFeaturedVideoPlus;
       });
     } else {
       // From cache
-      $('#DOMWindow').html( $cache.html() );
+      $('#DOMWindow').html( cache[id] );
       $(window).trigger('scroll');
     }
   }
