@@ -207,6 +207,19 @@ switch ( $version ) {
 			$options['conditions'][ $key ] = (bool) $value;
 		}
 
+	case '2.1.2':
+		$options['autoplay'] = array(
+			'lazy' => true
+		);
+
+		if (
+			! empty( $options['default_args']['general']['autoplay'] ) &&
+			$options['default_args']['general']['autoplay']
+		) {
+			$options['autoplay']['always'] = true;
+		}
+		unset( $options['default_args']['general']['autoplay'] );
+
 
 	default:
 		update_option( 'fvp-settings', $options );

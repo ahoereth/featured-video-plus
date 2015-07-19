@@ -43,12 +43,7 @@ class Featured_Video_Plus {
 		$general = ! empty( $defaults['general'] ) ? $defaults['general'] : array();
 
 		// Autoplay option. Suppressed when viewing admin.
-		$autoplay = ! empty( $general['autoplay'] ) && $general['autoplay'];
-		$single_autoplay =
-			! empty( $options['single_autoplay'] ) && $options['single_autoplay'];
-		$general['autoplay'] =
-			( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() ) &&
-			( $autoplay && ( ! $single_autoplay || is_single() ) ) ? '1' : null;
+		$general['autoplay'] = self::parse_autoplay_options($options) ? true : null;
 
 		// Responsive scaling option. Not used when viewing the admin screen.
 		$responsive =
@@ -192,6 +187,48 @@ class Featured_Video_Plus {
 		);
 	}
 
+
+	/**
+	 * Parse the autoplay options to determine if video should or should not
+	 * autoplay.
+	 *
+	 * @param  {assoic} $options
+	 * @return {bool}
+	 */
+	private static function parse_autoplay_options( $options ) {
+		if ( empty( $options['autoplay'] ) ) {
+			return false;
+		}
+
+		if (
+			! empty( $options['autoplay']['always'] ) &&
+			$options['autoplay']['always']
+		) {
+			return true;
+		};
+
+		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
+		//$islazy = 'overlay' === $mode || 'dynamic' === $mode;
+		$isajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
+
+		if (
+			! empty( $options['autoplay']['lazy'] ) &&
+			$options['autoplay']['lazy'] &&
+			$isajax
+		) {
+			return true;
+		}
+
+		if (
+			! empty( $options['autoplay']['single'] ) &&
+			$options['autoplay']['single'] &&
+			is_single()
+		) {
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Gets a post by an meta_key meta_value pair. Returns it's post_id.
