@@ -329,7 +329,9 @@ class FVP_Backend extends Featured_Video_Plus {
 		// there was a video and we want to delete it
 		if ( ! empty( $meta['full'] ) && empty( $url ) ) {
 			delete_post_meta( $post['id'], '_fvp_video' );
-			$this->delete_featured_image( $post['id'], $meta );
+			if ( get_post_thumbnail_id( $post['id'] ) == $meta['img'] ) {
+				$this->delete_featured_image( $post['id'], $meta );
+			}
 			return false;
 		}
 
@@ -512,8 +514,8 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Remove featured image.
 		delete_post_meta( $post_id, '_thumbnail_id' );
 
-		// If the image is from the current video we do some more fancy stuff
-		// about removing it.
+		// If the image is a featured video thumbnail we might want to remove it
+		// completely from the media library.
 		if ( empty( $meta['img'] ) ) {
 			return false;
 		}
