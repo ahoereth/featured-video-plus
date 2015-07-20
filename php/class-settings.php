@@ -333,6 +333,7 @@ class FVP_Settings {
 	 */
 	public function arguments() {
 		$options     = get_option( 'fvp-settings' );
+		$autoplay    = ! empty( $options['autoplay'] ) ? $options['autoplay'] : array();
 		$args        = ! empty( $options['default_args'] ) ? $options['default_args'] : array();
 		$vimeo       = ! empty( $args['vimeo'] )       ? $args['vimeo'] : array();
 		$youtube     = ! empty( $args['youtube'] )     ? $args['youtube'] : array();
@@ -353,17 +354,24 @@ class FVP_Settings {
 					),
 					! empty( $args['general'] ) ? $args['general'] : array()
 				),
+				FVP_HTML::radios(
+					'fvp-settings[autoplay][always]',
+					array(
+						'1' => esc_html__( 'Always autoplay.', 'featured-video-plus' ),
+						'0' => esc_html__( 'Autoplay when...', 'featured-video-plus' ),
+					),
+					! empty( $autoplay['always'] ) ? $autoplay['always'] : '0'
+				),
 				FVP_HTML::checkboxes(
 					'fvp-settings[autoplay]',
 					array(
-						'always' => esc_html__( 'Always autoplay.', 'featured-video-plus' ),
-						'lazy' => esc_html__( 'Autoplay when lazy loading.', 'featured-video-plus' ),
+						'lazy' => esc_html__( '... lazy loading videos.', 'featured-video-plus' ),
 						'single' => sprintf(
-							esc_html__( 'Autoplay when viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
+							esc_html__( '... viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
 							'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">', '</a>'
 						),
 					),
-					! empty( $options['autoplay'] ) ? $options['autoplay'] : array()
+					! empty( $autoplay ) ? $autoplay : array()
 				)
 			),
 
