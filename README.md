@@ -63,17 +63,3 @@ When editing your theme's sourcecode keep in mind that a future update through W
 
 
 
-## Screenshots ##
-
-1. A Featured Video in the Twenty Fifteen theme on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus).
-![1. A Featured Video in the Twenty Fifteen theme on [yrnxt.com](http://yrnxt.com/wordpress/featured-video-plus).](https://ps.w.org/featured-video-plus/assets/screenshot-1.jpg)
-
-2. Featured Video and Featured Image boxes on the post edit screen.
-![2. Featured Video and Featured Image boxes on the post edit screen.](https://ps.w.org/featured-video-plus/assets/screenshot-2.jpg)
-
-3. Featured Video settings on the `Settings -> Media` administration screen.
-![3. Featured Video settings on the `Settings -> Media` administration screen.](https://ps.w.org/featured-video-plus/assets/screenshot-3.jpg)
-
-
-
-
