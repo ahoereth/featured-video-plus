@@ -1,20 +1,28 @@
 # Changelog #
 
-## 2.2.0: 2015-06-xx ##
+## 2.2.0: 2015-07-20 ##
 * Shortcodes can now be used as featured content (e.g. `[gallery]`).
+* Added fine tuned autoplay options.
+* New option for hiding YouTube video annotations. ([*](https://wordpress.org/support/topic/add-feature-to-hide-youtube-screen-annotation))
+* Expose a JS function to manually re-initialize the plugin's JS behavior like responsive sizing and overlays. Specifically interesting when using FVP in combination with a infinite scroll plugin. ([*](https://wordpress.org/support/topic/open-video-overlay-when-featured-image-is-clicked-in-loop))
+* Fetch high quality thumbnails for YouTube and Dailymotion. ([*](https://wordpress.org/support/topic/featured-image-size-42))
+* Fix bug which suppressed the removal of foreign featured images. ([*](https://wordpress.org/support/topic/cannot-remove-featured-image-if-a-featured-video-is-set))
+* Fix 'undefined function exif_imagetype' error. ([*](https://wordpress.org/support/topic/cant-add-featured-video-1), [*](https://wordpress.org/support/topic/infinite-spinning-wheel-all-previous-videos-not-working-anymore), [*](https://wordpress.org/support/topic/error-message-444))
+* Implement a workaround for a bug with iframes in Google Chrome, see [[0](https://code.google.com/p/chromium/issues/detail?id=395533)], [[1](https://code.google.com/p/chromium/issues/detail?id=395791)]. ([*](https://wordpress.org/support/topic/found-a-huge-critical-bug-videos-vanish-after-using-back))
+* Fix bug which resulted in a invisible video playing in the background when using autoplay and overlay mode. ([*](https://wordpress.org/support/topic/video-overlay-with-autoplay-causes-two-videos-to-play))
 
 ## 2.1.2: 2015-06-16 ##
 * Fix bug which resulted in missing featured images when a post did not have a featured video. ([*](https://wordpress.org/support/topic/cookie-send-to-you-and-video-yes-image-no), [*](https://wordpress.org/support/topic/version-221-featured-image-not-diplayed))
 
 ## 2.1.1: 2015-06-15 ##
-* Fix play and loading featured image overlay for some themes ([*](https://wordpress.org/support/topic/play-icon-missing)).
+* Fix play and loading featured image overlay for some themes. ([*](https://wordpress.org/support/topic/play-icon-missing))
 * Fix broken `remove featured image` link. ([*](https://wordpress.org/support/topic/cant-remove-featured-image-2),  [*](https://wordpress.org/support/topic/version-210-conflict-with-wp-featured-image), [*](https://wordpress.org/support/topic/fvp-not-working-after-210-update))
 
 ## 2.1.0: 2015-06-11 ##
 * Display options are now chained using OR - if one of them holds, the replace mode is used.
-* Added `always use replace mode when viewing single posts and pages` option, was implicitly true since 2.0.0. ([*](https://wordpress.org/support/topic/featured-video-overrides-featured-image)).
-* Fixed undefined warnings when using `WP_DEBUG` ([*](https://wordpress.org/support/topic/debug-error-16)).
-* Fixed double-wrapped .post-thumbnails ([*](https://wordpress.org/support/topic/video-no-longer-appearing)).
+* Added `always use replace mode when viewing single posts and pages` option, was implicitly true since 2.0.0. ([*](https://wordpress.org/support/topic/featured-video-overrides-featured-image))
+* Fixed undefined warnings when using `WP_DEBUG`. ([*](https://wordpress.org/support/topic/debug-error-16))
+* Fixed double-wrapped .post-thumbnails. ([*](https://wordpress.org/support/topic/video-no-longer-appearing))
 * Lazy loading a video no longer breaks other videos. ([*](https://wordpress.org/support/topic/blank-screen-after-the-video-is-played))
 
 ## 2.0.3: 2015-06-01 ##
