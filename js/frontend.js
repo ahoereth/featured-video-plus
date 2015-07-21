@@ -173,6 +173,7 @@ var initFeaturedVideoPlus;
     } else {
       // From cache
       $('#DOMWindow').html( cache[id] );
+      sizeLocal();
       $(window).trigger('scroll');
     }
   }
