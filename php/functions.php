@@ -1,5 +1,6 @@
 <?php
 
+if ( ! function_exists('has_post_video') ) :
 /**
  * Checks if post has a featured video
  *
@@ -18,6 +19,7 @@ function has_post_video( $post_id = null ) {
 
 	return true;
 }
+endif;
 
 
 /**
