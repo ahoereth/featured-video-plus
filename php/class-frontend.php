@@ -145,29 +145,48 @@ class FVP_Frontend extends Featured_Video_Plus {
 		$single_replace = is_single() &&
 			! empty( $options['single_replace'] ) && $options['single_replace'];
 
+		// Don't show a video.
 		if ( ( 'manual' === $mode ) ||
 		     ( ! self::check_conditions( $conditions ) ) ||
 		     ( ! has_post_video( $post_id ) )
 		) {
 			return $html;
+		}
 
-		} elseif ( 'dynamic' === $mode && ! $single_replace ) {
-			return sprintf(
-				'<a href="#" data-id="%1$s" class="fvp-dynamic post-thumbnail">%2$s</a>',
-				$post_id,
-				$html
-			);
 
-		} elseif ( 'overlay' === $mode && ! $single_replace ) {
+		// Playicon with onload JavaScript for initalizing FVP JS functionality
+		// which has to be done from here because of infinite scroll plugins.
+		$onload = '<img class="playicon onload" ' .
+		            'src="'. FVP_URL . 'img/playicon.png" ' .
+		            'onload="(function() {' .
+		              "('initFeaturedVideoPlus' in this) && ".
+		              "('function' === typeof initFeaturedVideoPlus) && ".
+		              "initFeaturedVideoPlus();" .
+		            '})();" ' .
+		          '/>';
+
+		// Show the video on-click - lazy load.
+		if ( 'dynamic' === $mode && ! $single_replace ) {
 			return sprintf(
-				'<a href="#" data-id="%1$s" class="fvp-overlay post-thumbnail">%2$s</a>' .
-				'<div id="fvp-cache-%1$s" style="display: none;"></div>',
+				'<a href="#" data-id="%s" class="fvp-dynamic post-thumbnail">%s</a>%s',
 				$post_id,
-				$html
+				$html,
+				$onload
 			);
 		}
 
-		return get_the_post_video( $post_id, $size );
+		// Show the video on-click in an overlay.
+		if ( 'overlay' === $mode && ! $single_replace ) {
+			return sprintf(
+				'<a href="#" data-id="%s" class="fvp-overlay post-thumbnail">%s</a>%s',
+				$post_id,
+				$html,
+				$onload
+			);
+		}
+
+		// Replace the featured image with the video.
+		return get_the_post_video( $post_id, $size ) . $onload;
 	}
 
 
