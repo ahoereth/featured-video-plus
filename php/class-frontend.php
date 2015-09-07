@@ -158,6 +158,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		// which has to be done from here because of infinite scroll plugins.
 		$onload = '<img class="playicon onload" ' .
 		            'src="'. FVP_URL . 'img/playicon.png" ' .
+		            'alt="Featured Video Play Icon" ' .
 		            'onload="(function() {' .
 		              "('initFeaturedVideoPlus' in this) && ".
 		              "('function' === typeof initFeaturedVideoPlus) && ".
