@@ -1,5 +1,12 @@
 # Changelog #
 
+## 2.2.1: 2015-09-08 ##
+* Now compatible with infinite scroll! ([*](https://wordpress.org/support/topic/vimeo-thrumbnails-not-work), [*](https://wordpress.org/support/topic/video-embedding-issue-when-using-infinite-scroll), [*](https://wordpress.org/support/topic/featured-video-plus-jetpack-infinite-scroll-video-width-problem))
+* Fix bad overlay sizing when loading from cache. ([*](https://wordpress.org/support/topic/video-shrinking-on-2nd-play))
+* Fix local video responsiveness in recent WordPress videos.
+* The `has_post_video` function is now pluggable.
+* The `get_the_post_video_url` function post id argument is now optional ([*](https://wordpress.org/support/topic/video-url)).
+
 ## 2.2.0: 2015-07-20 ##
 * Shortcodes can now be used as featured content (e.g. `[gallery]`).
 * Added fine tuned autoplay options.

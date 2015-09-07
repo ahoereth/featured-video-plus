@@ -9,8 +9,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
-Tested up to: 4.2.2
-Stable tag: 2.2.0
+Tested up to: 4.3
+Stable tag: 2.2.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -106,6 +106,13 @@ Yes, please! Check out the public [Featured Video Plus Translation Project](http
 
 
 == Changelog ==
+
+= 2.2.1: 2015-09-08 =
+* Now compatible with infinite scroll! ([*](https://wordpress.org/support/topic/vimeo-thrumbnails-not-work), [*](https://wordpress.org/support/topic/video-embedding-issue-when-using-infinite-scroll), [*](https://wordpress.org/support/topic/featured-video-plus-jetpack-infinite-scroll-video-width-problem))
+* Fix bad overlay sizing when loading from cache. ([*](https://wordpress.org/support/topic/video-shrinking-on-2nd-play))
+* Fix local video responsiveness in recent WordPress videos.
+* The `has_post_video` function is now pluggable.
+* The `get_the_post_video_url` function post id argument is now optional ([*](https://wordpress.org/support/topic/video-url)).
 
 = 2.2.0: 2015-07-20 =
 * Shortcodes can now be used as featured content (e.g. `[gallery]`).
