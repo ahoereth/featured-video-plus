@@ -25,6 +25,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 
 		add_filter( 'post_thumbnail_html', array( $this, 'filter_post_thumbnail' ), 99, 5 );
+		add_filter( 'genesis_pre_get_image', array( $this, 'genesis_filter_image' ), 10, 2 );
 		add_filter( 'post_class', array( $this, 'has_post_video_class' ) );
 
 		add_shortcode( 'featured-video-plus', array( $this, 'shortcode' ) );
@@ -187,6 +188,21 @@ class FVP_Frontend extends Featured_Video_Plus {
 
 		// Replace the featured image with the video.
 		return get_the_post_video( $post_id, $size ) . $onload;
+	}
+
+
+	public function genesis_filter_image( $output, $args ) {
+		if( 'html' === $args['format'] && 'achive' === $args['context'] ) {
+			return $this->filter_post_thumbnail(
+				$output,
+				$args['post_id'],
+				null,
+				$args['size'],
+				null
+			);
+		} else {
+			return $output;
+		}
 	}
 
 
