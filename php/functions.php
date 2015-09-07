@@ -109,7 +109,7 @@ function get_the_post_video_image( $post_id = null, $size = null ) {
  * @param  {int} $post_id
  * @return {string/boolean} url or false
  */
-function get_the_post_video_url( $post_id ) {
+function get_the_post_video_url( $post_id = null ) {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 
 	$meta = get_post_meta( $post_id, '_fvp_video', true );
