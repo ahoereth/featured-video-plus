@@ -46,7 +46,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 			'jquery.fitvids',
 			FVP_URL . "js/jquery.fitvids$min.js",
 			array( 'jquery' ),
-			'1.1',
+			'master-2015-08',
 			false
 		);
 
