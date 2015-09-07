@@ -4,14 +4,19 @@
   .wp-video {
     width: auto !important;
     height: auto !important;
+
+    video {
+      width: 100% !important;
+      height: auto !important;
+    }
   }
 
+  // Backcompat-Code
   .mejs-container {
     width: 100% !important;
     height: auto !important;
     padding-top: 57%;
   }
-
   .mejs-overlay, .mejs-poster {
     width: 100% !important;
     height: 100% !important;
@@ -26,6 +31,7 @@
     width: 100% !important;
     height: 100% !important;
   }
+  // End Backcompat-Code.
 
   audio {
     width: 100%;
