@@ -10,7 +10,7 @@ var initFeaturedVideoPlus;
   var loadBg = 'url(\'' + fvpdata.loadicon + '\')';
   var bgState;
   var cache = {};
-  var initTimeout;
+  var initTimeout = 0;
 
 
   /**
@@ -214,8 +214,13 @@ var initFeaturedVideoPlus;
    * Debounced version of the init function.
    */
   initFeaturedVideoPlus = function() {
-    clearTimeout(initTimeout);
-    initTimeout = setTimeout(init, 50);
+    if (0 === initTimeout) {
+      init();
+      initTimeout = setTimeout(function() {}, 100);
+    } else {
+      clearTimeout(initTimeout);
+      initTimeout = setTimeout(init, 100);
+    }
   };
 
 
@@ -228,7 +233,5 @@ var initFeaturedVideoPlus;
         this.src = this.src;
       });
     }
-
-    initFeaturedVideoPlus();
   });
 })(jQuery);
