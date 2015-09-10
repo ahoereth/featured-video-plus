@@ -70,11 +70,7 @@ var initFeaturedVideoPlus;
     // preload images
     if (bgState === undefined) {
       [fvpdata.playicon, fvpdata.loadicon].forEach(function(val) {
-        $('body').append($('<img/>', {
-          src: val,
-          alt: 'preload image',
-          style: 'display: none;'
-        }));
+        $('body').append($('<img/>', {src: val, alt: 'preload image'}).hide());
       });
     }
 
