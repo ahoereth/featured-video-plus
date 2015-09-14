@@ -556,7 +556,7 @@ class FVP_Backend extends Featured_Video_Plus {
 
 		if ( has_post_video( $id ) ) {
 			// Return featured video html as requested.
-			$video = get_the_post_video( $id, null, true );
+			$video = $this->get_the_post_video( $id, null, true );
 			wp_send_json_success( $video );
 		} else {
 			// Post has no video, return featured image html.

@@ -64,13 +64,25 @@
   height: auto;
   width: auto;
 
-  .fvp-loader {
+  .fvp-actionicon {
     background: transparent no-repeat scroll center center;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 999;
     pointer-events: none;
+    display: none;
+
+    &.play {
+      display: block;
+      background-image: url('../img/playicon.png');
+    }
+
+    &.load {
+      display: block;
+      &.w { background-image: url('../img/loadicon_w.gif'); }
+      &.b { background-image: url('../img/loadicon_b.gif'); }
+    }
   }
 }
 
@@ -80,7 +92,16 @@
   height: auto;
   margin: auto auto;
   overflow: hidden;
+  background-image: url('../img/loadicon_w.gif');
 }
+
+.fvp-onload {
+  display: none !important;
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
 
 // *****************************************************************************
 // Hacks
@@ -101,11 +122,4 @@
 // TODO.
 .featured-video-plus.fvp-responsive.fvp-spotify .fluid-width-video-wrapper {
   padding-top: 100% !important;
-}
-
-.onload.playicon {
-  display: none !important;
-  height: 0;
-  width: 0;
-  visibility: hidden;
 }

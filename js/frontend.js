@@ -4,12 +4,8 @@ var initFeaturedVideoPlus;
   'use strict';
   /* global fvpdata */
 
-
-  var $loader = $('<div />').addClass('fvp-loader');
-  var playBg = 'url(\'' + fvpdata.playicon + '\')';
-  var loadBg = 'url(\'' + fvpdata.loadicon + '\')';
-  var bgState;
-  var cache = {};
+  var videoCache = {};
+  var selectorCache;
   var initTimeout = 0;
 
 
@@ -64,44 +60,33 @@ var initFeaturedVideoPlus;
 
 
   /**
-   * Trigger the play / load icon (and preload them).
+   * Get the actionicon element from the provided container.
    */
-  function triggerPlayLoad() {
-    // preload images
-    if (bgState === undefined) {
-      [fvpdata.playicon, fvpdata.loadicon].forEach(function(val) {
-        $('body').append($('<img/>', {src: val, alt: 'preload image'}).hide());
-      });
-    }
+  function getActioniconElem(elem) {
+    var $elem = $(elem);
+    var $icon = $elem.children('.fvp-actionicon');
+    $icon.css({
+      height: $elem.height(),
+      width : $elem.width(),
+      margin: $elem.css('margin')
+    });
 
-    // trigger image
-    bgState = bgState === playBg ? loadBg : playBg;
-    $loader.css({ backgroundImage: bgState });
+    return $icon;
   }
 
 
   /**
    * Handle mouseover and mouseout events.
    */
-  function hover(event) {
+  function hoverAction(event) {
     var $img = $(event.currentTarget).children('img');
+    var $icon = getActioniconElem(event.currentTarget);
 
-    // Is the overlay displayed currently?
-    if (0 === $img.siblings('.fvp-loader').length) {
-
-      // Copy classes and css styles onto the play icon overlay.
-      $loader.addClass($img.attr('class')).css({
-        height: $img.height(),
-        width: $img.width(),
-        margin: $img.css('margin')
-      });
-
-      // Set icon to play icon, fade out image and insert overlay.
-      $loader.css({ backgroundImage: (bgState = playBg) });
-      $img.animate({ opacity: fvpdata.opacity }).before($loader);
-    } else if (bgState !== loadBg) {
+    $icon.toggleClass('play');
+    if ($icon.hasClass('play')) {
+      $img.animate({ opacity: fvpdata.opacity });
+    } else {
       $img.animate({ opacity: 1 });
-      $loader.remove();
     }
   }
 
@@ -114,7 +99,8 @@ var initFeaturedVideoPlus;
     var $self = $(event.currentTarget);
     var id = parseInt($self.attr('data-id'), 10);
 
-    triggerPlayLoad();
+    var $icon = getActioniconElem(event.currentTarget);
+    $icon.addClass('load ' + fvpdata.color);
 
     $.post(fvpdata.ajaxurl, {
       'action'    : 'fvp_get_embed',
@@ -132,7 +118,7 @@ var initFeaturedVideoPlus;
         unwrap();
       }
 
-      triggerPlayLoad();
+      $icon.removeClass('load ' + fvpdata.color);
     });
   }
 
@@ -155,10 +141,8 @@ var initFeaturedVideoPlus;
       height: '100%'
     });
 
-    $('#DOMWindow').css({ backgroundImage: loadBg });
-
     // Check if the result is already cached
-    if (! cache[id]) {
+    if (! videoCache[id]) {
       $.post(fvpdata.ajaxurl, {
         'action'    : 'fvp_get_embed',
         'fvp_nonce' : fvpdata.nonce,
@@ -166,7 +150,7 @@ var initFeaturedVideoPlus;
       }, function(response) {
         if (response.success) {
           // cache the result to not reload when opened again
-          cache[id] = response.data;
+          videoCache[id] = response.data;
 
           $('#DOMWindow').html(response.data);
           sizeLocal();
@@ -175,7 +159,7 @@ var initFeaturedVideoPlus;
       });
     } else {
       // From cache
-      $('#DOMWindow').html( cache[id] );
+      $('#DOMWindow').html( videoCache[id] );
       sizeLocal();
       $(window).trigger('scroll');
     }
@@ -186,6 +170,10 @@ var initFeaturedVideoPlus;
    * Initialize the plugins JS functionality.
    */
   function init() {
+    var newSet = $('.featured-video-plus, .fvp-overlay, .fvp-dynamic');
+    if (newSet.is(selectorCache)) { return false; }
+    selectorCache = newSet;
+
     // remove wrapping anchors
     // doing this twice with a 1 second delay to fix wrapped local video posters
     unwrap();
@@ -198,15 +186,14 @@ var initFeaturedVideoPlus;
 
     // add hover effect and preload icons
     $('.fvp-overlay, .fvp-dynamic')
-      .off('mouseenter').on('mouseenter', hover)
-      .off('mouseleave').on('mouseleave', hover);
-    triggerPlayLoad();
+      .off('mouseenter').on('mouseenter', hoverAction)
+      .off('mouseleave').on('mouseleave', hoverAction);
 
     // on-demand video insertion click handler
-    $('.fvp-dynamic').click(dynamicTrigger);
+    $('.fvp-dynamic').off('click').on('click', dynamicTrigger);
 
     // overlay click handler
-    $('.fvp-overlay').click(overlayTrigger);
+    $('.fvp-overlay').off('click').on('click', overlayTrigger);
   }
 
 
@@ -233,5 +220,10 @@ var initFeaturedVideoPlus;
         this.src = this.src;
       });
     }
+
+    // preload images
+    [fvpdata.playicon, fvpdata.loadicon].forEach(function(val) {
+      $('body').append($('<img/>', {src: val, alt: 'preload image'}).hide());
+    });
   });
 })(jQuery);

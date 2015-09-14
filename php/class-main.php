@@ -192,9 +192,10 @@ class Featured_Video_Plus {
 		}
 
 
-		// Playicon with onload JavaScript for initalizing FVP JS functionality
-		// which has to be done from here because of infinite scroll plugins.
-		$onload = '<img class="playicon onload" ' .
+		// On-load JavaScript for initalizing FVP JS functionality.
+		// Doing this here in order to also have it fire when posts are loaded
+		// over AJAX.
+		$onload = '<img class="fvp-onload" ' .
 		            'src="'. FVP_URL . 'img/playicon.png" ' .
 		            'alt="Featured Video Play Icon" ' .
 		            'onload="(function() {' .
@@ -204,12 +205,15 @@ class Featured_Video_Plus {
 		            '})();" ' .
 		          '/>';
 
+		// Action icon overlay container.
+		$actionicon = '<div class="fvp-actionicon"></div>';
+
 		// Show the video on-click - lazy load.
 		if ( 'dynamic' === $mode && ! $single_replace ) {
 			return sprintf(
 				'<a href="#" data-id="%s" class="fvp-dynamic post-thumbnail">%s</a>%s',
 				$post_id,
-				$html,
+				$actionicon . $html,
 				$onload
 			);
 		}
@@ -219,7 +223,7 @@ class Featured_Video_Plus {
 			return sprintf(
 				'<a href="#" data-id="%s" class="fvp-overlay post-thumbnail">%s</a>%s',
 				$post_id,
-				$html,
+				$actionicon . $html,
 				$onload
 			);
 		}
@@ -395,7 +399,10 @@ class Featured_Video_Plus {
 	 * @param  {assoic} $options
 	 * @return {bool}
 	 */
-	private static function parse_autoplay_options( $options, $ajax ) {
+	private static function parse_autoplay_options(
+		$options = array(),
+		$ajax = null
+	) {
 		if ( empty( $options['autoplay'] ) ) {
 			return false;
 		}

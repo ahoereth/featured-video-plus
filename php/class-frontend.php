@@ -93,9 +93,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 			'dynamic'  => 'dynamic' === $mode,
 			'overlay'  => 'overlay' === $mode,
 			'opacity'  => 0.75,
-			'loadicon' => 'overlay' === $mode ? FVP_URL . 'img/loadicon_w.gif' :
-			                                    FVP_URL . 'img/loadicon_b.gif',
-			'playicon' => FVP_URL . 'img/playicon.png',
+			'color'    => 'overlay' === $mode ? 'w' : 'b',
 			'width'    => ! empty( $options['sizing']['width'] ) ?
 				$options['sizing']['width'] : null
 		));
