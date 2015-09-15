@@ -1,5 +1,9 @@
 # Changelog #
 
+## 2.2.2: 2015-09-15 ##
+* Fix for not correctly hidden preload images. ([*](https://wordpress.org/support/topic/your-aplication-is-not-working-right-on-wordpress-43–es_es), [*](https://wordpress.org/support/topic/play-and-load-images-appended-to-body-since-update-to-221))
+* Replace features videos more reliably on AJAX requests. ([*](https://wordpress.org/support/topic/video-embedding-issue-when-using-infinite-scroll))
+
 ## 2.2.1: 2015-09-08 ##
 * Now compatible with infinite scroll! ([*](https://wordpress.org/support/topic/vimeo-thrumbnails-not-work), [*](https://wordpress.org/support/topic/video-embedding-issue-when-using-infinite-scroll), [*](https://wordpress.org/support/topic/featured-video-plus-jetpack-infinite-scroll-video-width-problem))
 * Fix bad overlay sizing when loading from cache. ([*](https://wordpress.org/support/topic/video-shrinking-on-2nd-play))
