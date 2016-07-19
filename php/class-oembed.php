@@ -240,6 +240,8 @@ class FVP_oEmbed {
 			return $this->oembed->get_provider( $url, $args );
 		}
 
+		$args = wp_parse_args( $args );
+
 		$provider = false;
 		if ( ! isset( $args['discover'] ) ) {
 			$args['discover'] = true;
