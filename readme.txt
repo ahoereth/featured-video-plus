@@ -107,6 +107,10 @@ Yes, please! Check out the public [Featured Video Plus Translation Project](http
 
 == Changelog ==
 
+= 2.2.3: 2016-07-19 =
+* Fix for bad iframe src attributes. ([*](https://wordpress.org/support/topic/fix-for-wordpress-442-for-youtube-video-error))
+* Fix a problem with image type detection. ([*](https://wordpress.org/support/topic/warning-and-no-featured-image-generated?replies=3), [*](https://wordpress.org/support/topic/plugin-is-not-supporting-by-wordpress-44))
+
 = 2.2.2: 2015-09-15 =
 * Fix for not correctly hidden preload images. ([*](https://wordpress.org/support/topic/your-aplication-is-not-working-right-on-wordpress-43–es_es), [*](https://wordpress.org/support/topic/play-and-load-images-appended-to-body-since-update-to-221), [*](https://wordpress.org/support/topic/big-black-play-triangle-under-video))
 * Replace features videos more reliably on AJAX requests. ([*](https://wordpress.org/support/topic/video-embedding-issue-when-using-infinite-scroll))

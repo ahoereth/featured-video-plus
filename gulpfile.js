@@ -53,8 +53,9 @@ gulp.task('readme', function() {
       details: false,
       screenshot_ext: 'jpg',
       extract: {
-        'changelog': 'CHANGELOG',
-        'Frequently Asked Questions': 'FAQ'
+        'Changelog': 'CHANGELOG',
+        'Frequently Asked Questions': 'FAQ',
+        'Screenshots': null
       }
     }))
     .pipe(gulp.dest('.'));
