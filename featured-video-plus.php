@@ -3,14 +3,14 @@
 Plugin Name: Featured Video Plus
 Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Description: Add Featured Videos to your posts and pages.
-Version: 2.2.2
+Version: 2.2.3
 Author: Alexander Höreth
 Author URI: http://yrnxt.com
 Text Domain: featured-video-plus
 Domain Path: /lng
 License: GPL-2.0
 
-	Copyright 2009-2015  Alexander Höreth (email: a.hoereth@gmail.com)
+	Copyright 2009-2016  Alexander Höreth (email: a.hoereth@gmail.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License version 2,
@@ -32,7 +32,7 @@ License: GPL-2.0
 // ********************
 // CONSTANTS
 if ( ! defined( 'FVP_VERSION' ) ) {
-	define( 'FVP_VERSION', '2.2.2' );
+	define( 'FVP_VERSION', '2.2.3' );
 }
 
 $pathinfo = pathinfo( dirname( plugin_basename( __FILE__ ) ) );

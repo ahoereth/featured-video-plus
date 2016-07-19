@@ -9,8 +9,8 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
-Tested up to: 4.3
-Stable tag: 2.2.2
+Tested up to: 4.5
+Stable tag: 2.2.3
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
