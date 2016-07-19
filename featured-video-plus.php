@@ -8,7 +8,7 @@ Author: Alexander Höreth
 Author URI: http://yrnxt.com
 Text Domain: featured-video-plus
 Domain Path: /lng
-License: GPL2
+License: GPL-2.0
 
 	Copyright 2009-2015  Alexander Höreth (email: a.hoereth@gmail.com)
 

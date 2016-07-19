@@ -5,7 +5,7 @@
   "homepage": "http://yrnxt.com/wordpress/featured-video-plus",
   "main": "featured-video-plus.php",
   "author": "Alexander Höreth",
-  "license": "GPL2",
+  "license": "GPL-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ahoereth/featured-video-plus.git"
