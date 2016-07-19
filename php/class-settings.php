@@ -160,7 +160,7 @@ class FVP_Settings {
 			sprintf( esc_html__( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">', '</a>' )
 		);
 
-		// Always replace on is_single() ?
+		// Always replace on is_singular() ?
 		echo FVP_HTML::conditional(
 			'<br />' .
 			FVP_HTML::checkbox(
@@ -170,7 +170,7 @@ class FVP_Settings {
 						'Always use replace mode when viewing %ssingle%s posts and pages.',
 						'featured-video-plus'
 					),
-					'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
+					'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">',
 					'</a>'
 				),
 				'1',
@@ -185,7 +185,7 @@ class FVP_Settings {
 
 
 	/**
-	 * Video replace condition option like is_single or is_home.
+	 * Video replace condition option like is_singular or is_home.
 	 *
 	 * @since  2.0.0
 	 */
@@ -217,7 +217,7 @@ class FVP_Settings {
 				array(
 					'single' => sprintf(
 						esc_html__( 'when viewing %ssingle%s posts and pages %s', 'featured-video-plus' ),
-						'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">',
+						'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">',
 						'</a>',
 						$or
 					),
@@ -368,7 +368,7 @@ class FVP_Settings {
 						'lazy' => esc_html__( '... lazy loading videos.', 'featured-video-plus' ),
 						'single' => sprintf(
 							esc_html__( '... viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
-							'<a href="http://codex.wordpress.org/Function_Reference/is_single" target="_blank">', '</a>'
+							'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">', '</a>'
 						),
 					),
 					! empty( $autoplay ) ? $autoplay : array()

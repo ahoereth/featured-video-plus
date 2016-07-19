@@ -1,5 +1,8 @@
 # Changelog #
 
+### 2.3.0: 2016-07-## ###
+* "Single" now actually means single posts **and** pages. ([*](https://wordpress.org/support/topic/is_singular), [*](https://github.com/ahoereth/featured-video-plus/issues/7))
+
 ## 2.2.3: 2016-07-19 ##
 * Fix for bad iframe src attributes. ([*](https://wordpress.org/support/topic/fix-for-wordpress-442-for-youtube-video-error))
 * Fix a problem with image type detection. ([*](https://wordpress.org/support/topic/warning-and-no-featured-image-generated?replies=3), [*](https://wordpress.org/support/topic/plugin-is-not-supporting-by-wordpress-44))

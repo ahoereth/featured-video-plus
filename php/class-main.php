@@ -180,7 +180,7 @@ class Featured_Video_Plus {
 		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 		$conditions = ! empty( $options['conditions'] ) ?
 			$options['conditions'] : null;
-		$single_replace = is_single() &&
+		$single_replace = is_singular() &&
 			! empty( $options['single_replace'] ) && $options['single_replace'];
 
 		// Don't show a video.
@@ -428,7 +428,7 @@ class Featured_Video_Plus {
 		if (
 			! empty( $options['autoplay']['single'] ) &&
 			$options['autoplay']['single'] &&
-			is_single()
+			is_singular()
 		) {
 			return true;
 		}
