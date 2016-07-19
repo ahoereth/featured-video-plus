@@ -18,12 +18,12 @@
     "build": "gulp build"
   },
   "devDependencies": {
-    "del": "1.2.x",
+    "del": "2.2.x",
     "gulp": "3.9.x",
-    "gulp-less": "3.0.x",
-    "gulp-readme-to-markdown": "0.1.x",
+    "gulp-less": "3.1.x",
+    "gulp-readme-to-markdown": "0.2.x",
     "gulp-rename": "1.2.x",
-    "gulp-uglify": "1.2.x",
-    "merge-stream": "0.1.x"
+    "gulp-uglify": "1.5.x",
+    "merge-stream": "1.0.x"
   }
 }
