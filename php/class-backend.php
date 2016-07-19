@@ -772,14 +772,13 @@ class FVP_Backend extends Featured_Video_Plus {
 	 */
 	private static function get_image_type( $filename ) {
 		if ( function_exists( 'exif_imagetype' ) ) {
-			return exif_imagetype( $filename );
+			$type = exif_imagetype( $filename );
 		} else {
 			$img = getimagesize( $filename );
-			if ( !empty( $img[2] ) ) {
-				return image_type_to_mime_type( $img[2] );
-			}
+			$type = $img[2];
 		}
-		return false;
+
+		return ! empty( $type ) ? $type : false;
 	}
 
 
