@@ -13,6 +13,10 @@
   "bugs": {
     "url": "https://github.com/ahoereth/featured-video-plus/issues"
   },
+  "scripts": {
+    "start": "gulp",
+    "build": "gulp build"
+  },
   "devDependencies": {
     "del": "1.2.x",
     "gulp": "3.9.x",
