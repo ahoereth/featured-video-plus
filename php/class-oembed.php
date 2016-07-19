@@ -97,7 +97,7 @@ class FVP_oEmbed {
 				}
 
 				// Remove fullscreen button manually because the YouTube API
-				//  does not care about `&fs=0`.
+				// does not care about `&fs=0`.
 				if ( array_key_exists( 'fs', $args ) && $args['fs'] == 0 ) {
 					$html = str_replace( 'allowfullscreen', '', $html );
 				}
@@ -118,12 +118,28 @@ class FVP_oEmbed {
 			$pattern = "/src=([\"'])([^\"']*)[\"']/";
 			preg_match( $pattern, $html, $match );
 			if ( ! empty( $match[1] ) && ! empty( $match[2] ) ) {
-				$replace = sprintf('src=$1%s$1', add_query_arg( $args, $match[2] ) );
+				$code = $this->clean_url( $match[2] );
+				$replace = sprintf( 'src=$1%s$1', add_query_arg( $args, $code ) );
 				$html = preg_replace( $pattern, $replace, $html );
 			}
 		}
 
 		return $html;
+	}
+
+
+	/**
+	 * Cleans up ? and & in urls such that before all & there is a single ?
+	 * with none following.
+	 *
+	 * @see wordpress.org/support/topic/fix-for-wordpress-442-for-youtube-video-error
+	 *
+	 * @param {string} $urls
+	 * @return {string}
+	 */
+	public function clean_url($url) {
+		$url = preg_replace( '/\?/', '&', $url, 1);
+		return preg_replace( '/&/',  '?', $url, 1);
 	}
 
 
