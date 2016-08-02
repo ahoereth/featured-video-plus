@@ -347,6 +347,10 @@ class FVP_oEmbed {
 	 */
 	private function filter_legal_args( $provider, $args ) {
 		$legals = array(
+			'default' => array(
+				'width',
+				'height',
+			),
 
 			// YouTube.com
 			// https://developers.google.com/youtube/player_parameters
@@ -427,12 +431,11 @@ class FVP_oEmbed {
 		$result = array();
 
 		if ( ! empty( $legals[ $provider ] ) ) {
-			foreach ( $legals[ $provider ] AS $key => $value ) {
-				if ( array_key_exists( $value, $args ) &&
-				     ! is_null( $args[ $value ] )
-				) {
-					$key = is_numeric( $key ) ? $value : $key;
-					$result[ $key ] = urlencode( $args[ $value ] );
+			$combinedlegals = array_merge( $legals['default'], $legals[ $provider ] );
+			foreach ( $combinedlegals AS $key => $val ) {
+				if ( array_key_exists( $val, $args ) && ! is_null( $args[ $val ] ) ) {
+					$key = is_numeric( $key ) ? $val : $key;
+					$result[ $key ] = urlencode( $args[ $val ] );
 				}
 			}
 		}

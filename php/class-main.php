@@ -174,8 +174,6 @@ class Featured_Video_Plus {
 		$size,
 		$attr
 	) {
-		$size = self::get_size();
-
 		$options = get_option( 'fvp-settings' );
 		$mode = ! empty( $options['mode'] ) ? $options['mode'] : null;
 		$conditions = ! empty( $options['conditions'] ) ?
@@ -280,8 +278,8 @@ class Featured_Video_Plus {
 	protected static function get_size( $size = null, $original = null ) {
 		$options = get_option( 'fvp-settings' );
 
-		// fixed size requested as array( width => #, height => # ) or array( #, # )
 		if ( is_array( $size ) ) {
+				// Fixed size as array( width => #, height => # ) or array( #, # ).
 				$width = isset( $size['width'] ) && is_numeric( $size['width'] ) ?
 					$size['width'] :
 					( isset( $size[0] ) && is_numeric( $size[0] ) ? $size[0] : null );
@@ -289,8 +287,8 @@ class Featured_Video_Plus {
 					$size['height'] :
 					( isset( $size[1] ) && is_numeric( $size[1] ) ? $size[1] : null );
 
-			// size requested using a string pointing to a WordPress preset
 		} elseif ( is_string( $size ) ) {
+			// Size as string pointing to a WordPress preset.
 			global $_wp_additional_image_sizes;
 			$presets = get_intermediate_image_sizes();
 			foreach ( $presets as $preset ) {
@@ -305,8 +303,8 @@ class Featured_Video_Plus {
 				}
 			}
 
-			// single number provided - use it for the width
 		} elseif ( is_numeric( $size ) ) {
+			// Single number provided - use it for the width.
 			$width = $size;
 		}
 
@@ -316,7 +314,7 @@ class Featured_Video_Plus {
 		}
 
 		if ( empty( $height ) ) {
-			// calculate height relative to width
+			// Calculate height relative to width.
 			$height = ! empty( $original ) ?
 				round( $original['height'] * ($width / $original['width']) ) :
 				$height = $width / 16 * 9;
