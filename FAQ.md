@@ -15,5 +15,8 @@ Sadly not all themes work out of the box. Themes need to make use of WordPress' 
 ## How can I make the videos fit into their designated space in my theme? ##
 Take a look at your media settings and try using a fixed width instead of responsive sizing.
 
+## How can I make the plugin work with infinite scrolling? ##
+While the plugin tries to handle infinite scrolling automatically, it does not work for all configurations. In those cases you will want to manually call `initFeaturedVideoPlus()` using JavaScript everytime new articles have been loaded. Most infinite scroll plugins should have some kind of post-load hook.
+
 ## Can I help translating the plugin? ##
 Yes, please! Check out the official [Featured Video Plus Translation Project](https://translate.wordpress.org/projects/wp-plugins/featured-video-plus).
