@@ -83,6 +83,7 @@ class Featured_Video_Plus {
 
 				$atts = array(
 					'src'      => wp_get_attachment_url( $meta['id'] ),
+                    'poster'   => wp_get_attachment_url( get_post_thumbnail_id( $meta['id'] ) ),
 					'autoplay' => $general['autoplay'] ? 'on' : null,
 					'loop'     => ! empty( $general['loop'] ) ? 'on' : null,
 					// use massive video size/height for responsive videos because
