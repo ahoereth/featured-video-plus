@@ -87,7 +87,7 @@ class FVP_Frontend extends Featured_Video_Plus {
 		// some context for JS
 		wp_localize_script( 'fvp-frontend', 'fvpdata', array(
 			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-			'nonce'    => wp_create_nonce( FVP_NAME . FVP_VERSION ),
+			'nonce'    => wp_create_nonce( self::get_nonce_action( 'frontend' ) ),
 			'fitvids'  => ! empty( $options['sizing']['responsive'] ) &&
 			              $options['sizing']['responsive'],
 			'dynamic'  => 'dynamic' === $mode,

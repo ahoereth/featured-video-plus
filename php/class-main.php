@@ -361,6 +361,17 @@ class Featured_Video_Plus {
 
 
 	/**
+	 * Generate a standardized nonce action string.
+	 *
+	 * @param  int/string $identifier
+	 * @return string
+	 */
+	protected static function get_nonce_action( $identifier ) {
+		return FVP_NAME . FVP_VERSION . $identifier;
+	}
+
+
+	/**
 	 * Check a given set of display conditions if one or more of them hold. If
 	 * an empty set is given, return true.
 	 *

@@ -112,7 +112,8 @@ Yes, please! Check out the official [Featured Video Plus Translation Project](ht
 
 == Changelog ==
 
-= 2.3.0: 2016-07-## =
+= 2.3.0: 2016-12-## =
+* Fix AJAX vulnerability reported by [@jamesgol](https://github.com/jamesgol).
 * "Single" now actually means single posts **and** pages. ([*](https://wordpress.org/support/topic/is_singular), [*](https://github.com/ahoereth/featured-video-plus/issues/7))
 * Fix some problem with fixed size specifications. ([*](https://wordpress.org/support/topic/modifying-size-has-no-effect), [*](https://wordpress.org/support/topic/not-able-to-change-size-of-video), [*](https://wordpress.org/support/topic/width-function-on-featured-video-plus-width560-is-not-working), [*](https://wordpress.org/support/topic/the_post_video-is-the-wrong-size))
 

@@ -135,11 +135,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.0.0
 	 */
 	public function metabox_content() {
-		wp_nonce_field( FVP_NAME . FVP_VERSION, 'fvp_nonce' );
-
-		// Get current post's id.
 		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : $GLOBALS['post']->ID;
-
 		$options = get_option( 'fvp-settings' );
 		$meta = get_post_meta( $post_id, '_fvp_video', true );
 		$has_post_video = has_post_video( $post_id );
@@ -215,8 +211,9 @@ class FVP_Backend extends Featured_Video_Plus {
 		}
 
 		echo "\n\n\n<!-- Featured Video Plus Metabox -->\n";
+		wp_nonce_field( self::get_nonce_action( $post_id ), 'fvp_nonce' );
 		echo $content;
-		echo "<!-- Featured Video Plus Metabox End-->\n\n\n";
+		echo "\n<!-- Featured Video Plus Metabox End-->\n\n\n";
 	}
 
 
@@ -228,10 +225,8 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @param {int} $post_id
 	 */
-	public function metabox_save( $post_id ){
-		if ( ! self::has_valid_nonce( $_POST ) ) {
-			return false;
-		}
+	public function metabox_save( $post_id ) {
+		self::verify_nonce( $post_id );
 
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
 		     ( defined( 'DOING_AJAX' )     && DOING_AJAX )     ||
@@ -259,18 +254,22 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @uses $this->save()
 	 */
 	public function metabox_save_ajax() {
-		if ( ! self::has_valid_nonce( $_POST ) || empty( $_POST['id'] ) ) {
+		$post_id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : -1;
+		if (
+			$post_id === -1 ||
+			! self::verify_nonce( $post_id, true ) ||
+			! current_user_can( 'edit_post', $post_id )
+		) {
 			wp_send_json_error();
 		}
 
 		$post = array(
-			'id' => (int) $_POST['id'],
+			'id' => $post_id,
 			'fvp_video' => ! empty( $_POST['fvp_video'] ) ? $_POST['fvp_video'] : '',
 			'fvp_set_featimg' =>
 				! empty( $_POST['fvp_set_featimg'] ) ? $_POST['fvp_set_featimg'] : '',
 		);
 
-		// this also verifies the nonce
 		$meta = $this->save( $post );
 
 		$img = _wp_post_thumbnail_html(
@@ -547,20 +546,21 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @since 1.7.0
 	 */
 	public function ajax_get_embed() {
-		if ( ! self::has_valid_nonce( $_POST ) || empty( $_POST['id'] ) ) {
+		$post_id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : -1;
+		if (
+			$post_id === -1 ||
+			! self::verify_nonce( $post_id, true )
+		) {
 			wp_send_json_error();
 		}
 
-		// Parse post id.
-		$id = (int) $_POST['id'];
-
-		if ( has_post_video( $id ) ) {
+		if ( has_post_video( $post_id ) ) {
 			// Return featured video html as requested.
-			$video = $this->get_the_post_video( $id, null, true );
+			$video = $this->get_the_post_video( $post_id, null, true );
 			wp_send_json_success( $video );
 		} else {
 			// Post has no video, return featured image html.
-			$image = get_the_post_thumbnail( $id );
+			$image = get_the_post_thumbnail( $post_id );
 			wp_send_json_success( $image );
 		}
 	}
@@ -576,23 +576,23 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * which was previously set by the plugin.
 	 */
 	public function ajax_remove_img() {
-		if ( ! self::has_valid_nonce( $_POST ) || empty( $_POST['id'] ) ) {
+		$post_id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : -1;
+		if (
+			$post_id === -1 ||
+			! self::verify_nonce( $post_id ) ||
+			! current_user_can( 'edit_post', $post_id )
+		) {
 			wp_send_json_error();
 		}
 
-		// Retrieve post id and check user capabilities.
-		$id = (int) $_POST['id'];
-		if ( ! current_user_can( 'edit_post', $id ) ) {
-			wp_send_json_error();
-		}
 
 		// Retrieve featured video metadata.
-		$meta = get_post_meta( $id, '_fvp_video', true );
+		$meta = get_post_meta( $post_id, '_fvp_video', true );
 
 		// Delete the image from database if feasible. This also again tries to
 		// remove the link of the featured image to the post although it will
 		// probably already be unlinked by WordPress internal functionality.
-		$this->delete_featured_image( $id, $meta );
+		$this->delete_featured_image( $post_id, $meta );
 
 		// Remember that we do not want to set a featured image automatically for
 		// this post.
@@ -602,11 +602,12 @@ class FVP_Backend extends Featured_Video_Plus {
 		$meta['img'] = null;
 
 		// Save meta.
-		update_post_meta( $id, '_fvp_video', $meta );
+		update_post_meta( $post_id, '_fvp_video', $meta );
 
 		// Respond to the client.
-		$html = _wp_post_thumbnail_html( get_post_thumbnail_id( $id ), $id );
-		wp_send_json_success( $html );
+		wp_send_json_success(
+			_wp_post_thumbnail_html( get_post_thumbnail_id( $post_id ), $post_id )
+		);
 	}
 
 
@@ -746,17 +747,25 @@ class FVP_Backend extends Featured_Video_Plus {
 
 
 	/**
-	 * Check the given assoc array for a 'fvp_nonce' field and check if this
-	 * field contains a valid nonce.
+	 * Verify the current request's nonce. Nonce is expected in the REQUEST
+	 * object's `fvp_nonce` field.
 	 *
-	 * @param  {assoc}  $post_data
-	 * @return boolean
+	 * @param  int/string $identifier nonce identifier
+	 * @param  bool       $bool       whether to return a boolean or strictly exit
+	 * @return bool/none  Return bool if $bool is set to true
 	 */
-	private static function has_valid_nonce( $post_data ) {
+	private static function verify_nonce( $identifier, $bool = false ) {
+		$action = self::get_nonce_action( $identifier );
+
 		if (
-			! isset( $post_data['fvp_nonce'] ) ||
-			! wp_verify_nonce( $post_data['fvp_nonce'], FVP_NAME . FVP_VERSION )
+			! isset( $_REQUEST[ 'fvp_nonce' ] ) ||
+			! wp_verify_nonce( $_REQUEST[ 'fvp_nonce' ], $action )
 		) {
+			if ( ! $bool ) {
+				wp_nonce_ays( $action );
+				exit;
+			}
+
 			return false;
 		}
 
