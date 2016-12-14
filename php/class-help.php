@@ -32,7 +32,7 @@ class FVP_Help {
 				'Take a video url from one of the %ssupported oembed providers%s and paste it into the Featured Video input field.',
 				'featured-video-plus'
 			),
-			'<a href="https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F" target="_blank">',
+			'<a href="https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F" target="_blank" rel="noopener noreferrer">',
 			'</a>'
 		) );
 
@@ -59,7 +59,7 @@ class FVP_Help {
 					'Read %sthis%s on how to increase the maximum file upload size.',
 					'featured-video-plus'
 				),
-				'<a href="http://goo.gl/yxov27" target="_blank">',
+				'<a href="https://goo.gl/yxov27" target="_blank" rel="noopener noreferrer">',
 				'</a>'
 			)
 		);
@@ -116,14 +116,14 @@ class FVP_Help {
 				'The functions are implemented corresponding to the original %sfunctions%s: They are intended to be used and to act the same way. Take a look into the WordPress Codex for further guidance:',
 				'featured-video-plus'
 			),
-			'<a href="http://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank">' . esc_html__( 'Featured Image' ) . '&nbsp;',
+			'<a href="https://codex.wordpress.org/Post_Thumbnails#Function_Reference" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Featured Image' ) . '&nbsp;',
 			'</a>'
 		) );
 
 		// WordPress Featured Image functions
 		$content[] = FVP_HTML::unordered_list( array(
-			'<code><a href="https://developer.wordpress.org/reference/functions/the_post_thumbnail/" target="_blank">get_the_post_thumbnail</a></code>',
-			'<code><a href="https://developer.wordpress.org/reference/functions/wp_get_attachment_image/" target="_blank">wp_get_attachment_image</a></code>',
+			'<code><a href="https://developer.wordpress.org/reference/functions/the_post_thumbnail/" target="_blank" rel="noopener noreferrer">get_the_post_thumbnail</a></code>',
+			'<code><a href="https://developer.wordpress.org/reference/functions/wp_get_attachment_image/" target="_blank" rel="noopener noreferrer">wp_get_attachment_image</a></code>',
 		) );
 
 		// Register tab.

@@ -632,7 +632,7 @@ class FVP_Backend extends Featured_Video_Plus {
 					'Simply paste a URL into this input to add a bit extra life to your posts. %sTry an example%s.',
 					'featured-video-plus'
 				),
-				'<a href="#" onclick="jQuery(\'.fvp-video\').val(\'http://youtu.be/CfNHleTEpTI\').trigger(\'blur\'); return false;">',
+				'<a href="#" onclick="jQuery(\'.fvp-video\').val(\'https://youtu.be/CfNHleTEpTI\').trigger(\'blur\'); return false;">',
 				'</a>'
 			) . '</p><p>' . sprintf(
 				esc_html__(
@@ -728,7 +728,7 @@ class FVP_Backend extends Featured_Video_Plus {
 	/**
 	 * Gets post id by it's url / guid.
 	 *
-	 * @see http://codex.wordpress.org/Class_Reference/wpdb
+	 * @see https://codex.wordpress.org/Class_Reference/wpdb
 	 * @since 1.0
 	 *
 	 * @param  {string} $url which url to look for

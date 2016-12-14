@@ -26,7 +26,7 @@ class FVP_Settings {
 	/**
 	 * Initializes the plugin settings section, the settings fields and registers the options field and save function.
 	 *
-	 * @see http://codex.wordpress.org/Settings_API
+	 * @see https://codex.wordpress.org/Settings_API
 	 * @since 1.0
 	 */
 	public function settings_init() {
@@ -157,7 +157,7 @@ class FVP_Settings {
 		);
 
 		echo FVP_HTML::description(
-			sprintf( esc_html__( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="http://codex.wordpress.org/Post_Thumbnails" target="_blank">', '</a>' )
+			sprintf( esc_html__( "Automatic integration (options 1-3) requires your theme to make use of WordPress' native %sfeatured image%s functionality.", 'featured-video-plus' ), '<a href="https://codex.wordpress.org/Post_Thumbnails" target="_blank" rel="noopener noreferrer">', '</a>' )
 		);
 
 		// Always replace on is_singular() ?
@@ -170,7 +170,7 @@ class FVP_Settings {
 						'Always use replace mode when viewing %ssingle%s posts and pages.',
 						'featured-video-plus'
 					),
-					'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">',
+					'<a href="https://codex.wordpress.org/Function_Reference/is_singular" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
 				'1',
@@ -217,30 +217,30 @@ class FVP_Settings {
 				array(
 					'single' => sprintf(
 						esc_html__( 'when viewing %ssingle%s posts and pages %s', 'featured-video-plus' ),
-						'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">',
+						'<a href="https://codex.wordpress.org/Function_Reference/is_singular" target="_blank" rel="noopener noreferrer">',
 						'</a>',
 						$or
 					),
 					'home' => sprintf(
 						esc_html__( 'when on the %spost index page%s %s', 'featured-video-plus' ),
-						'<a href="http://codex.wordpress.org/Function_Reference/is_home" target="_blank">',
+						'<a href="https://codex.wordpress.org/Function_Reference/is_home" target="_blank" rel="noopener noreferrer">',
 						'</a>',
 						$or
 					),
 					'main_query' => sprintf(
 						esc_html__( 'when inside the %smain query%s of each page %s', 'featured-video-plus' ),
-						'<a href="https://developer.wordpress.org/reference/functions/is_main_query/" target="_blank">',
+						'<a href="https://developer.wordpress.org/reference/functions/is_main_query/" target="_blank" rel="noopener noreferrer">',
 						'</a>',
 						$or
 					),
 					'sticky' => sprintf(
 						esc_html__( 'when displaying %ssticky%s posts.', 'featured-video-plus' ),
-						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
+						'<a href="https://codex.wordpress.org/Function_Reference/is_sticky" target="_blank" rel="noopener noreferrer">',
 						'</a>'
 					),
 					'!sticky' => sprintf(
 						esc_html__( 'when displaying not %ssticky%s posts.', 'featured-video-plus' ),
-						'<a href="http://codex.wordpress.org/Function_Reference/is_sticky" target="_blank">',
+						'<a href="https://codex.wordpress.org/Function_Reference/is_sticky" target="_blank" rel="noopener noreferrer">',
 						'</a>'
 					)
 				),
@@ -300,7 +300,6 @@ class FVP_Settings {
 			),
 			array( 'fvp_warning' )
 		);
-
 	}
 
 
@@ -368,7 +367,7 @@ class FVP_Settings {
 						'lazy' => esc_html__( '... lazy loading videos.', 'featured-video-plus' ),
 						'single' => sprintf(
 							esc_html__( '... viewing %ssingle%s posts and pages.', 'featured-video-plus' ),
-							'<a href="http://codex.wordpress.org/Function_Reference/is_singular" target="_blank">', '</a>'
+							'<a href="https://codex.wordpress.org/Function_Reference/is_singular" target="_blank" rel="noopener noreferrer">', '</a>'
 						),
 					),
 					! empty( $autoplay ) ? $autoplay : array()
@@ -503,11 +502,11 @@ class FVP_Settings {
 					'If you have found a bug or think a specific feature is missing, %slet me know%s in the support forum. Like this plugin? %sRate it%s or %sbuy me a cookie%s!',
 					'featured-video-plus'
 				),
-				'<a href="https://wordpress.org/support/plugin/featured-video-plus#plugin-title" title="Featured Video Plus Support Forum on WordPress.org" target="_blank" style="font-weight: bold;">',
+				'<a href="https://wordpress.org/support/plugin/featured-video-plus#plugin-title" title="Featured Video Plus Support Forum on WordPress.org" target="_blank" rel="noopener noreferrer" style="font-weight: bold;">',
 				'</a>',
-				'<a href="https://wordpress.org/support/view/plugin-reviews/featured-video-plus#plugin-title" title="Rate Featured Video Plus on WordPress.org" target="_blank" style="font-weight: bold;">',
+				'<a href="https://wordpress.org/support/view/plugin-reviews/featured-video-plus#plugin-title" title="Rate Featured Video Plus on WordPress.org" target="_blank" rel="noopener noreferrer" style="font-weight: bold;">',
 				'</a>',
-				'<a href="https://paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6" title="Gift to the developer!" target="_blank" style="font-weight: bold;">',
+				'<a href="https://paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6" title="Gift to the developer!" target="_blank" rel="noopener noreferrer" style="font-weight: bold;">',
 				'</a>'
 			)
 		);
