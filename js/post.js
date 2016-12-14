@@ -99,22 +99,19 @@
       // reset loading icon
       $media.css({ backgroundImage: mediaicon });
 
-      // removed video
-      if('remove' === data.task) {
-        $container
-          .css({height: $container.height() })
-          .html('')
-          .animate({height: 0});
-
-      // new video data
+      $input.val(data.full);
+      currentUrl = data.full; // Remember new url.
+      if(!data.full) {
+        var height = $container.height();
+        if (height) {
+          $container.css({ height: height }).animate({ height: 0 });
+        }
+        $container.html('')
       } else {
         // Suppress autoplay in admin interface. Cannot do this on the server
         // side because ajax requests from frontend and backend look the same.
         data.video = data.video.replace(/autoplay(?:=.?)?&?/i, '');
-
-        $container
-          .css({height: ''})
-          .html(data.video);
+        $container.css({ height: '' }).html(data.video);
       }
 
       // update featured image

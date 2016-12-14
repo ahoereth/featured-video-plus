@@ -220,6 +220,13 @@ switch ( $version ) {
 		}
 		unset( $options['default_args']['general']['autoplay'] );
 
+	case '2.3.0':
+		$options['legal_html'] = array(
+			'iframe' => false,
+			'embed'  => false,
+			'object' => false,
+		);
+
 
 	default:
 		update_option( 'fvp-settings', $options );

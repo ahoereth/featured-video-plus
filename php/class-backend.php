@@ -277,22 +277,13 @@ class FVP_Backend extends Featured_Video_Plus {
 			$post['id']
 		);
 
-		if ( has_post_video( $post['id'] ) ) {
-			$video = get_the_post_video( $post['id'], array( 256, 144 ) );
-			$response = array(
-				'type'     => 'update',
-				'valid'    => isset( $meta['valid'] ) ? $meta['valid'] : null,
-				'video'    => $video,
-				'img'      => $img,
-				'provider' => isset( $meta['provider'] ) ? $meta['provider'] : null
-			);
-		} else {
-			$response = array(
-				'task'  => 'remove',
-				'valid' => isset( $meta['valid'] ) ? $meta['valid'] : null,
-				'img'   => $img,
-			);
-		}
+		$response = array(
+			'valid'    => isset( $meta['valid'] ) ? $meta['valid'] : null,
+			'video'    => get_the_post_video( $post['id'], array( 256, 144 ) ),
+			'img'      => $img,
+			'full'     => $meta['full'],
+			'provider' => isset( $meta['provider'] ) ? $meta['provider'] : null
+		);
 
 		wp_send_json_success( $response );
 	}
@@ -311,7 +302,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$meta = get_post_meta( $post['id'], '_fvp_video', true );
 
 		// parse video url
-		$url = ! empty( $post['fvp_video'] ) ? trim( $post['fvp_video'] ) : '';
+		$video = ! empty( $post['fvp_video'] ) ? trim( $post['fvp_video'] ) : '';
 
 		// Was this a force-auto-set featimg action?
 		$setimg = ! empty ( $post['fvp_set_featimg'] ) && $post['fvp_set_featimg'];
@@ -319,14 +310,14 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Don't do anything if we are not setting the featured image AND the
 		// URL is empty AND did not change.
 		if ( ! $setimg && (
-			( ! empty( $meta['full'] ) && $url == $meta['full'] ) ||
-			(   empty( $meta['full'] ) && empty( $url ) )
+			( ! empty( $meta['full'] ) && $video == $meta['full'] ) ||
+			(   empty( $meta['full'] ) && empty( $video ) )
 		) ) {
 			return false;
 		}
 
 		// there was a video and we want to delete it
-		if ( ! empty( $meta['full'] ) && empty( $url ) ) {
+		if ( ! empty( $meta['full'] ) && empty( $video ) ) {
 			delete_post_meta( $post['id'], '_fvp_video' );
 			if ( get_post_thumbnail_id( $post['id'] ) == $meta['img'] ) {
 				$this->delete_featured_image( $post['id'], $meta );
@@ -334,7 +325,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			return false;
 		}
 
-		$data = $this->get_video_data( $url );
+		$data = $this->get_video_data( $video );
 
 		// Do we have a screen capture to pull?
 		if ( empty( $data['img_url'] ) ) {
@@ -354,10 +345,8 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Create the final _fvp_video meta data.
 		$meta = array_merge(
 			array(
-				'full'     => $url,
-				'img'      => ! empty( $img ) ? $img : null,
-				'valid'    => 1, // can be overwritten by $data
-				'provider' => 'raw', // "
+				'valid' => true, // can be overwritten by $data
+				'img' => ! empty( $img ) ? $img : null,
 			),
 			$data
 		);
@@ -372,75 +361,80 @@ class FVP_Backend extends Featured_Video_Plus {
 	 *
 	 * @since 1.5.0
 	 *
-	 * @param  {string} $url The video URL
+	 * @param  {string} $video The video URL
 	 * @return {assoc}  Associative array containing the video information data
 	 */
-	private function get_video_data( $url ) {
+	private function get_video_data( $video ) {
+		$video = trim( self::kses_video( stripslashes( $video ) ) );
+		$provider = null;
 		$data = array();
 
 		$local = wp_upload_dir();
-		$islocal = strpos( $url, $local['baseurl'] );
-
-		// handle local videos
+		$islocal = strpos( $video, $local['baseurl'] );
 		if ( false !== $islocal ) {
 			$provider = 'local';
-
-			// handle external videos
+		} elseif ( $video != strip_tags( $video ) ) {
+			$provider = 'raw';
 		} else {
-			$raw = $this->oembed->request( $url );
-
-			// If no provider is returned the URL is invalid
-			if ( empty( $raw ) || empty( $raw->provider_name ) ) {
-				return array( 'valid' => false );
-			}
-
-			$provider = strtolower( $raw->provider_name );
-
-			$data = array(
-				'id'          => null,
-				'provider'    => $provider,
-				'title'       => ! empty( $raw->title )         ? $raw->title : null,
-				'author'      => ! empty( $raw->author_name )   ? $raw->author_name : null,
-				'description' => ! empty( $raw->description )   ? $raw->description : null,
-				'img_url'     => ! empty( $raw->thumbnail_url ) ? $raw->thumbnail_url : null,
-				'filename'    => ! empty( $raw->title ) ? $raw->title : null,
-			);
-
-			switch ( $provider ) {
-				case 'dailymotion':
-					$data['id'] = $this->oembed->get_video_id( $url );
-					$img_url = $this->oembed->get_thumbnail_url( $provider, $data['id'] );
-					if ( false !== $img_url ) {
-						$data['img_url'] = $img_url;
-					}
-					break;
-			}
-		}
-
-		$data['parameters'] = $this->oembed->get_args( $url, $provider );
-
-		// provider specific handling
-		switch ( $provider ) {
-
-			// local video
-			case 'local':
-				$ext_legal = array( 'mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv' );
-				$ext = pathinfo( $url, PATHINFO_EXTENSION );
-
-				// check if extension is legal
-				if ( empty( $ext ) || ! in_array( $ext, $ext_legal ) ) {
-					return array( 'valid' => false );
-				}
+			$v = $this->oembed->request( $video );
+			if ( ! empty( $raw ) && ! empty( $raw->provider_name ) ) {
+				$provider = strtolower( $v->provider_name );
 
 				$data = array(
-					'provider' => 'local',
-					'id'  => self::get_post_by_url( $url ),
-					'url' => $url,
+					'id'          => null,
+					'provider'    => $provider,
+					'title'       => ! empty( $v->title ) ? $v->title : null,
+					'author'      => ! empty( $v->author_name ) ? $v->author_name : null,
+					'description' => ! empty( $v->description ) ? $v->description : null,
+					'img_url'     => ! empty( $v->thumbnail_url ) ? $v->thumbnail_url : null,
+					'filename'    => ! empty( $v->title ) ? $v->title : null,
+					'full'        => $video,
+					'parameters'  => $this->oembed->get_args( $video, $provider ),
 				);
-				break;
+			}
 		}
 
-		return ! empty( $data ) ? $data : false;
+		switch ( $provider ) {
+			case 'dailymotion':
+				$id = $this->oembed->get_video_id( $video );
+				$img = $this->oembed->get_thumbnail_url( $provider, $id );
+				return array_merge( $data, array(
+					'id' => $id,
+					'img_url' => $img !== false ? $img : null,
+				) );
+
+			case 'local':
+				// check if extension is legal
+				$ext_legal = array( 'mp4', 'm4v', 'webm', 'ogv', 'wmv', 'flv' );
+				$ext = pathinfo( $video, PATHINFO_EXTENSION );
+				if ( empty( $ext ) || ! in_array( $ext, $ext_legal ) ) {
+					return array(
+						'full' => $video,
+					);
+				}
+
+				return array(
+					'provider' => $provider,
+					'id' => self::get_post_by_url( $video ),
+					'full' => $video,
+				);
+
+			case 'raw':
+				return array(
+					'provider' => $provider,
+					'full' => $video,
+				);
+
+			default:
+				if ( ! empty( $data ) ) {
+					return $data;
+				} else {
+					return array(
+						'valid' => false,
+						'full' => $video,
+					);
+				}
+		}
 	}
 
 
@@ -772,6 +766,54 @@ class FVP_Backend extends Featured_Video_Plus {
 		return true;
 	}
 
+
+	/**
+	 * Filter video string to remove bad html. `embed`, `object` and `iframe`
+	 * may explicitly whitelisted.
+	 *
+	 * @param  string $video
+	 * @return string
+	 */
+	private static function kses_video( $video ) {
+		$opt = get_option( 'fvp-settings' );
+		$tag = ! empty( $opt['legal_html'] ) ? $opt['legal_html'] : array();
+
+		$legal_tags = array_merge(
+			wp_kses_allowed_html( 'post' ),
+			isset( $tag['embed'] ) && $tag['embed'] ? array(
+				'embed' => array(
+					'src' => true,
+					'type' => true,
+					'width' => true,
+					'height' => true,
+				),
+			) : array(),
+			isset( $tag['object'] ) && $tag['object'] ? array(
+				'object' => array(
+					'width' => true,
+					'height' => true,
+					'data' => true,
+					'form' => true,
+					'name' => true,
+					'type' => true,
+					'usemap' => true,
+				),
+			) : array(),
+			isset( $tag['iframe'] ) && $tag['iframe'] ? array(
+				'iframe' => array(
+					'align' => true,
+					'width' => true,
+					'height' => true,
+					'src' => true,
+					'sandbox' => true,
+					'frameborder' => true,
+					'allowfullscreen' => true,
+				),
+			) : array()
+		);
+
+		return wp_kses( $video, $legal_tags, array( 'http', 'https' ) );
+	}
 
 	/**
 	 * exif_imagetype function is not available on all systems - fallback wrapper.

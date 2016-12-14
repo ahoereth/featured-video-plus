@@ -80,6 +80,15 @@ class FVP_Settings {
 			self::$section
 		);
 
+		// video align options
+		add_settings_field(
+			'fvp-legal_html',
+			esc_html__( 'Legal HTML', 'featured-video-plus' ),
+			array( $this, 'legal_html' ),
+			self::$page,
+			self::$section
+		);
+
 		// video default url argument options
 		add_settings_field(
 			'fvp-defaults',
@@ -325,6 +334,36 @@ class FVP_Settings {
 
 
 	/**
+	 * Define which HTML is legal in the video input.
+	 *
+	 * @since 2.3
+	 */
+	public function legal_html() {
+		$options = get_option( 'fvp-settings' );
+
+		echo FVP_HTML::description(
+			sprintf(
+				esc_html__(
+					'By default the video input only accepts %soEmbed urls%s. If you want to insert raw embed codes you need to enable the unsecure HTML here first.',
+					'featured-video-plus'
+				),
+				'<a href="https://codex.wordpress.org/Embeds#Okay.2C_So_What_Sites_Can_I_Embed_From.3F" target="_blank" rel="noopener noreferrer">', '</a>'
+			)
+		);
+
+		echo FVP_HTML::checkboxes(
+			'fvp-settings[legal_html]',
+			array(
+				'iframe' => 'iframe',
+				'embed' => 'embed',
+				'object' => 'object',
+			),
+			! empty( $options['legal_html'] ) ? $options['legal_html'] : array()
+		);
+	}
+
+
+	/**
 	 * Default settings for video embeds. Can be altered on a per video basis
 	 * using video embed URL arguments.
 	 *
@@ -543,10 +582,15 @@ class FVP_Settings {
 				'sticky'     => 'BOOLEAN',
 				'!sticky'    => 'BOOLEAN',
 			),
-			'alignment' => '(left|center|right)',
 			'sizing' => array(
 				'responsive' => 'BOOLEAN',
 				'width'      => $patterns['number'],
+			),
+			'alignment' => '(left|center|right)',
+			'legal_html' => array(
+				'iframe' => 'BOOLEAN',
+				'embed' => 'BOOLEAN',
+				'object' => 'BOOLEAN',
 			),
 			'autoplay' => array(
 				'always' => 'BOOLEAN',
