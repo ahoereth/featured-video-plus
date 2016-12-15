@@ -5,12 +5,12 @@ Plugin URI: http://yrnxt.com/wordpress/featured-video-plus/
 Tags: featured, post, video, videos, image, thumbnail, html5, flash, lazy, overlay, youtube, vimeo, dailymotion, soundcloud, spotify
 Author: Alexander Höreth
 Author URI: http://yrnxt.com/
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AD8UKMQW2DMM6
+Donate link: https://www.paypal.me/ahoereth
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
-Tested up to: 4.5
-Stable tag: 2.2.3
+Tested up to: 4.7
+Stable tag: 2.3.0
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -112,7 +112,7 @@ Yes, please! Check out the official [Featured Video Plus Translation Project](ht
 
 == Changelog ==
 
-= 2.3.0: 2016-12-## =
+= 2.3.0: 2016-12-15 =
 * Now compatible with [Video SEO](https://yoast.com/wordpress/plugins/video-seo/)! ([*](https://wordpress.org/support/topic/compatibility-with-video-seo), [*](https://wordpress.org/support/topic/video-seo-featured-video-plus-compatability), [*](https://wordpress.org/support/topic/fantastic-a-must-have-for-all-video-sites))
 * Fix AJAX vulnerability reported by [@jamesgol](https://github.com/jamesgol).
 * **Disallow raw embeds (`iframe`, `object`, `embed`) by default for new videos -- can be enabled in the settings.** Could have been misused if somebody had gained access to an editor account beforehand. Reported by [@jamesgol](https://github.com/jamesgol).

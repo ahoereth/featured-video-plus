@@ -1,6 +1,9 @@
 # Changelog #
 
-### 2.3.0: 2016-07-## ###
+## 2.3.0: 2016-12-15 ##
+* Now compatible with [Video SEO](https://yoast.com/wordpress/plugins/video-seo/)! ([*](https://wordpress.org/support/topic/compatibility-with-video-seo), [*](https://wordpress.org/support/topic/video-seo-featured-video-plus-compatability), [*](https://wordpress.org/support/topic/fantastic-a-must-have-for-all-video-sites))
+* Fix AJAX vulnerability reported by [@jamesgol](https://github.com/jamesgol).
+* **Disallow raw embeds (`iframe`, `object`, `embed`) by default for new videos -- can be enabled in the settings.** Could have been misused if somebody had gained access to an editor account beforehand. Reported by [@jamesgol](https://github.com/jamesgol).
 * "Single" now actually means single posts **and** pages. ([*](https://wordpress.org/support/topic/is_singular), [*](https://github.com/ahoereth/featured-video-plus/issues/7))
 * Fix some problem with fixed size specifications. ([*](https://wordpress.org/support/topic/modifying-size-has-no-effect), [*](https://wordpress.org/support/topic/not-able-to-change-size-of-video), [*](https://wordpress.org/support/topic/width-function-on-featured-video-plus-width560-is-not-working), [*](https://wordpress.org/support/topic/the_post_video-is-the-wrong-size))
 
