@@ -8,6 +8,7 @@
   var currentUrl;
   var mediaicon;
   var loadingicon = 'url(' + context.loading_gif + ')';
+  var $invalidNotice;
 
 
   /**
@@ -99,6 +100,12 @@
       // reset loading icon
       $media.css({ backgroundImage: mediaicon });
 
+      if (data.valid !== false) {
+        $invalidNotice.hide();
+      } else {
+        $invalidNotice.css({ display: 'block' });
+      }
+
       $input.val(data.full);
       currentUrl = data.full; // Remember new url.
       if(!data.full) {
@@ -123,12 +130,19 @@
   $(document).ready(function() {
     $input = $('.fvp-video');
     $media = $input.siblings('.fvp-video-choose').children('.fvp-media-icon');
+    $invalidNotice = $('#featured-video-plus-box .fvp-notice-invalid');
     currentUrl  = $input.val();
     mediaicon = $media.css('backgroundImage');
 
     // Automatically submit the video URL using AJAX when the input is blurred.
     // Update video and featured image with the returned data.
     $input.blur(submitVideo);
+
+    $('#featured-video-plus-box .notice-dismiss').click(function(e) {
+      $input.val('');
+      $invalidNotice.hide();
+      submitVideo(e);
+    })
 
     // Initialize autosizing the url input field, disable enter key and
     // auto select content on click.

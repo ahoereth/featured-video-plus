@@ -138,6 +138,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : $GLOBALS['post']->ID;
 		$options = get_option( 'fvp-settings' );
 		$meta = get_post_meta( $post_id, '_fvp_video', true );
+		$has_invalid_video = isset( $meta['valid'] ) && $meta['valid'] === false;
 		$has_post_video = has_post_video( $post_id );
 
 		$content = '';
@@ -183,12 +184,24 @@ class FVP_Backend extends Featured_Video_Plus {
 		// Close media gallery wrapper.
 		$content .= '</div>';
 
+		// Illegal value warning
+		$content .= sprintf(
+			'<span class="fvp-notice-invalid notice notice-info visible"%s><p>%s</p><button type="button" class="notice-dismiss"/></span>',
+			FVP_HTML::inline_styles( array(
+				'display' => $has_invalid_video ? 'block' : 'none',
+			), true, true ),
+			esc_html__(
+				'The inserted value is illegal. You might want to manually enable raw HTML embeds in the media settings.',
+				'featured-video-plus'
+			)
+		);
+
 		// 'Current theme does not support Featured Images' warning.
 		if (
 			! current_theme_supports( 'post-thumbnails' ) &&
 			'manual' !== $options['mode']
 		) {
-			$content .= '<p class="fvp-warning description">';
+			$content .= '<span class="fvp-notice-theme notice notice-info visible"><p>';
 			$content .= sprintf(
 				'<span style="font-weight: bold;">%s</span>&nbsp;',
 				esc_html__(
@@ -207,7 +220,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				'<a href="' . esc_attr( get_admin_url( null, '/options-media.php' ) ) . '">',
 				'</a>'
 			);
-				'</p>';
+				'</p></span>';
 		}
 
 		echo "\n\n\n<!-- Featured Video Plus Metabox -->\n";
@@ -311,13 +324,13 @@ class FVP_Backend extends Featured_Video_Plus {
 		// URL is empty AND did not change.
 		if ( ! $setimg && (
 			( ! empty( $meta['full'] ) && $video == $meta['full'] ) ||
-			(   empty( $meta['full'] ) && empty( $video ) )
+			(   empty( $meta ) && empty( $video ) )
 		) ) {
 			return false;
 		}
 
 		// there was a video and we want to delete it
-		if ( ! empty( $meta['full'] ) && empty( $video ) ) {
+		if ( empty( $video ) ) {
 			delete_post_meta( $post['id'], '_fvp_video' );
 			if ( get_post_thumbnail_id( $post['id'] ) == $meta['img'] ) {
 				$this->delete_featured_image( $post['id'], $meta );
@@ -373,7 +386,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$islocal = strpos( $video, $local['baseurl'] );
 		if ( false !== $islocal ) {
 			$provider = 'local';
-		} elseif ( $video != strip_tags( $video ) ) {
+		} elseif ( $video !== strip_tags( $video ) ) {
 			$provider = 'raw';
 		} else {
 			$v = $this->oembed->request( $video );
