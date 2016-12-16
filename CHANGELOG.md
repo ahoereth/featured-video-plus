@@ -1,7 +1,10 @@
 # Changelog #
 
+## 2.3.2: 2016-12-16 ##
+* Quick fix for *illegal video* message when using oEmbed. ([*](https://wordpress.org/support/topic/illegal-warning-displays-on-youtube-videos-2/), [*](https://wordpress.org/support/topic/illegal-warning-displays-on-youtube-videos/))
+
 ## 2.3.1: 2016-12-16 ##
-* Quick fix 'are you sure' error on post creation. ([*](https://wordpress.org/support/topic/latest-update-causing-error/), [*](https://wordpress.org/support/topic/error-are-you-sure-you-want-to-do-this-3/))
+* Quick fix for *are you sure* error on post creation. ([*](https://wordpress.org/support/topic/latest-update-causing-error/), [*](https://wordpress.org/support/topic/error-are-you-sure-you-want-to-do-this-3/))
 
 ## 2.3.0: 2016-12-15 ##
 * Now compatible with [Video SEO](https://yoast.com/wordpress/plugins/video-seo/)! ([*](https://wordpress.org/support/topic/compatibility-with-video-seo), [*](https://wordpress.org/support/topic/video-seo-featured-video-plus-compatability), [*](https://wordpress.org/support/topic/fantastic-a-must-have-for-all-video-sites))

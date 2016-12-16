@@ -191,7 +191,7 @@ class FVP_Backend extends Featured_Video_Plus {
 				'display' => $has_invalid_video ? 'block' : 'none',
 			), true, true ),
 			esc_html__(
-				'The inserted value is illegal. You might want to manually enable raw HTML embeds in the media settings.',
+				'Could not resolve the inserted value to a video. Are you sure it is a legal video url and the server can connect to its provider? If you tried to insert a raw embed code, you might need to enable it in the media settings.',
 				'featured-video-plus'
 			)
 		);
@@ -389,7 +389,7 @@ class FVP_Backend extends Featured_Video_Plus {
 			$provider = 'raw';
 		} else {
 			$v = $this->oembed->request( $video );
-			if ( ! empty( $raw ) && ! empty( $raw->provider_name ) ) {
+			if ( ! empty( $v ) && ! empty( $v->provider_name ) ) {
 				$provider = strtolower( $v->provider_name );
 
 				$data = array(
