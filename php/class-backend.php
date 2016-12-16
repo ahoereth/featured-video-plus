@@ -239,12 +239,11 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param {int} $post_id
 	 */
 	public function metabox_save( $post_id ) {
-		self::verify_nonce( $post_id );
-
 		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) ||
-		     ( defined( 'DOING_AJAX' )     && DOING_AJAX )     ||
-		     ( ! current_user_can( 'edit_post', $post_id ) )   ||
-		     ( false !== wp_is_post_revision( $post_id ) )
+		     ( defined( 'DOING_AJAX' )     && DOING_AJAX ) ||
+		     ( ! current_user_can( 'edit_post', $post_id ) ) ||
+		     ( false !== wp_is_post_revision( $post_id ) ) ||
+		     ( ! self::verify_nonce( $post_id ) )
 		) {
 			return;
 		}
@@ -761,18 +760,13 @@ class FVP_Backend extends Featured_Video_Plus {
 	 * @param  bool       $bool       whether to return a boolean or strictly exit
 	 * @return bool/none  Return bool if $bool is set to true
 	 */
-	private static function verify_nonce( $identifier, $bool = false ) {
+	private static function verify_nonce( $identifier ) {
 		$action = self::get_nonce_action( $identifier );
 
 		if (
 			! isset( $_REQUEST[ 'fvp_nonce' ] ) ||
 			! wp_verify_nonce( $_REQUEST[ 'fvp_nonce' ], $action )
 		) {
-			if ( ! $bool ) {
-				wp_nonce_ays( $action );
-				exit;
-			}
-
 			return false;
 		}
 
