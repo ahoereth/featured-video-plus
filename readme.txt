@@ -10,7 +10,7 @@ License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Requires at least: 3.7
 Tested up to: 4.7
-Stable tag: 2.3.0
+Stable tag: 2.3.1
 
 Add Featured Videos to your posts and pages. Works like magic with most themes which use Featured Images. Local Media, YouTube, Vimeo and many more.
 
@@ -111,6 +111,9 @@ Yes, please! Check out the official [Featured Video Plus Translation Project](ht
 
 
 == Changelog ==
+
+= 2.3.1: 2016-12-16 =
+* Quick fix 'are you sure' error on post creation. ([*](https://wordpress.org/support/topic/latest-update-causing-error/), [*](https://wordpress.org/support/topic/error-are-you-sure-you-want-to-do-this-3/))
 
 = 2.3.0: 2016-12-15 =
 * Now compatible with [Video SEO](https://yoast.com/wordpress/plugins/video-seo/)! ([*](https://wordpress.org/support/topic/compatibility-with-video-seo), [*](https://wordpress.org/support/topic/video-seo-featured-video-plus-compatability), [*](https://wordpress.org/support/topic/fantastic-a-must-have-for-all-video-sites))
