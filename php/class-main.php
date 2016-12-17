@@ -58,11 +58,9 @@ class Featured_Video_Plus {
 		// Autoplay option. Suppressed when viewing admin.
 		$general['autoplay'] = self::parse_autoplay_options( $options, $ajax );
 
-		// Responsive scaling option. Not used when viewing the admin screen.
-		$responsive =
-			! empty($options['sizing']['responsive']) &&
-			$options['sizing']['responsive'] &&
-			( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ! is_admin() );
+		// Responsive scaling option.
+		$responsive = ! empty( $options['sizing']['responsive'] ) &&
+		              $options['sizing']['responsive'];
 
 		// Alignment option
 		$align = ! empty($options['alignment']) ? $options['alignment'] : 'center';
@@ -180,6 +178,8 @@ class Featured_Video_Plus {
 			$options['conditions'] : null;
 		$single_replace = is_singular() &&
 			! empty( $options['single_replace'] ) && $options['single_replace'];
+			$responsive = ! empty( $options['sizing']['responsive'] ) &&
+			              $options['sizing']['responsive'];
 
 		// Don't show a video.
 		if ( ( 'manual' === $mode ) ||
@@ -227,7 +227,7 @@ class Featured_Video_Plus {
 		}
 
 		// Replace the featured image with the video.
-		return get_the_post_video( $post_id, $size ) . $onload;
+		return get_the_post_video( $post_id, $responsive ? $size : null ) . $onload;
 	}
 
 
@@ -310,14 +310,14 @@ class Featured_Video_Plus {
 
 		if ( empty( $width ) ) {
 			$width = ! empty( $options['sizing']['width'] ) ?
-				$options['sizing']['width'] : 1280;
+				floatval( $options['sizing']['width'] ) : 1280;
 		}
 
 		if ( empty( $height ) ) {
 			// Calculate height relative to width.
 			$height = ! empty( $original ) ?
 				round( $original['height'] * ($width / $original['width']) ) :
-				$height = $width / 16 * 9;
+				round( $width / 16 * 9 );
 		}
 
 		return array(
