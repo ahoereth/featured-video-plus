@@ -112,6 +112,9 @@ Yes, please! Check out the official [Featured Video Plus Translation Project](ht
 
 == Changelog ==
 
+= 2.3.3: 2016-12-17 =
+* Fix frontend ajax requests. ([*](https://wordpress.org/support/topic/video-overlay-does-not-work/))
+
 = 2.3.2: 2016-12-16 =
 * Quick fix for *illegal video* message when using oEmbed. ([*](https://wordpress.org/support/topic/illegal-warning-displays-on-youtube-videos-2/), [*](https://wordpress.org/support/topic/illegal-warning-displays-on-youtube-videos/))
 

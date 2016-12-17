@@ -269,7 +269,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$post_id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : -1;
 		if (
 			$post_id === -1 ||
-			! self::verify_nonce( $post_id, true ) ||
+			! self::verify_nonce( $post_id ) ||
 			! current_user_can( 'edit_post', $post_id )
 		) {
 			wp_send_json_error();
@@ -555,7 +555,7 @@ class FVP_Backend extends Featured_Video_Plus {
 		$post_id = ! empty( $_POST['id'] ) ? (int) $_POST['id'] : -1;
 		if (
 			$post_id === -1 ||
-			! self::verify_nonce( $post_id, true )
+			! self::verify_nonce( 'frontend' )
 		) {
 			wp_send_json_error();
 		}
