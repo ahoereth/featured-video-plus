@@ -470,6 +470,10 @@ class FVP_Settings {
 							'value' => '0',
 							'label' => esc_html__( 'Disallow fullscreen', 'featured-video-plus' )
 						),
+						'controls' => array(
+							'value' => '0',
+							'label' => esc_html__( 'Hide Video Playback controls', 'featured-video-plus' )
+						),
 						'showinfo' => array(
 							'value' => '0',
 							'label' => esc_html__( 'Hide video info', 'featured-video-plus' )
@@ -614,6 +618,7 @@ class FVP_Settings {
 					'iv_load_policy' => $patterns['digit'],
 					'fs'             => $patterns['digit'],
 					'rel'            => $patterns['digit'],
+					'controls'       => $patterns['digit'],
 					'showinfo'       => $patterns['digit'],
 					'enablejsapi'    => $patterns['digit'],
 				),
