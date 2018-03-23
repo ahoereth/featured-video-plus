@@ -392,6 +392,7 @@ class FVP_oEmbed {
 				'loop',
 				'api',
 				'player_id',
+				'background',
 			),
 
 			// DailyMotion.com
