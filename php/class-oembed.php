@@ -459,7 +459,7 @@ class FVP_oEmbed {
 		// parse query
 		$query = parse_url( $url, PHP_URL_QUERY );
 		$query_args = array();
-		parse_str( $query, $query_args );
+		parse_str( html_entity_decode($query), $query_args );
 
 		// parse fragment
 		$fragment = parse_url( $url, PHP_URL_FRAGMENT );
