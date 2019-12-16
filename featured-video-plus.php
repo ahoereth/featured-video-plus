@@ -32,7 +32,7 @@ License: GPL-2.0
 // ********************
 // CONSTANTS
 if ( ! defined( 'FVP_VERSION' ) ) {
-	define( 'FVP_VERSION', '2.3.3' );
+	define( 'FVP_VERSION', '2.3.4' );
 }
 
 $pathinfo = pathinfo( dirname( plugin_basename( __FILE__ ) ) );
