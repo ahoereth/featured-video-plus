@@ -1,22 +1,26 @@
 <?php
 /**
- * Class providing additional functionality to WordPress' native oEmbed
- * functionality.
+ * API for fetching the HTML to embed remote content based on a provided URL
  *
- * @link http://codex.wordpress.org/oEmbed
- * @link http://oembed.com/ oEmbed Homepage
- * @link https://github.com/WordPress/WordPress/tree/master/wp-includes/class-oembed.php
+ * Used internally by the WP_Embed class, but is designed to be generic.
  *
- * @package Featured Video Plus
+ * @link https://wordpress.org/support/article/embeds/
+ * @link http://oembed.com/
+ *
+ * @package WordPress
  * @subpackage oEmbed
- * @since 2.0.0
+ */
+/**
+ * Core class used to implement oEmbed functionality.
+ *
+ * @since 2.9.0
  */
 class FVP_oEmbed {
 	private $oembed;
 
 	public function __construct() {
 		// Does not extend oEmbed in order to not initialize it a second time.
-		require_once( ABSPATH . '/' . WPINC . '/class-oembed.php' );
+		require_once( ABSPATH . '/' . WPINC . '/class-wp-oembed.php' );
 		$this->oembed = _wp_oembed_get_object();
 
 		add_filter(
